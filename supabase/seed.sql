@@ -1,0 +1,2 @@
+-- Intentionally empty in the foundation. No fake users, reviews, or approved exercises.
+-- Add draft content in P7; never mark content reviewed without a qualified review.

@@ -1,0 +1,257 @@
+@import "tailwindcss";
+@import "@fontsource-variable/geist";
+
+:root {
+  --brand-700: #143a36;
+  --brand-600: #1a6b5f;
+  --brand-100: #eaf7f3;
+  --ink-900: #17212b;
+  --ink-600: #5e6b78;
+  --surface: #ffffff;
+  --canvas: #f7faf9;
+  --border: #d9e2e7;
+  --warning: #fff4db;
+  --danger: #ffe8e8;
+  --success: #e6f7ee;
+  --background: var(--canvas);
+  --foreground: var(--ink-900);
+  --card: var(--surface);
+  --primary: var(--brand-600);
+  --primary-foreground: #ffffff;
+  --secondary: var(--brand-100);
+  --muted: #edf1ef;
+  --muted-foreground: var(--ink-600);
+  --ring: var(--brand-600);
+  --input: #a3b4bb;
+  --destructive: #a52c36;
+  --sage: #e6eee5;
+  --peach: #f8ebe1;
+  --lavender: #ecebf3;
+  --radius: 1rem;
+  --shape-control: 0.75rem;
+  --shape-card: 1rem;
+  --shape-panel: 1.5rem;
+  --layout-dashboard: 75rem;
+  --layout-flow: 45rem;
+  --motion-feedback: 180ms;
+  --motion-panel: 220ms;
+  --strong: var(--brand-700);
+  --strong-foreground: #ffffff;
+  --elevation-preview:
+    0 20px 65px -30px color-mix(in srgb, var(--foreground) 28%, transparent),
+    0 2px 8px color-mix(in srgb, var(--foreground) 3%, transparent);
+  --elevation-card: 0 12px 30px -18px
+    color-mix(in srgb, var(--foreground) 24%, transparent);
+}
+
+@theme inline {
+  --font-sans: "Geist Variable", ui-sans-serif, system-ui, sans-serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-destructive: var(--destructive);
+  --color-brand-700: var(--brand-700);
+  --color-sage: var(--sage);
+  --color-peach: var(--peach);
+  --color-lavender: var(--lavender);
+  --color-warning: var(--warning);
+  --color-success: var(--success);
+  --color-danger: var(--danger);
+  --color-strong: var(--strong);
+  --color-strong-foreground: var(--strong-foreground);
+  --shadow-preview: var(--elevation-preview);
+  --shadow-card: var(--elevation-card);
+  --radius-lg: var(--radius);
+  --radius-control: var(--shape-control);
+  --radius-card: var(--shape-card);
+  --radius-panel: var(--shape-panel);
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 2rem;
+  }
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-size: 16px;
+    line-height: 1.6;
+  }
+  button,
+  a,
+  input,
+  select,
+  summary {
+    -webkit-tap-highlight-color: transparent;
+  }
+  button:not(:disabled),
+  summary {
+    cursor: pointer;
+  }
+  :focus-visible {
+    outline: 3px solid var(--ring);
+    outline-offset: 4px;
+  }
+  ::selection {
+    background: var(--brand-100);
+    color: var(--brand-700);
+  }
+  progress {
+    accent-color: var(--primary);
+  }
+  progress::-webkit-progress-bar {
+    background: var(--muted);
+  }
+  progress::-webkit-progress-value {
+    background: var(--primary);
+    border-radius: 99px;
+  }
+  progress::-moz-progress-bar {
+    background: var(--primary);
+  }
+}
+@utility page-width {
+  width: min(1160px, calc(100% - 48px));
+  margin-inline: auto;
+}
+@utility eyebrow {
+  color: var(--primary);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+}
+@utility app-heading {
+  font-size: clamp(1.5rem, 3vw, 2rem);
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+}
+@utility section-heading {
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  font-weight: 500;
+  line-height: 1.15;
+  letter-spacing: -0.045em;
+}
+.nav-link {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  transition: color 150ms ease;
+}
+.nav-link:hover {
+  color: var(--primary);
+}
+.sheet-overlay[data-state="open"] {
+  animation: fade-in 180ms ease-out;
+}
+.sheet-overlay[data-state="closed"] {
+  animation: fade-out 150ms ease-in;
+}
+.sheet-content[data-state="open"] {
+  animation: sheet-in 220ms ease-out;
+}
+.sheet-content[data-state="closed"] {
+  animation: sheet-out 160ms ease-in;
+}
+.sheet-content[data-side="bottom"][data-state="open"] {
+  animation: drawer-in var(--motion-panel) ease-out;
+}
+.sheet-content[data-side="bottom"][data-state="closed"] {
+  animation: drawer-out var(--motion-feedback) ease-in;
+}
+@keyframes drawer-in {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+@keyframes drawer-out {
+  to {
+    transform: translateY(100%);
+  }
+}
+.accordion-content[data-state="open"] {
+  animation: accordion-down 200ms ease-out;
+}
+.accordion-content[data-state="closed"] {
+  animation: accordion-up 180ms ease-in;
+}
+[data-sonner-toaster] [data-sonner-toast].peth-toast {
+  background: var(--card);
+  color: var(--foreground);
+  border-color: var(--border);
+  border-radius: var(--radius);
+  font-family: var(--font-sans);
+  box-shadow: var(--elevation-card);
+}
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+@keyframes fade-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes sheet-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+@keyframes sheet-out {
+  to {
+    transform: translateX(100%);
+  }
+}
+@keyframes accordion-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+}
+@keyframes accordion-up {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+@media (max-width: 639px) {
+  .page-width {
+    width: calc(100% - 32px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
