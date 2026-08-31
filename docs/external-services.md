@@ -11,7 +11,7 @@ Destino informado: `coach.peth.com.br`. Remetente: `PethCoach <suporte@peth.com.
 | Stripe | Sandbox existente da Peth, chave de testes local validada pela API | Preços definidos pelo responsável, Checkout e webhook assinado na P10; ativação comercial posterior |
 | Vercel | Conta conectada `fxlipecdrs-projects`, plano Hobby, sem projeto criado | Escolha de hospedagem compatível com SaaS comercial; nenhum upgrade ou deploy realizado |
 | DNS | Cloudflare confirmada; Zoho recebe os e-mails do domínio | Criar registro `coach` somente após conhecer o destino real da hospedagem |
-| GitHub | Acesso administrativo validado, repositório privado inicialmente vazio, remote `origin` configurado | Conferir resultado do primeiro push/CI no painel; não há credenciais no repositório |
+| GitHub | Repositório privado, remote `origin`, código enviado à `main` e SHA remoto conferido | Conferir CI no painel; não há credenciais no repositório |
 
 ## Supabase
 
@@ -35,6 +35,7 @@ Destino informado: `coach.peth.com.br`. Remetente: `PethCoach <suporte@peth.com.
 - Geração de tipos por `supabase gen types --db-url` ficou pendente porque exige Docker/Podman, indisponíveis neste computador. Não substituir `lib/supabase/database.types.ts` pelo arquivo de erro; os tipos atuais continuam mantidos à mão.
 - Esses resultados não substituem testes de Auth/PKCE, JWTs reais de dois tutores e entrega de e-mail.
 - Verificação local após a configuração: lint, TypeScript e 52 testes aprovados; smoke offline com 26 testes aprovados em desktop/celular. O smoke isola as credenciais e não envia mensagens reais.
+- Servidor local reiniciado com `.env.local`: `/entrar` abre com o botão de acesso habilitado. Nenhum pedido de link foi enviado automaticamente.
 
 ## Stripe e Resend
 
