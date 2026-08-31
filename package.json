@@ -16,6 +16,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:integration": "vitest run --config vitest.integration.config.ts",
+    "test:p2:live": "node --experimental-strip-types scripts/p2-live-acceptance.ts",
     "e2e:smoke": "playwright test",
     "verify": "pnpm lint && pnpm typecheck && pnpm test"
   },

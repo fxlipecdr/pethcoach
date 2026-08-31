@@ -1,6 +1,6 @@
 # P2 — conectar o Supabase de desenvolvimento
 
-Status: projeto Supabase dev conectado, migrations aplicadas e SMTP Resend configurado. Testes de RLS no PostgreSQL remoto e bloqueio anônimo pela Data API aprovados; aceite do login real ainda pendente. Não publicar para clientes. Nenhum e-mail real foi enviado nesta configuração. Valores e evidências em `docs/external-services.md`.
+Status: projeto Supabase dev conectado, migrations aplicadas e SMTP Resend configurado. Testes de RLS no PostgreSQL remoto e bloqueio anônimo pela Data API aprovados. Login PKCE, persistência, logout, replay e isolamento pelo app passaram com duas contas reais de teste; Data API direta com os dois JWTs e geração de tipos continuam pendentes. Não liberar para clientes. Valores e evidências em `docs/external-services.md`.
 
 ## 1. Projeto e variáveis
 
@@ -44,7 +44,7 @@ Solicitar o link em `/entrar` e abrir o e-mail **no mesmo navegador** que inicio
 
 Google não foi ativado: não há credenciais/provider configurados e é opcional na P2.
 
-## 4. Aceite com o fornecedor real — ainda pendente
+## 4. Aceite com o fornecedor real — parcialmente concluído
 
 Usar duas contas de teste próprias e uma janela sem sessão. Autorizar os destinatários antes de enviar e-mails reais.
 
@@ -62,13 +62,13 @@ Registrar resultados em `docs/p2-acceptance.md`. Testes PGlite não substituem e
 
 ## Desenvolvimento local com Docker (alternativa)
 
-Docker continua indisponível; o CLI 2.116.0 foi executado via `pnpm dlx` para migrations remotas. A geração de tipos por conexão direta ainda depende de Docker/Podman. Se Docker for instalado posteriormente, `supabase start` usa `supabase/config.toml` (signup e callbacks locais preparados); aplicar migrations apenas no banco local descartável. Usar a chave publicável real emitida pela versão instalada do CLI; não afrouxar a validação do app para aceitar service role. A caixa de e-mail local usa a porta 54324. O CLI novo avisa que a seção local `inbucket` foi renomeada para `local_smtp`; revisar essa configuração antes de iniciar a stack local.
+O Docker CLI está instalado, mas o daemon não iniciou na auditoria posterior; o CLI Supabase 2.116.0 continua sendo executado via `pnpm dlx`. A geração de tipos por conexão direta segue pendente. Quando o daemon estiver operacional, `supabase start` usa `supabase/config.toml` (signup e callbacks locais preparados); aplicar migrations apenas no banco local descartável. Usar a chave publicável real emitida pela versão instalada do CLI; não afrouxar a validação do app para aceitar service role. A caixa de e-mail local usa a porta 54324. O CLI novo avisa que a seção local `inbucket` foi renomeada para `local_smtp`; revisar essa configuração antes de iniciar a stack local.
 
 ## Limites antes de disponibilizar publicamente
 
 - Substituir o limitador em memória por armazenamento compartilhado atômico para múltiplas instâncias; manter rate limits do fornecedor e avaliar CAPTCHA. O atual é uma defesa adicional de desenvolvimento, não um limitador distribuído.
 - Concluir privacidade, canal do controlador, retenção, exportação/exclusão e revisão jurídica (P14). Não abrir cadastros ao público com páginas jurídicas provisórias.
-- Validar o serviço real, tipos gerados, templates, SMTP e cache de produção. Não há deploy nesta entrega.
+- Validar o serviço real, tipos gerados, templates, SMTP e cache. O deploy Vercel existente não possui envs, bloqueia indexação e serve apenas para validar a apresentação pública/fail-closed.
 - O app omite logs de argumentos de Server Actions e URLs de acesso no Next dev. Configurar também redaction de query strings de `/auth/*` nos logs de gateway/CDN/provedor; a configuração do Next dev não controla infraestrutura externa.
 - Captura/consentimento de atribuição: P11. Assessment e claim seguro: P4/P6. Plano/coaching/pagamento: fases posteriores.
 

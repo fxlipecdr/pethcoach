@@ -29,13 +29,14 @@ A suíte de banco executa as duas migrations sobre PostgreSQL/PGlite; emula apen
 
 Em 31/08/2026, criado o projeto dev, aplicadas as duas migrations com histórico, conectado SMTP Resend e publicados templates PT-BR no Supabase. RLS forçada confirmada nas três tabelas. Data API anônima bloqueada com HTTP 401/42501. Testes em PostgreSQL remoto de ownership, CRUD, grants e bloqueio anônimo aprovados com rollback, sem usuários persistidos. Ver `docs/external-services.md` e `supabase/tests/p2_remote_rls.sql`.
 
-Não houve envio real de e-mail nem validação de sessão PKCE neste passo. SQL com claims de teste não equivale a JWTs emitidos pelo Auth.
+O aceite real no navegador avançou com duas contas próprias de teste. Ambas receberam o template PT-BR e concluíram o callback PKCE no mesmo Edge. A conta A manteve sessão após nova aba/reload, criou um cão só com nome, completou os campos e confirmou persistência. Depois do logout, `/app` voltou a exigir login. A conta B iniciou com lista vazia, recebeu 404 ao abrir diretamente o UUID do cão A e criou somente o próprio cão. O replay do link usado, sem sessão, terminou em `/entrar?error=link` com mensagem segura para pedir novo acesso. Nenhum token ou URL de autenticação foi persistido em documentação.
+
+Essa prova cobre Auth real, sessão SSR, CRUD pelo app e isolamento observado com JWTs reais nas rotas do produto. Ainda não substitui a chamada direta à Data API com os JWTs de A e B para testar select/update/delete/insert forjados. O deploy de validação na Vercel continua sem envs; portanto, o Auth permanece deliberadamente indisponível nesse endereço.
 
 ## Pendências de aceite
 
-- Gerar e comparar tipos do Supabase; geração por `--db-url` exige Docker/Podman ainda indisponíveis.
-- Validar envio, primeiro acesso, callback/cookies, reload, refresh e logout reais.
+- Gerar e comparar tipos do Supabase; o Docker CLI existe, mas o daemon não iniciou e a geração por `--db-url` continua indisponível.
 - Repetir RLS com dois usuários via Data API, além da prova local no PostgreSQL.
-- Verificar comportamento em navegador sem sessão, replay de link e falhas do fornecedor.
+- Verificar expiração natural/outro navegador, refresh de token e falhas controladas do fornecedor/conexão.
 
-Procedimento concreto: `docs/p2-setup.md`. Google é opcional e permanece desativado. Credenciais locais Supabase/Resend/Stripe test configuradas; preços, webhook, DNS do app, deploy e cobrança continuam pendentes.
+Procedimento concreto: `docs/p2-setup.md`. Google é opcional e permanece desativado. As variáveis públicas do Supabase foram restauradas somente em `.env.local`, ignorado pelo Git; preços, webhooks e cobrança continuam pendentes. O deploy Vercel existente é apenas uma validação sem envs e não conclui a P2.

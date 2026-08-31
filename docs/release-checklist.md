@@ -27,7 +27,8 @@
 ## Antes de produção
 
 - [ ] P15 e beta controlado concluídos; incidentes resolvidos.
-- [ ] Domínio próprio, secrets por ambiente e hospedagem comercial apropriada.
+- [x] Domínio próprio de validação configurado com DNS e HTTPS.
+- [ ] Secrets por ambiente e hospedagem comercial apropriada.
 - [ ] Indexação liberada apenas para landings prontas; conteúdo privado permanece noindex.
 - [ ] Backup, restore e rollback ensaiados.
 - [ ] Nenhum conteúdo draft acessível pelo planner.
@@ -39,4 +40,4 @@
 
 Rollback de código: reimplantar a última versão validada, verificar health e smoke. Banco: preferir migrations expansivas e compatíveis; não reverter migration destrutiva automaticamente. Snapshot/backup antes de operações irreversíveis. Um desligamento de IA deve usar fallback aprovado; sem catálogo aprovado, manter geração indisponível.
 
-Nenhum deploy remoto, configuração de conta externa ou compra de serviço foi realizado nesta etapa.
+Existe um deploy remoto de validação no Hobby da Vercel em `https://coach.peth.com.br`, com DNS e HTTPS válidos, mas sem envs ou liberação comercial. Nenhuma compra de serviço foi realizada; migrar para hospedagem/plano comercial apropriado antes de vendas.

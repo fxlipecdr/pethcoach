@@ -6,12 +6,12 @@ Destino informado: `coach.peth.com.br`. Remetente: `PethCoach <suporte@peth.com.
 
 | Serviço | Configurado | Falta |
 | --- | --- | --- |
-| Supabase Free | Organização PethCoach, projeto `pethcoach-dev`, migrations aplicadas, Auth por e-mail, SMTP, callbacks e templates PT-BR | Aceite do magic link no navegador, dois tutores via Data API e comparação dos tipos gerados |
-| Resend | `peth.com.br` já estava verificado; chave nova `PethCoach Auth Dev`, somente envio nesse domínio; SMTP autenticado | Testar entrega na caixa de entrada; nenhum e-mail enviado nesta configuração |
-| Stripe | Sandbox existente da Peth, chave de testes local validada pela API | Preços definidos pelo responsável, Checkout e webhook assinado na P10; ativação comercial posterior |
-| Vercel | Conta conectada `fxlipecdrs-projects`, plano Hobby, sem projeto criado | Escolha de hospedagem compatível com SaaS comercial; nenhum upgrade ou deploy realizado |
-| DNS | Cloudflare confirmada; Zoho recebe os e-mails do domínio | Criar registro `coach` somente após conhecer o destino real da hospedagem |
-| GitHub | Repositório privado, remote `origin`, código enviado à `main` e SHA remoto conferido | Conferir CI no painel; não há credenciais no repositório |
+| Supabase Free | Organização PethCoach, projeto `pethcoach-dev`, migrations aplicadas, Auth por e-mail, SMTP, callbacks e templates PT-BR; PKCE/CRUD/logout/replay e isolamento pelo app passaram com duas contas reais | Repetir RLS diretamente pela Data API com os dois JWTs, exercitar refresh/expiração/falhas e comparar tipos gerados |
+| Resend | `peth.com.br` verificado; chave `PethCoach Auth Dev` restrita a envio; SMTP autenticado; três e-mails reais de acesso entregues no total | Exercitar expiração/falhas; retenção e webhooks pertencem à P12 |
+| Stripe | Sandbox `acct_1UAZB3LaePxLnVtP` acessível no painel; modo de teste ativo; nenhum produto/preço ou webhook | Preços definidos pelo responsável, Checkout e webhook assinado na P10; ativação comercial posterior |
+| Vercel | Projeto `pethcoach` na equipe `pethdeveloper-3373s-projects`, plano Hobby, GitHub conectado, primeiro deploy `READY` e `coach.peth.com.br` com configuração válida/HTTPS | Configurar envs somente quando o aceite exigir e migrar para Pro antes da operação comercial |
+| DNS | Cloudflare confirmada; `coach` aponta por CNAME DNS-only para o destino exclusivo do Vercel; Zoho continua recebendo os e-mails do domínio | Monitorar renovação TLS e manter o registro sem proxy enquanto o Vercel exigir |
+| GitHub | Repositório privado, remote `origin`, código enviado à `main`, SHA remoto conferido e quality gates aprovados no Actions | Não há credenciais no repositório; manter a CI obrigatória nos próximos incrementos |
 
 ## Supabase
 
@@ -32,28 +32,28 @@ Destino informado: `coach.peth.com.br`. Remetente: `PethCoach <suporte@peth.com.
 - Data API sem sessão autenticada: HTTP 401/código 42501 nas três tabelas.
 - `supabase/tests/p2_remote_rls.sql`: teste no PostgreSQL remoto com usuários sintéticos dentro de uma transação; trigger, CRUD próprio, isolamento entre tutores, ownership, grants por coluna, atribuição e bloqueio anônimo aprovados. Rollback confirmado: zero usuários persistidos após o teste.
 - O teste SQL foi executado com cliente PostgreSQL e certificado validado. A versão atual de `supabase db query --file` rejeitou o lote por usar prepared statement; não houve aplicação parcial por esse comando. Pode-se executar o arquivo completo com `psql` em uma sessão no projeto dev.
-- Geração de tipos por `supabase gen types --db-url` ficou pendente porque exige Docker/Podman, indisponíveis neste computador. Não substituir `lib/supabase/database.types.ts` pelo arquivo de erro; os tipos atuais continuam mantidos à mão.
-- Esses resultados não substituem testes de Auth/PKCE, JWTs reais de dois tutores e entrega de e-mail.
+- Geração de tipos por `supabase gen types --db-url` continua pendente. O Docker CLI passou a existir neste computador, mas o daemon não iniciou na auditoria posterior. Não substituir `lib/supabase/database.types.ts` pelo arquivo de erro; os tipos atuais continuam mantidos à mão.
+- Duas contas próprias concluíram PKCE no navegador real. Sessão/reload, criação e edição do cão A, logout, lista vazia do cão B, 404 do UUID alheio, criação do cão B e replay do link usado sem sessão foram aprovados. A prova direta de PostgREST com os dois JWTs ainda é obrigatória.
 - Verificação local após a configuração: lint, TypeScript e 52 testes aprovados; smoke offline com 26 testes aprovados em desktop/celular. O smoke isola as credenciais e não envia mensagens reais.
-- Servidor local reiniciado com `.env.local`: `/entrar` abre com o botão de acesso habilitado. Nenhum pedido de link foi enviado automaticamente.
+- Servidor local reiniciado com `.env.local`: `/entrar` abre com o botão de acesso habilitado. Os pedidos usados no aceite foram iniciados manualmente pelo formulário.
 
 ## Stripe e Resend
 
-A chave Stripe local pertence ao sandbox `acct_1UAZB3LaePxLnVtP`. A consulta somente de leitura retornou HTTP 200, com `charges_enabled=false` e `details_submitted=false`. Não foram criados preços, cobranças, assinaturas ou endpoints fictícios. O adapter de pagamento continua desativado mesmo com a chave configurada.
+A chave Stripe anteriormente usada pertence ao sandbox `acct_1UAZB3LaePxLnVtP`. A consulta somente de leitura retornou HTTP 200, com `charges_enabled=false` e `details_submitted=false`. A auditoria posterior no painel confirmou modo de teste, zero produtos e nenhum destino de webhook; ativação de Payments e modelo de preços seguem não iniciados. O adapter de pagamento continua desativado.
 
-A autenticação SMTP Resend retornou 235 sobre TLS; o teste não executou envio. A chave anterior `Peth Staging` foi preservada. O adapter de e-mails de retenção continua desativado; apenas Supabase Auth está preparado para enviar quando alguém solicitar acesso.
+A autenticação SMTP Resend retornou 235 sobre TLS. Depois disso, o fluxo de Auth entregou três e-mails reais `Confirme seu acesso ao PethCoach` no total, incluindo as duas contas do aceite PKCE, e usou a chave restrita `PethCoach Auth Dev`. A chave anterior `Peth Staging`, de acesso total, foi preservada e permanecia sem atividade. Não há webhooks Resend; o adapter de e-mails de retenção continua desativado.
 
 ## Credenciais e DNS
 
-- `.env.local`: URL pública local, conexão pública Supabase, Resend, remetente e **Stripe test**. Arquivo ignorado pelo Git.
-- `.env.supabase-admin.local`: senha administrativa do banco, também ignorada pelo Git. Não carregar no Next.js, não enviar à Vercel e não usar em código do app. Guardar em gerenciador de senhas e limitar acesso ao computador.
+- `.env.local` foi restaurado com origem local, URL do projeto dev e chave publicável completa; permanece ignorado pelo Git. Nenhuma chave secreta foi adicionada ao runtime.
+- Quando restaurado, `.env.supabase-admin.local` contém a senha administrativa do banco e permanece ignorado pelo Git. Não carregar no Next.js, não enviar à Vercel e não usar em código do app. Guardar em gerenciador de senhas e limitar acesso ao computador.
 - Não há service role no app, chave live Stripe, segredo de webhook, API OpenAI ou modelos de IA configurados.
-- MX do domínio raiz continuam em `mx.zoho.com`, `mx2.zoho.com` e `mx3.zoho.com`; SPF raiz continua com `include:zohomail.com`. Nenhum registro DNS foi alterado. `coach.peth.com.br` ainda não tinha A/CNAME na consulta inicial.
+- MX do domínio raiz continuam em `mx.zoho.com`, `mx2.zoho.com` e `mx3.zoho.com`; SPF raiz continua com `include:zohomail.com`. Foi criado apenas o CNAME DNS-only `coach` para `f26d9bdb1aea5a39.vercel-dns-017.com`; os registros da raiz e do Zoho não foram alterados.
 - Separar ambiente público/produção do projeto dev e nunca aplicar envs de produção indistintamente a previews. Rebuild é obrigatório após mudar valores `NEXT_PUBLIC_*`.
 
 ## Hospedagem e próximos passos
 
-O Hobby da Vercel é limitado a uso pessoal não comercial. Como o PethCoach é um SaaS comercial, não presumir que ausência temporária de cobranças torna o projeto elegível. Manter a conta sem upgrade até o responsável escolher Pro ou outro provedor compatível. Não apontar DNS para um destino inventado.
+Por decisão do responsável, o projeto permanece no Hobby apenas durante a validação sem vendas. O primeiro deploy do commit `0b39599` ficou `READY` em `https://pethcoach.vercel.app`; `https://coach.peth.com.br` foi associado ao ambiente Production com configuração válida e certificado HTTPS. O deploy continua sem variáveis de ambiente, Analytics ou Speed Insights. A aplicação mantém `Disallow: /`, fecha `/dev/*` em produção e deixa Auth indisponível sem Supabase. Migrar para Pro antes da operação comercial; o domínio próprio ativo não representa liberação para clientes.
 
 Antes de liberar clientes: concluir aceite P2, limitador distribuído, revisão de privacidade/termos e fases restantes. Nenhum serviço foi publicado como produto pronto.
 
