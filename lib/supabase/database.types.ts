@@ -1,17 +1,19 @@
-// Hand-maintained against migrations; compare with CLI-generated types once Supabase is connected.
-export type DogRow = {
-  id: string;
-  owner_id: string;
-  name: string;
-  birth_date: string | null;
+import type {
+  Database as GeneratedDatabase,
+  Json,
+} from "./database.generated.types";
+
+type PublicTables = GeneratedDatabase["public"]["Tables"];
+
+export type DogRow = Omit<
+  PublicTables["dogs"]["Row"],
+  "environment" | "sex" | "size"
+> & {
+  environment: "apartment" | "house" | "other" | null;
   sex: "male" | "female" | null;
   size: "small" | "medium" | "large" | "giant" | null;
-  breed_text: string | null;
-  neutered: boolean | null;
-  environment: "apartment" | "house" | "other" | null;
-  created_at: string;
-  updated_at: string;
 };
+
 type DogEditable = Pick<
   DogRow,
   | "name"
@@ -22,61 +24,47 @@ type DogEditable = Pick<
   | "neutered"
   | "environment"
 >;
-type AttributionRow = {
-  id: string;
-  anonymous_id: string | null;
-  user_id: string | null;
+
+type AttributionRow = Omit<
+  PublicTables["attribution_touches"]["Row"],
+  "click_ids" | "touch_type"
+> & {
+  click_ids: Json;
   touch_type: "first" | "last";
-  source: string | null;
-  medium: string | null;
-  campaign: string | null;
-  referrer: string | null;
-  landing: string | null;
-  click_ids: Record<string, string>;
-  created_at: string;
-  updated_at: string;
 };
-export type Database = {
-  public: {
+
+/**
+ * GeneratedDatabase reflects the physical schema. This refinement also models
+ * check constraints and authenticated column grants that pg-meta cannot infer.
+ */
+export type Database = Omit<GeneratedDatabase, "public"> & {
+  public: Omit<GeneratedDatabase["public"], "Tables"> & {
     Tables: {
       profiles: {
-        Row: {
-          id: string;
-          name: string | null;
-          locale: string;
-          timezone: string;
-          onboarding_source: string | null;
-          created_at: string;
-          updated_at: string;
-        };
-        Insert: {
-          id: string;
-          name?: string | null;
-          locale?: string;
-          timezone?: string;
-          created_at?: string;
-          updated_at?: string;
-        };
-        Update: { name?: string | null; locale?: string; timezone?: string };
-        Relationships: [];
+        Row: PublicTables["profiles"]["Row"];
+        Insert: Pick<
+          PublicTables["profiles"]["Insert"],
+          "id" | "locale" | "name" | "timezone"
+        >;
+        Update: Pick<
+          PublicTables["profiles"]["Update"],
+          "locale" | "name" | "timezone"
+        >;
+        Relationships: PublicTables["profiles"]["Relationships"];
       };
       dogs: {
         Row: DogRow;
         Insert: Pick<DogRow, "owner_id" | "name"> &
           Partial<DogEditable> & { id?: string };
         Update: Partial<DogEditable>;
-        Relationships: [];
+        Relationships: PublicTables["dogs"]["Relationships"];
       };
       attribution_touches: {
         Row: AttributionRow;
-        Insert: Pick<AttributionRow, "touch_type"> & Partial<AttributionRow>;
-        Update: Partial<AttributionRow>;
-        Relationships: [];
+        Insert: never;
+        Update: never;
+        Relationships: PublicTables["attribution_touches"]["Relationships"];
       };
     };
-    Views: Record<string, never>;
-    Functions: Record<string, never>;
-    Enums: Record<string, never>;
-    CompositeTypes: Record<string, never>;
   };
 };

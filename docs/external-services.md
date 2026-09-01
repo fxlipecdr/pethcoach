@@ -1,4 +1,4 @@
-# Configuração externa — 31/08/2026
+# Configuração externa — atualizada em 01/09/2026
 
 Destino informado: `coach.peth.com.br`. Remetente: `PethCoach <suporte@peth.com.br>`. Repositório privado: https://github.com/fxlipecdr/pethcoach.
 
@@ -6,10 +6,10 @@ Destino informado: `coach.peth.com.br`. Remetente: `PethCoach <suporte@peth.com.
 
 | Serviço | Configurado | Falta |
 | --- | --- | --- |
-| Supabase Free | Organização PethCoach, projeto `pethcoach-dev`, migrations aplicadas, Auth por e-mail, SMTP, callbacks e templates PT-BR; PKCE/CRUD/logout/replay e isolamento pelo app passaram com duas contas reais | Repetir RLS diretamente pela Data API com os dois JWTs, exercitar refresh/expiração/falhas e comparar tipos gerados |
-| Resend | `peth.com.br` verificado; chave `PethCoach Auth Dev` restrita a envio; SMTP autenticado; três e-mails reais de acesso entregues no total | Exercitar expiração/falhas; retenção e webhooks pertencem à P12 |
+| Supabase Free | Organização PethCoach, projeto `pethcoach-dev`, migrations aplicadas, Auth por e-mail, SMTP, callbacks e templates PT-BR; P2 hospedada/local aceita, incluindo tipos, PKCE/RLS, expiração, refresh e falhas | Monitorar drift de schema e repetir o aceite após mudanças de Auth/RLS |
+| Resend | `peth.com.br` verificado; chave `PethCoach Auth Dev` restrita a envio; SMTP autenticado; cinco e-mails reais de acesso entregues no total | Retenção e webhooks pertencem à P12 |
 | Stripe | Sandbox `acct_1UAZB3LaePxLnVtP` acessível no painel; modo de teste ativo; nenhum produto/preço ou webhook | Preços definidos pelo responsável, Checkout e webhook assinado na P10; ativação comercial posterior |
-| Vercel | Projeto `pethcoach` na equipe `pethdeveloper-3373s-projects`, plano Hobby, GitHub conectado, primeiro deploy `READY` e `coach.peth.com.br` com configuração válida/HTTPS | Configurar envs somente quando o aceite exigir e migrar para Pro antes da operação comercial |
+| Vercel | Projeto `pethcoach` na equipe `pethdeveloper-3373s-projects`, plano Hobby, GitHub conectado, `coach.peth.com.br` com HTTPS e variáveis públicas do Supabase somente em Production; login confirmado | Manter Preview isolado e migrar para Pro antes da operação comercial |
 | DNS | Cloudflare confirmada; `coach` aponta por CNAME DNS-only para o destino exclusivo do Vercel; Zoho continua recebendo os e-mails do domínio | Monitorar renovação TLS e manter o registro sem proxy enquanto o Vercel exigir |
 | GitHub | Repositório privado, remote `origin`, código enviado à `main`, SHA remoto conferido e quality gates aprovados no Actions | Não há credenciais no repositório; manter a CI obrigatória nos próximos incrementos |
 
@@ -32,8 +32,9 @@ Destino informado: `coach.peth.com.br`. Remetente: `PethCoach <suporte@peth.com.
 - Data API sem sessão autenticada: HTTP 401/código 42501 nas três tabelas.
 - `supabase/tests/p2_remote_rls.sql`: teste no PostgreSQL remoto com usuários sintéticos dentro de uma transação; trigger, CRUD próprio, isolamento entre tutores, ownership, grants por coluna, atribuição e bloqueio anônimo aprovados. Rollback confirmado: zero usuários persistidos após o teste.
 - O teste SQL foi executado com cliente PostgreSQL e certificado validado. A versão atual de `supabase db query --file` rejeitou o lote por usar prepared statement; não houve aplicação parcial por esse comando. Pode-se executar o arquivo completo com `psql` em uma sessão no projeto dev.
-- Geração de tipos por `supabase gen types --db-url` continua pendente. O Docker CLI passou a existir neste computador, mas o daemon não iniciou na auditoria posterior. Não substituir `lib/supabase/database.types.ts` pelo arquivo de erro; os tipos atuais continuam mantidos à mão.
-- Duas contas próprias concluíram PKCE no navegador real. Sessão/reload, criação e edição do cão A, logout, lista vazia do cão B, 404 do UUID alheio, criação do cão B e replay do link usado sem sessão foram aprovados. A prova direta de PostgREST com os dois JWTs ainda é obrigatória.
+- Docker 29.6.1 e Supabase CLI 2.116.0 iniciaram a stack descartável e geraram `database.generated.types.ts` a partir das migrations. `database.types.ts` deriva dessa estrutura e restringe checks/grants que pg-meta não infere. A geração pela Management API remota não foi necessária e nenhum PAT foi criado.
+- Duas contas próprias concluíram PKCE no navegador real. Sessão/reload, criação e edição do cão A, logout, lista vazia do cão B, 404 do UUID alheio, criação do cão B e replay do link usado sem sessão foram aprovados. `pnpm test:p2:live` repetiu o PKCE em memória e aprovou isolamento direto PostgREST para select/update/delete/insert, owner e timestamp; dados sacrificiais foram limpos.
+- O responsável confirmou o login/callback no deployment `coach.peth.com.br`. Na stack local descartável, `pnpm test:p2:session` aprovou expiração natural de JWT, rejeição pela Data API após a tolerância de relógio, refresh válido, refresh inválido e falha de rede, usando somente a chave publicável e Mailpit.
 - Verificação local após a configuração: lint, TypeScript e 52 testes aprovados; smoke offline com 26 testes aprovados em desktop/celular. O smoke isola as credenciais e não envia mensagens reais.
 - Servidor local reiniciado com `.env.local`: `/entrar` abre com o botão de acesso habilitado. Os pedidos usados no aceite foram iniciados manualmente pelo formulário.
 
@@ -41,11 +42,11 @@ Destino informado: `coach.peth.com.br`. Remetente: `PethCoach <suporte@peth.com.
 
 A chave Stripe anteriormente usada pertence ao sandbox `acct_1UAZB3LaePxLnVtP`. A consulta somente de leitura retornou HTTP 200, com `charges_enabled=false` e `details_submitted=false`. A auditoria posterior no painel confirmou modo de teste, zero produtos e nenhum destino de webhook; ativação de Payments e modelo de preços seguem não iniciados. O adapter de pagamento continua desativado.
 
-A autenticação SMTP Resend retornou 235 sobre TLS. Depois disso, o fluxo de Auth entregou três e-mails reais `Confirme seu acesso ao PethCoach` no total, incluindo as duas contas do aceite PKCE, e usou a chave restrita `PethCoach Auth Dev`. A chave anterior `Peth Staging`, de acesso total, foi preservada e permanecia sem atividade. Não há webhooks Resend; o adapter de e-mails de retenção continua desativado.
+A autenticação SMTP Resend retornou 235 sobre TLS. Depois disso, o fluxo de Auth entregou cinco e-mails reais de acesso no total, incluindo as duas contas do aceite pelo navegador e a repetição direta, e usou a chave restrita `PethCoach Auth Dev`. A chave anterior `Peth Staging`, de acesso total, foi preservada e permanecia sem atividade. Não há webhooks Resend; o adapter de e-mails de retenção continua desativado.
 
 ## Credenciais e DNS
 
-- `.env.local` foi restaurado com origem local, URL do projeto dev e chave publicável completa; permanece ignorado pelo Git. Nenhuma chave secreta foi adicionada ao runtime.
+- `.env.local` contém origem local, URL do projeto dev, chave publicável completa e token OIDC temporário criado pela Vercel CLI; permanece ignorado pelo Git. A Vercel recebeu somente origem pública, URL do Supabase e chave publicável em Production. Nenhuma chave secreta do Supabase foi adicionada ao runtime.
 - Quando restaurado, `.env.supabase-admin.local` contém a senha administrativa do banco e permanece ignorado pelo Git. Não carregar no Next.js, não enviar à Vercel e não usar em código do app. Guardar em gerenciador de senhas e limitar acesso ao computador.
 - Não há service role no app, chave live Stripe, segredo de webhook, API OpenAI ou modelos de IA configurados.
 - MX do domínio raiz continuam em `mx.zoho.com`, `mx2.zoho.com` e `mx3.zoho.com`; SPF raiz continua com `include:zohomail.com`. Foi criado apenas o CNAME DNS-only `coach` para `f26d9bdb1aea5a39.vercel-dns-017.com`; os registros da raiz e do Zoho não foram alterados.
@@ -53,8 +54,10 @@ A autenticação SMTP Resend retornou 235 sobre TLS. Depois disso, o fluxo de Au
 
 ## Hospedagem e próximos passos
 
-Por decisão do responsável, o projeto permanece no Hobby apenas durante a validação sem vendas. O primeiro deploy do commit `0b39599` ficou `READY` em `https://pethcoach.vercel.app`; `https://coach.peth.com.br` foi associado ao ambiente Production com configuração válida e certificado HTTPS. O deploy continua sem variáveis de ambiente, Analytics ou Speed Insights. A aplicação mantém `Disallow: /`, fecha `/dev/*` em produção e deixa Auth indisponível sem Supabase. Migrar para Pro antes da operação comercial; o domínio próprio ativo não representa liberação para clientes.
+Por decisão do responsável, o projeto permanece no Hobby apenas durante a validação sem vendas. Em 01/09/2026, o deployment `dpl_19Mtq9nVYTJ816BqRLLi13MWk74s` ficou `READY` e foi associado a `https://coach.peth.com.br`. As três variáveis públicas estão limitadas a Production; Preview continua sem acesso ao projeto Supabase dev. A verificação pública retornou health 200, formulário de Auth habilitado e redirecionamento de `/app` para login sem sessão. A aplicação mantém `Disallow: /`, fecha `/dev/*` em produção e continua sem Analytics ou Speed Insights. Migrar para Pro antes da operação comercial; o domínio e o Auth ativos não representam liberação para clientes.
 
-Antes de liberar clientes: concluir aceite P2, limitador distribuído, revisão de privacidade/termos e fases restantes. Nenhum serviço foi publicado como produto pronto.
+P3 foi concluída tecnicamente no repositório com três landings, metadata, OG, canonical condicional e sitemap restrito às páginas prontas. Essas alterações ainda não foram promovidas por esta etapa e a aplicação mantém `Disallow: /` e `noindex`; revisão editorial/profissional continua obrigatória antes de indexar.
 
-Fontes: [Vercel Hobby](https://vercel.com/docs/plans/hobby), [Resend SMTP no Supabase](https://resend.com/docs/send-with-supabase-smtp), [TLS do Supabase](https://supabase.com/docs/guides/platform/ssl-enforcement), [CLI Supabase](https://supabase.com/docs/reference/cli/supabase-db-push).
+Antes de liberar clientes: concluir P4-P15, limitador distribuído e revisão de conteúdo, privacidade e termos. Nenhum serviço foi publicado como produto pronto.
+
+Fontes: [Vercel Hobby](https://vercel.com/docs/plans/hobby), [Resend SMTP no Supabase](https://resend.com/docs/send-with-supabase-smtp), [TLS do Supabase](https://supabase.com/docs/guides/platform/ssl-enforcement), [CLI Supabase](https://supabase.com/docs/reference/cli/supabase-db-push), [tipos gerados](https://supabase.com/docs/guides/api/rest/generating-types).

@@ -1,6 +1,6 @@
 # P2 — conectar o Supabase de desenvolvimento
 
-Status: projeto Supabase dev conectado, migrations aplicadas e SMTP Resend configurado. Testes de RLS no PostgreSQL remoto e bloqueio anônimo pela Data API aprovados. Login PKCE, persistência, logout, replay e isolamento pelo app passaram com duas contas reais de teste; Data API direta com os dois JWTs e geração de tipos continuam pendentes. Não liberar para clientes. Valores e evidências em `docs/external-services.md`.
+Status: P2 concluída em 01/09/2026. Projeto Supabase dev conectado, migrations e SMTP Resend configurados; RLS remota, bloqueio anônimo, PKCE, persistência, logout, replay, isolamento pelo app, Data API direta, tipos gerados, expiração natural, refresh e falhas controladas passaram. Não liberar para clientes. Valores e evidências em `docs/external-services.md`.
 
 ## 1. Projeto e variáveis
 
@@ -27,7 +27,7 @@ Se a primeira já estiver aplicada, não executá-la novamente. O segundo arquiv
 
 Preferir o fluxo de migrations do CLI. Após autenticar o CLI e vincular explicitamente o projeto dev, revisar `supabase db push --dry-run` antes de aplicar `supabase db push`. Não usar `db reset` em projeto remoto. Alternativa manual: SQL Editor do projeto dev, mantendo registro de quais migrations foram aplicadas para reconciliar o histórico do CLI antes do próximo push.
 
-Depois de aplicar, gerar os tipos com o CLI do Supabase e comparar com `lib/supabase/database.types.ts`. O arquivo atual é mantido à mão; não foi apresentado como gerado por um banco conectado. O tipo de escrita pode continuar mais restrito do que a tabela para refletir os grants.
+Depois de aplicar, iniciar a stack local e executar `pnpm db:types`. O CLI escreve a introspecção física em `lib/supabase/database.generated.types.ts`. `lib/supabase/database.types.ts` deriva desse arquivo e mantém refinamentos que pg-meta não representa: valores de `CHECK`, grants de escrita por coluna e ausência total de escrita pública em attribution. Revisar ambos sempre que uma migration mudar.
 
 ## 3. Auth e envio
 
@@ -44,7 +44,7 @@ Solicitar o link em `/entrar` e abrir o e-mail **no mesmo navegador** que inicio
 
 Google não foi ativado: não há credenciais/provider configurados e é opcional na P2.
 
-## 4. Aceite com o fornecedor real — parcialmente concluído
+## 4. Aceite com o fornecedor real — concluído
 
 Usar duas contas de teste próprias e uma janela sem sessão. Autorizar os destinatários antes de enviar e-mails reais.
 
@@ -60,15 +60,19 @@ Usar duas contas de teste próprias e uma janela sem sessão. Autorizar os desti
 
 Registrar resultados em `docs/p2-acceptance.md`. Testes PGlite não substituem esse aceite.
 
+O fluxo direto pode ser repetido com `pnpm test:p2:live`. Informe duas contas próprias diferentes e cole os links recém-recebidos apenas no prompt do processo. O utilitário mantém PKCE/JWT em memória, valida select/update/delete/insert e colunas protegidas, cria registros sacrificiais e os remove com o respectivo dono. Ele recusa URL de verificação fora do projeto e chave que não seja `sb_publishable_*`; nunca adicionar service role para fazê-lo passar.
+
+Com Docker ativo, `pnpm test:p2:session` executa o complemento descartável local. O script solicita magic link com a chave publicável, lê somente a mensagem destinada ao e-mail aleatório no Mailpit, espera o JWT de 120 segundos expirar e verifica Data API 401 após a tolerância de relógio. Depois testa refresh válido, refresh inválido e falha de rede. A stack local deve usar o `jwt_expiry = 120` documentado em `supabase/config.toml`; o comando demora cerca de três minutos e não deve apontar para o projeto hospedado.
+
 ## Desenvolvimento local com Docker (alternativa)
 
-O Docker CLI está instalado, mas o daemon não iniciou na auditoria posterior; o CLI Supabase 2.116.0 continua sendo executado via `pnpm dlx`. A geração de tipos por conexão direta segue pendente. Quando o daemon estiver operacional, `supabase start` usa `supabase/config.toml` (signup e callbacks locais preparados); aplicar migrations apenas no banco local descartável. Usar a chave publicável real emitida pela versão instalada do CLI; não afrouxar a validação do app para aceitar service role. A caixa de e-mail local usa a porta 54324. O CLI novo avisa que a seção local `inbucket` foi renomeada para `local_smtp`; revisar essa configuração antes de iniciar a stack local.
+Docker 29.6.1 e Supabase CLI 2.116.0 estão operacionais. `pnpm exec supabase start` usa `supabase/config.toml`, aplica migrations somente ao banco descartável e expõe Mailpit na porta 54324. O CLI está fixado como dependência de desenvolvimento; use `pnpm db:types` com a stack ativa. A configuração usa a seção atual `local_smtp` e TTL curto apenas para o aceite local. Nunca copiar as chaves locais de administração para `.env.local`, Vercel ou código do app. Para remover todos os dados descartáveis, executar `pnpm exec supabase stop --no-backup` somente neste projeto local.
 
 ## Limites antes de disponibilizar publicamente
 
 - Substituir o limitador em memória por armazenamento compartilhado atômico para múltiplas instâncias; manter rate limits do fornecedor e avaliar CAPTCHA. O atual é uma defesa adicional de desenvolvimento, não um limitador distribuído.
 - Concluir privacidade, canal do controlador, retenção, exportação/exclusão e revisão jurídica (P14). Não abrir cadastros ao público com páginas jurídicas provisórias.
-- Validar o serviço real, tipos gerados, templates, SMTP e cache. O deploy Vercel existente não possui envs, bloqueia indexação e serve apenas para validar a apresentação pública/fail-closed.
+- Regerar os tipos após migrations e repetir os aceites P2 antes de mudanças em Auth/RLS. O deploy Vercel possui somente as variáveis públicas do Supabase em Production, bloqueia indexação e serve apenas para validação; Preview continua sem acesso ao banco de desenvolvimento.
 - O app omite logs de argumentos de Server Actions e URLs de acesso no Next dev. Configurar também redaction de query strings de `/auth/*` nos logs de gateway/CDN/provedor; a configuração do Next dev não controla infraestrutura externa.
 - Captura/consentimento de atribuição: P11. Assessment e claim seguro: P4/P6. Plano/coaching/pagamento: fases posteriores.
 

@@ -21,6 +21,8 @@ enabled = true
 site_url = "http://127.0.0.1:3000"
 additional_redirect_urls = ["http://127.0.0.1:3000/auth/callback**", "http://127.0.0.1:3100/auth/callback**"]
 enable_signup = true
+# Development-only short TTL for the explicit P2 expiry/refresh acceptance.
+jwt_expiry = 120
 
 [auth.email]
 enable_signup = true
@@ -30,6 +32,6 @@ enable_confirmations = true
 enabled = true
 port = 54323
 
-[inbucket]
+[local_smtp]
 enabled = true
 port = 54324

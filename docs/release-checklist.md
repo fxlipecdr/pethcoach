@@ -1,6 +1,6 @@
 # Checklist de release
 
-**Estado: fundação e P1 concluídas. Não publicar como SaaS operacional.**
+**Estado: P0-P3 concluídas tecnicamente. Não publicar como SaaS operacional.**
 
 ## Fundação
 
@@ -11,12 +11,14 @@
 - [x] CI com lint, tipos, unitários, integração, build e E2E.
 - [x] Ausência de fornecedor não concede autenticação, plano ou compra.
 - [x] P1: componentes, estados, layouts, teclado/foco, 360px/desktop e prévias fechadas em produção.
+- [x] P2: Auth/cães/RLS aceitos no projeto dev e em stack descartável.
+- [x] P3: landings, metadata, OG, canonical condicional e sitemap de páginas prontas validados com `noindex` preservado.
 
 ## Antes de staging funcional
 
 - [ ] P2-P14 concluídas e testadas.
-- [ ] Projeto Supabase descartável e Auth/callback reais testados.
-- [ ] RLS real via API para todas as tabelas pessoais.
+- [x] Projeto Supabase descartável e Auth/callback reais testados.
+- [x] RLS real via API para todas as tabelas pessoais existentes.
 - [ ] Conteúdo e mensagens de segurança revisados por profissional qualificado.
 - [ ] Checkout, webhook, portal e expiração/cancelamento em Stripe test.
 - [ ] Consentimento, atribuição, e-mail e preferências verificados.
@@ -40,4 +42,4 @@
 
 Rollback de código: reimplantar a última versão validada, verificar health e smoke. Banco: preferir migrations expansivas e compatíveis; não reverter migration destrutiva automaticamente. Snapshot/backup antes de operações irreversíveis. Um desligamento de IA deve usar fallback aprovado; sem catálogo aprovado, manter geração indisponível.
 
-Existe um deploy remoto de validação no Hobby da Vercel em `https://coach.peth.com.br`, com DNS e HTTPS válidos, mas sem envs ou liberação comercial. Nenhuma compra de serviço foi realizada; migrar para hospedagem/plano comercial apropriado antes de vendas.
+Existe um deploy remoto de validação no Hobby da Vercel em `https://coach.peth.com.br`, com DNS/HTTPS válidos e variáveis públicas do Supabase somente em Production, mas sem liberação comercial. Nenhuma compra de serviço foi realizada; migrar para hospedagem/plano comercial apropriado antes de vendas.

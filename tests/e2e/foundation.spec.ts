@@ -39,10 +39,10 @@ test("home, navigation, accessibility and responsive layout", async ({
   await page.getByRole("link", { name: /Meu cachorro puxa a guia/ }).click();
   await page.waitForURL("/problemas/cachorro-puxa-guia");
   await expect(
-    page.getByRole("heading", { name: "Passeios mais tranquilos" }),
+    page.getByRole("heading", { name: "Meu cachorro puxa a guia" }),
   ).toBeVisible();
   await expect(
-    page.getByText(/Nenhum treino, cadastro ou pagamento/),
+    page.getByText(/O programa ainda está em preparação/),
   ).toBeVisible();
   expect(errors).toEqual([]);
 });

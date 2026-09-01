@@ -173,13 +173,14 @@ async function deleteOwnDog(
   actor: Actor,
   dogId: string,
 ) {
-  await dataRequest(
+  const response = await dataRequest(
     projectUrl,
     publishableKey,
     actor,
     `dogs?id=eq.${encodeURIComponent(dogId)}`,
     { method: "DELETE" },
   );
+  assert(response.ok, `Limpeza da Data API retornou HTTP ${response.status}.`);
 }
 
 async function run() {

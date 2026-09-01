@@ -13,7 +13,7 @@ PGlite executa PostgreSQL e suas políticas RLS, sem mocks de consultas. O fixtu
 
 ## Supabase local (P2)
 
-Com Docker e CLI Supabase instalados, executar `supabase start` e `supabase db reset` somente no ambiente local descartável. A configuração usa portas 54321-54324 e signup/callbacks locais preparados pela P2. Docker/CLI não estavam disponíveis nesta execução. A aplicação remota, tipos gerados, Auth e RLS via Data API seguem pendentes. Procedimento: `p2-setup.md`.
+Docker 29.6.1 e Supabase CLI 2.116.0 executam a stack descartável nas portas 54321-54324. `pnpm db:types` gera a introspecção física; `pnpm test:p2:session` usa PKCE/Mailpit e cobre expiração natural, refresh válido/inválido e falha de rede. O TTL curto de 120 segundos existe somente nessa configuração local. O fluxo hospedado e a Data API com dois JWTs são cobertos separadamente por `pnpm test:p2:live` e pelas evidências manuais. Procedimento: `p2-setup.md`.
 
 Nunca executar reset ou migrations destrutivas em projeto remoto sem revisão e backup. `TEST_DATABASE_URL` é reservado para futuro teste contra banco descartável; nenhum script da fundação usa essa variável.
 
@@ -23,8 +23,12 @@ P1 adiciona `tests/e2e/p1.spec.ts`: radios por teclado, foco visível, loading/d
 
 ## Cobertura ainda necessária
 
-Auth/cookies/refresh e dog CRUD via Supabase real; safety gate, catálogo/planner, consentimento/atribuição real, assessment anônimo/claim, webhooks Stripe, entitlement, check-ins, exportação/exclusão e admin. Testes desses recursos entram junto com sua fase. A CI local não prova que secrets, DNS, provedores, produção ou LGPD estejam prontos.
+Safety gate, catálogo/planner, consentimento/atribuição real, assessment anônimo/claim, webhooks Stripe, entitlement, check-ins, exportação/exclusão e admin. Testes desses recursos entram junto com sua fase. A CI local não prova que secrets, DNS, provedores, produção ou LGPD estejam prontos.
 
 ## P2: contratos, ações e RLS
 
-`p2-contracts.test.ts` cobre redirects, origem, entrada de cães, limites e contexto anônimo. `p2-actions.test.ts` testa autorização de cada mutation, erros, retry e callback com fronteiras de fornecedor simuladas. `p2-rls.test.ts` executa as duas migrations, trigger/backfill, CRUD entre donos, ownership/timestamps imutáveis, atribuição e acesso anônimo. `p2.spec.ts` valida formulário a 360px/desktop, callback inválido e persistência local na tela de acesso. O smoke inicia seu servidor com variáveis Supabase vazias para não enviar e-mails reais; não reutilizar um servidor conectado na porta 3100 para essa suíte. Todos os testes que dependem do fornecedor real permanecem explicitamente pendentes em `p2-acceptance.md`.
+`p2-contracts.test.ts` cobre redirects, origem, entrada de cães, limites e contexto anônimo. `p2-actions.test.ts` testa autorização de cada mutation, erros, retry e callback com fronteiras de fornecedor simuladas. `p2-rls.test.ts` executa as duas migrations, trigger/backfill, CRUD entre donos, ownership/timestamps imutáveis, atribuição e acesso anônimo. `p2.spec.ts` valida formulário a 360px/desktop, callback inválido e persistência local na tela de acesso. O smoke inicia seu servidor com variáveis Supabase vazias para não enviar e-mails reais; não reutilizar um servidor conectado na porta 3100 para essa suíte. Os aceites do fornecedor e da stack local estão registrados separadamente em `p2-acceptance.md`.
+
+## P3: landings e SEO
+
+`p3-content.test.ts` valida conteúdo exclusivo, duração, orientação baseada em recompensa, encaminhamento de segurança, metadata/canonical, sitemap e bloqueio de indexação. `p3.spec.ts` percorre as três landings em desktop e 360 px, verificando título, descrição, CTA único, aviso de indisponibilidade comercial e encaminhamento. O smoke totaliza 30 casos nos dois projetos; `robots.txt` permanece fechado e o sitemap fica vazio sem `NEXT_PUBLIC_SITE_URL`.
