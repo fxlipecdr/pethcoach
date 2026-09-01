@@ -3,18 +3,18 @@
 
 :root {
   --brand-700: #062549;
-  --brand-600: #188c83;
-  --brand-500: #0e6f69;
+  --brand-600: #0f766e;
+  --brand-500: #0b5f59;
   --brand-100: #ddf3ef;
   --heart: #fc6f4d;
   --ink-900: #0b1f33;
-  --ink-600: #667684;
+  --ink-600: #586875;
   --surface: #ffffff;
   --canvas: #f6faf9;
   --border: #d8e3e0;
   --success: #2e9e68;
   --warning: #e8a23a;
-  --danger: #d95c5c;
+  --danger: #b42318;
   --success-surface: color-mix(in srgb, var(--success) 14%, var(--surface));
   --warning-surface: color-mix(in srgb, var(--warning) 18%, var(--surface));
   --danger-surface: color-mix(in srgb, var(--danger) 14%, var(--surface));

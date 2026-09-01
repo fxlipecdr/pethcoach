@@ -27,8 +27,8 @@ test("home, navigation, accessibility and responsive layout", async ({
     }),
   ).toEqual({
     brand: "#062549",
-    primary: "#188c83",
-    hover: "#0e6f69",
+    primary: "#0f766e",
+    hover: "#0b5f59",
     accent: "#fc6f4d",
     canvas: "#f6faf9",
   });
