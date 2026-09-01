@@ -69,6 +69,8 @@ export type AssessmentRow = {
   quiz_version: number;
   answers_json: Json;
   safety_status: "pending" | "continue" | "refer" | "block";
+  safety_rule_version: string | null;
+  safety_evaluated_at: string | null;
   segment: string | null;
   status: "in_progress" | "completed";
   anonymous_token_hash: string;
@@ -77,6 +79,20 @@ export type AssessmentRow = {
   completed_at: string | null;
   created_at: string;
   updated_at: string;
+};
+
+export type SafetyEventRow = {
+  id: string;
+  assessment_id: string;
+  code: string;
+  severity: "info" | "caution" | "urgent";
+  outcome: "continue" | "refer" | "block";
+  rule_version: string;
+  message_key: string;
+  evidence_tags: string[];
+  recommended_action: string;
+  user_action: string | null;
+  created_at: string;
 };
 
 /**
@@ -129,6 +145,12 @@ export type Database = Omit<GeneratedDatabase, "public"> & {
         Update: never;
         Relationships: [];
       };
+      safety_events: {
+        Row: SafetyEventRow;
+        Insert: never;
+        Update: never;
+        Relationships: [];
+      };
     };
     Functions: {
       create_anonymous_assessment: {
@@ -156,6 +178,9 @@ export type Database = Omit<GeneratedDatabase, "public"> & {
           answers_json: Json;
           assessment_status: string;
           safety_status: string;
+          safety_codes: string[];
+          safety_rule_version: string | null;
+          safety_evaluated_at: string | null;
           started_at: string;
           completed_at: string | null;
         }[];
@@ -171,7 +196,13 @@ export type Database = Omit<GeneratedDatabase, "public"> & {
       };
       complete_anonymous_assessment: {
         Args: { p_assessment_id: string; p_token_hash: string };
-        Returns: { assessment_status: string; completed_at: string }[];
+        Returns: {
+          assessment_status: string;
+          safety_status: string;
+          safety_codes: string[];
+          safety_rule_version: string;
+          completed_at: string;
+        }[];
       };
     };
   };

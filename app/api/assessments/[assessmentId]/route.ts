@@ -47,7 +47,11 @@ export async function GET(
       runtime.id,
       runtime.tokenHash,
     );
-    const quiz = await loadPublishedQuiz(runtime.client, assessment.problemSlug);
+    const quiz = await loadPublishedQuiz(
+      runtime.client,
+      assessment.problemSlug,
+      assessment.version,
+    );
     return Response.json(
       { assessment, quiz },
       { headers: { "Cache-Control": "no-store" } },

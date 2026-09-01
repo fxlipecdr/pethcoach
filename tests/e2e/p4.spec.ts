@@ -22,6 +22,10 @@ async function mockAssessmentApi(page: Page) {
       version: 1,
       answers,
       status: "in_progress",
+      safetyStatus: "pending",
+      safetyCodes: [],
+      safetyRuleVersion: null,
+      safetyEvaluatedAt: null,
       startedAt: "2026-09-01T10:00:00.000Z",
       completedAt: null,
     },
@@ -47,7 +51,13 @@ async function mockAssessmentApi(page: Page) {
     if (request.method() === "POST" && url.pathname.endsWith("/complete")) {
       await route.fulfill({
         status: 200,
-        json: { status: "completed", completedAt: "2026-09-01T10:05:00.000Z" },
+        json: {
+          status: "completed",
+          safetyStatus: "continue",
+          safetyCodes: ["SAFETY_GATE_CLEAR"],
+          safetyRuleVersion: "p5-v1",
+          completedAt: "2026-09-01T10:05:00.000Z",
+        },
       });
       return;
     }
@@ -87,7 +97,11 @@ test("P4 quiz keeps one question per screen, persists progress and completes", a
       .click();
   }
   await expect(page).toHaveURL(`/resultado/${assessmentId}`);
-  await expect(page.getByRole("heading", { name: "Suas respostas foram salvas" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", {
+      name: "Nenhum bloqueio imediato foi identificado",
+    }),
+  ).toBeVisible();
 });
 
 test("P4 quiz resumes from the stored assessment id without exposing a token", async ({

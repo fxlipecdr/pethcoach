@@ -58,6 +58,10 @@ const assessment = {
   version: 1,
   answers: {},
   status: "in_progress" as const,
+  safetyStatus: "pending" as const,
+  safetyCodes: [],
+  safetyRuleVersion: null,
+  safetyEvaluatedAt: null,
   startedAt: "2026-09-01T10:00:00.000Z",
   completedAt: null,
 };
@@ -89,6 +93,9 @@ describe("P4 assessment Route Handlers", () => {
     mocks.update.mockResolvedValue({ question_0: "a" });
     mocks.complete.mockResolvedValue({
       status: "completed",
+      safetyStatus: "continue",
+      safetyCodes: ["SAFETY_GATE_CLEAR"],
+      safetyRuleVersion: "p5-v1",
       completedAt: "2026-09-01T10:05:00.000Z",
     });
   });
@@ -149,6 +156,11 @@ describe("P4 assessment Route Handlers", () => {
       context,
     );
     expect(read.status).toBe(200);
+    expect(mocks.loadQuiz).toHaveBeenCalledWith(
+      {},
+      assessment.problemSlug,
+      assessment.version,
+    );
     const updated = await updateAssessment(
       request(`/api/assessments/${id}`, {
         method: "PATCH",
@@ -185,5 +197,23 @@ describe("P4 assessment Route Handlers", () => {
     );
     expect(response.status).toBe(409);
     expect(await response.json()).toMatchObject({ code: "incomplete" });
+  });
+
+  it("returns the canonical safety decision produced during completion", async () => {
+    const token = createAssessmentToken(id, secret);
+    const response = await completeAssessment(
+      request(`/api/assessments/${id}/complete`, {
+        method: "POST",
+        cookie: `pethcoach-assessment=${token}`,
+      }),
+      { params: Promise.resolve({ assessmentId: id }) },
+    );
+    expect(response.status).toBe(200);
+    expect(await response.json()).toMatchObject({
+      status: "completed",
+      safetyStatus: "continue",
+      safetyCodes: ["SAFETY_GATE_CLEAR"],
+      safetyRuleVersion: "p5-v1",
+    });
   });
 });

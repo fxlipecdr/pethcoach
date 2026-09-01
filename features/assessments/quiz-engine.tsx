@@ -15,6 +15,7 @@ import { Feedback } from "@/components/ui/feedback";
 import { Badge, Card, Progress } from "@/components/ui/primitives";
 import {
   assessmentAnswersSchema,
+  assessmentCompletionSchema,
   quizSessionSchema,
   type AssessmentSnapshot,
   type ProblemSlug,
@@ -206,9 +207,11 @@ export function QuizEngine({
       setAnswers(nextAnswers);
       const isLast = current === quiz.questions.length - 1;
       if (isLast) {
-        await jsonRequest(
-          `/api/assessments/${assessment.assessmentId}/complete`,
-          { method: "POST" },
+        const completion = assessmentCompletionSchema.parse(
+          await jsonRequest(
+            `/api/assessments/${assessment.assessmentId}/complete`,
+            { method: "POST" },
+          ),
         );
         const duration = Math.max(
           0,
@@ -216,7 +219,7 @@ export function QuizEngine({
         );
         await analytics.capture("quiz_completed", {
           duration_s: duration,
-          safety_status: "pending",
+          safety_status: completion.safetyStatus,
         });
         persistAssessment(assessment.assessmentId, current);
         router.push(`/resultado/${assessment.assessmentId}`);
@@ -241,8 +244,8 @@ export function QuizEngine({
           Vamos entender a rotina de vocês
         </h1>
         <p className="mt-4 text-base leading-relaxed text-muted-foreground">
-          São 8 perguntas rápidas sobre situações observáveis. Não é diagnóstico
-          veterinário e nenhuma cobrança será iniciada.
+          São até 10 perguntas rápidas sobre situações observáveis. Não é
+          diagnóstico veterinário e nenhuma cobrança será iniciada.
         </p>
         <div className="mt-6 flex items-start gap-3 rounded-card bg-secondary p-4">
           <ShieldCheck className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden="true" />

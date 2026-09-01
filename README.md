@@ -1,6 +1,6 @@
 # PethCoach
 
-Fundação de um SaaS de orientação comportamental canina para o Brasil. **Prompt Mestre + P0 + P1 + P2 + P3 + P4 concluídos tecnicamente; próxima fase: P5.** Base: `PethCoach_Blueprint_Completo_Codex.pdf` (31/08/2026). Não é o MVP completo e não está liberado para clientes. Configuração externa e evidências: `docs/external-services.md`.
+Fundação de um SaaS de orientação comportamental canina para o Brasil. **Prompt Mestre + P0 + P1 + P2 + P3 + P4 + P5 concluídos tecnicamente; próxima fase: P6.** Base: `PethCoach_Blueprint_Completo_Codex.pdf` (31/08/2026). Não é o MVP completo e não está liberado para clientes. Configuração externa e evidências: `docs/external-services.md`.
 
 ## Executar localmente
 
@@ -29,13 +29,14 @@ Ao conectar serviços, copie `.env.example` para `.env.local` e preencha apenas 
 - P2: magic link PKCE, callback, logout, cadastro/edição de cães e conta do tutor; migration de cães, trigger de profiles e atribuição protegida. Configuração em `docs/p2-setup.md` e aceite em `docs/p2-acceptance.md`.
 - P3: três landings estáticas por problema com conteúdo próprio, prática curta baseada em recompensa, encaminhamento de segurança, metadata, canonical condicional, sitemap e imagem Open Graph. Aceite em `docs/p3-acceptance.md`.
 - P4: três quizzes versionados com oito perguntas cada, uma pergunta por tela, retomada por sete dias, respostas no Supabase, token assinado em cookie HttpOnly, hash no banco, rate limit distribuído e conclusão idempotente. Aceite em `docs/p4-acceptance.md`.
+- P5: safety gate determinístico e atômico antes de qualquer resultado/IA, quiz v2 com dez perguntas, prioridade BLOCK > REFER > CONTINUE, eventos auditáveis e mensagens fixas sem diagnóstico. Aceite em `docs/p5-acceptance.md`.
 - Prévia `/dev/perfil-cao`: formulário vazio com validação local, sem salvar e sem liberar as rotas privadas; disponível só em development.
 - Validação de ambiente, wrappers PostHog/Sentry e adapters desativados de IA, pagamentos e e-mail.
 - Vitest, testes de RLS com PostgreSQL embarcado, Playwright, axe e GitHub Actions.
 
 ## Limites desta versão
 
-Login por e-mail, dados de perfil e o quiz anônimo estão implementados, mas dependem do Supabase configurado; o quiz também depende do segredo exclusivo do servidor. Ainda não há safety gate, resultado personalizado, catálogo de exercícios, plano, check-in, checkout ou publicação de conteúdo. Os adapters de IA/pagamento/e-mail de retenção continuam desativados; o e-mail de acesso usa Supabase Auth. Nenhum preço, modelo de IA, depoimento ou aprovação profissional foi inventado.
+Login por e-mail, dados de perfil, quiz anônimo e safety gate estão implementados, mas dependem do Supabase configurado; o quiz também depende do segredo exclusivo do servidor. Ainda não há resultado personalizado elegível, claim, catálogo de exercícios, plano, check-in, checkout ou publicação de conteúdo. Os adapters de IA/pagamento/e-mail de retenção continuam desativados; o e-mail de acesso usa Supabase Auth. Nenhum preço, modelo de IA, depoimento ou aprovação profissional foi inventado.
 
 `/app` e todas as mutações exigem usuário Supabase validado; `/admin` exige `app_metadata.role = admin`, gerenciado por servidor. Magic link/refresh e RLS foram aceitos no projeto dev e na stack descartável conforme `docs/p2-acceptance.md`. O limitador em memória é adicional aos limites do Supabase e deve ser substituído por um armazenamento compartilhado antes de publicação com múltiplas instâncias.
 
@@ -72,4 +73,4 @@ Para testar também o bundle de produção, rode `pnpm build` e execute `pnpm e2
 | `docs/p1-acceptance.md` | Matriz de aceite, contratos dos componentes e limites da P1 |
 | `docs/roadmap.md` | Sequência das fases e critérios de avanço |
 
-Leia `AGENTS.md`, `docs/architecture.md`, `docs/safety.md`, `docs/testing.md` e `docs/release-checklist.md` antes de continuar. **Próximo passo: implementar a P5 com safety gate determinístico antes de produzir qualquer resultado.** A identidade oficial está documentada em `docs/ui-design.md`.
+Leia `AGENTS.md`, `docs/architecture.md`, `docs/safety.md`, `docs/testing.md` e `docs/release-checklist.md` antes de continuar. **Próximo passo: implementar a P6 com resultado observável e claim seguro após login, respeitando integralmente os desfechos P5.** A identidade oficial está documentada em `docs/ui-design.md`.

@@ -1,4 +1,8 @@
 import { z } from "zod";
+import {
+  safetyCodeSchema,
+  safetyOutcomeSchema,
+} from "@/features/safety/contracts";
 
 export const problemSlugSchema = z.enum([
   "cachorro-puxa-guia",
@@ -60,6 +64,10 @@ export const assessmentSnapshotSchema = z
     version: z.number().int().positive(),
     answers: assessmentAnswersSchema,
     status: z.enum(["in_progress", "completed"]),
+    safetyStatus: safetyOutcomeSchema,
+    safetyCodes: z.array(safetyCodeSchema).max(10),
+    safetyRuleVersion: z.literal("p5-v1").nullable(),
+    safetyEvaluatedAt: z.iso.datetime({ offset: true }).nullable(),
     startedAt: z.iso.datetime({ offset: true }),
     completedAt: z.iso.datetime({ offset: true }).nullable(),
   })
@@ -69,6 +77,16 @@ export const quizSessionSchema = z
   .object({
     assessment: assessmentSnapshotSchema,
     quiz: quizDefinitionSchema,
+  })
+  .strict();
+
+export const assessmentCompletionSchema = z
+  .object({
+    status: z.literal("completed"),
+    safetyStatus: safetyOutcomeSchema.exclude(["pending"]),
+    safetyCodes: z.array(safetyCodeSchema).min(1).max(10),
+    safetyRuleVersion: z.literal("p5-v1"),
+    completedAt: z.iso.datetime({ offset: true }),
   })
   .strict();
 

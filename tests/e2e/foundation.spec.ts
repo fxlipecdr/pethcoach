@@ -67,7 +67,7 @@ test("home, navigation, accessibility and responsive layout", async ({
     page.getByRole("heading", { name: "Meu cachorro puxa a guia" }),
   ).toBeVisible();
   await expect(
-    page.getByText(/São 8 perguntas sobre situações observáveis/),
+    page.getByText(/São até 10 perguntas sobre situações observáveis/),
   ).toBeVisible();
   expect(errors).toEqual([]);
 });

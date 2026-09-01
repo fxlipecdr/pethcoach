@@ -36,3 +36,7 @@ Safety gate, catálogo/planner, consentimento/atribuição real, claim do assess
 ## P4: quiz e assessments anônimos
 
 `p4-contracts.test.ts` cobre schemas, token assinado/expirado, hash, chave de rate limit, same-origin e persistência local sem respostas ou segredo. `p4-api.test.ts` cobre criação, retomada, mutation, cookie HttpOnly, origem inválida, token forjado e conclusão incompleta. `p4-assessments.test.ts` executa a migration completa no PGlite e valida catálogo publicado, grants/RLS, RPCs anônimas, respostas permitidas, expiração, idempotência e limites atômicos. `p4.spec.ts` percorre o quiz em desktop e 360 px, verifica uma pergunta por tela, retorno, reload, conclusão, axe e ausência de token/respostas no localStorage. O modo `E2E_QUIZ_UI_ONLY=1` apenas apresenta a interface em development; as requisições continuam interceptadas pelo teste e não constituem bypass de API.
+
+## P5: safety gate
+
+`p5-safety.test.ts` valida o gate TypeScript e as mensagens fixas para sinais isolados/combinados, prioridade BLOCK, aversivos e sinal desconhecido. `p5-safety-gate.test.ts` aplica todas as migrations em PostgreSQL/PGlite, comprova quiz v1 preservado/v2 com dez perguntas, decisão atômica, eventos, RLS, idempotência e equivalência dos cenários canônicos. `p5.spec.ts` exercita REFER/BLOCK em desktop e 360 px, axe, ausência de CTA comercial no conteúdo e ações de segurança. As fixtures P5 existem somente em development e não autorizam acesso; o aceite hospedado usa o fluxo real.

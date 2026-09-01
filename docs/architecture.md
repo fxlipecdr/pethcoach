@@ -23,7 +23,9 @@ Browser usa chave publishable e RLS. Server usa o mesmo contexto de usuário com
 
 Não há client service role implementado: o segredo está apenas documentado para futuras operações administrativas autorizadas. Nunca usar segredo para contornar ownership/RLS.
 
-O quiz público usa Route Handlers same-origin e RPCs `SECURITY DEFINER` com contratos estreitos. O navegador recebe um token HMAC em cookie HttpOnly/SameSite=Lax; o banco guarda somente seu SHA-256 e expiração. O localStorage contém apenas o UUID anônimo, problema, assessment e etapa. Os limites de criação, atualização e conclusão são atômicos no PostgreSQL e funcionam entre instâncias. `started_at` e `completed_at` são o registro canônico dos eventos; PostHog permanece inativo sem consentimento. A P4 não interpreta respostas: todo assessment termina com `safety_status = pending` até a P5.
+O quiz público usa Route Handlers same-origin e RPCs `SECURITY DEFINER` com contratos estreitos. O navegador recebe um token HMAC em cookie HttpOnly/SameSite=Lax; o banco guarda somente seu SHA-256 e expiração. O localStorage contém apenas o UUID anônimo, problema, assessment e etapa. Os limites de criação, atualização e conclusão são atômicos no PostgreSQL e funcionam entre instâncias. `started_at` e `completed_at` são o registro canônico dos eventos; PostHog permanece inativo sem consentimento.
+
+A P5 preserva a versão 1 do quiz e publica a versão 2 com dez perguntas. A conclusão chama o gate `p5-v1` na mesma transação, grava `safety_events` sem PII e persiste `CONTINUE`, `REFER` ou `BLOCK`; nenhum cliente escreve eventos ou status. Versões antigas continuam legíveis apenas pelos campos públicos do catálogo e pelo token do assessment. A tela de resultado valida o cookie no servidor e mostra somente mensagens fixas de segurança. Não há LLM, plano, cobrança ou claim nesse caminho.
 
 ## Rotas-base
 

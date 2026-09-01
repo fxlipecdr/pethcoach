@@ -91,8 +91,8 @@ export default async function ProblemPage({ params }: ProblemPageProps) {
             Começar avaliação <ArrowRight aria-hidden="true" />
           </Link>
           <p className="mt-4 max-w-md text-xs leading-relaxed text-muted-foreground">
-            São 8 perguntas sobre situações observáveis. Não é diagnóstico e
-            nenhuma cobrança será iniciada.
+            São até 10 perguntas sobre situações observáveis. Não é diagnóstico
+            e nenhuma cobrança será iniciada.
           </p>
         </div>
 

@@ -5,6 +5,7 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import {
   assessmentAnswersSchema,
   assessmentSnapshotSchema,
+  assessmentCompletionSchema,
   problemSlugSchema,
   quizDefinitionSchema,
   quizOptionSchema,
@@ -49,6 +50,7 @@ function mapProviderError(message: string | undefined) {
 export async function loadPublishedQuiz(
   client: Client,
   slug: ProblemSlug,
+  requestedVersion?: number,
 ): Promise<QuizDefinition> {
   const { data: problem, error: problemError } = await client
     .from("problems")
@@ -56,17 +58,20 @@ export async function loadPublishedQuiz(
     .eq("slug", slug)
     .maybeSingle();
   if (problemError || !problem) throw new AssessmentDataError("unavailable");
+  const version = requestedVersion ?? problem.quiz_version;
+  if (!Number.isInteger(version) || version < 1)
+    throw new AssessmentDataError("unavailable");
   const { data: questions, error: questionsError } = await client
     .from("quiz_questions")
     .select("key, prompt, help_text, options_json, order_index, version")
     .eq("problem_id", problem.id)
-    .eq("version", problem.quiz_version)
+    .eq("version", version)
     .order("order_index");
   if (questionsError || !questions) throw new AssessmentDataError("unavailable");
   return quizDefinitionSchema.parse({
     problemSlug: problemSlugSchema.parse(problem.slug),
     problemTitle: problem.title,
-    version: problem.quiz_version,
+    version,
     questions: questions.map((question) => ({
       key: question.key,
       prompt: question.prompt,
@@ -104,6 +109,10 @@ export async function createAssessmentRecord(
     version: row.quiz_version,
     answers: {},
     status: "in_progress",
+    safetyStatus: "pending",
+    safetyCodes: [],
+    safetyRuleVersion: null,
+    safetyEvaluatedAt: null,
     startedAt: row.started_at,
     completedAt: null,
   });
@@ -126,6 +135,10 @@ export async function readAssessmentRecord(
     version: row.quiz_version,
     answers: assessmentAnswersSchema.parse(row.answers_json),
     status: row.assessment_status,
+    safetyStatus: row.safety_status,
+    safetyCodes: row.safety_codes,
+    safetyRuleVersion: row.safety_rule_version,
+    safetyEvaluatedAt: row.safety_evaluated_at,
     startedAt: row.started_at,
     completedAt: row.completed_at,
   });
@@ -165,8 +178,11 @@ export async function completeAssessmentRecord(
   });
   const row = data?.[0];
   if (error || !row) throw mapProviderError(error?.message);
-  return {
-    status: "completed" as const,
+  return assessmentCompletionSchema.parse({
+    status: row.assessment_status,
+    safetyStatus: row.safety_status,
+    safetyCodes: row.safety_codes,
+    safetyRuleVersion: row.safety_rule_version,
     completedAt: row.completed_at,
-  };
+  });
 }

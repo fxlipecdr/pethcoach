@@ -6,7 +6,7 @@ Destino informado: `coach.peth.com.br`. Remetente: `PethCoach <suporte@peth.com.
 
 | Serviço | Configurado | Falta |
 | --- | --- | --- |
-| Supabase Free | Organização PethCoach, projeto `pethcoach-dev`, migrations P0/P2/P4 aplicadas, Auth por e-mail, SMTP, callbacks e templates PT-BR; P2 hospedada/local aceita e catálogo/assessments P4 provisionados | Monitorar drift de schema e repetir o aceite após mudanças de Auth/RLS |
+| Supabase Free | Organização PethCoach, projeto `pethcoach-dev`, migrations P0/P2/P4/P5 aplicadas, Auth por e-mail, SMTP, callbacks e templates PT-BR; P2 hospedada/local aceita e safety gate P5 validado nos três desfechos | Monitorar drift de schema e repetir o aceite após mudanças de Auth/RLS |
 | Resend | `peth.com.br` verificado; chave `PethCoach Auth Dev` restrita a envio; SMTP autenticado; cinco e-mails reais de acesso entregues no total | Retenção e webhooks pertencem à P12 |
 | Stripe | Sandbox `acct_1UAZB3LaePxLnVtP` acessível no painel; modo de teste ativo; nenhum produto/preço ou webhook | Preços definidos pelo responsável, Checkout e webhook assinado na P10; ativação comercial posterior |
 | Vercel | Projeto `pethcoach` na equipe `pethdeveloper-3373s-projects`, plano Hobby, GitHub conectado, `coach.peth.com.br` com HTTPS, variáveis públicas do Supabase e `ASSESSMENT_TOKEN_SECRET` sensível somente em Production; login confirmado | Manter Preview isolado e migrar para Pro antes da operação comercial |
@@ -23,7 +23,7 @@ Destino informado: `coach.peth.com.br`. Remetente: `PethCoach <suporte@peth.com.
 - Email habilitado, signup habilitado e confirmação de e-mail obrigatória, verificados pela API Auth.
 - SMTP: `smtp.resend.com`, porta `465`, usuário `resend`, remetente acima, intervalo mínimo por usuário de 60 segundos. A senha é a chave restrita Resend, armazenada no painel.
 - Templates em `emails/auth/`, preservando `{{ .ConfirmationURL }}`. Solicitar e abrir o link no mesmo navegador para manter o verificador PKCE.
-- As três migrations existentes foram aplicadas por Supabase CLI **2.116.0**, após dry run, com histórico de migrations. O dry run posterior confirmou `upToDate: true`. Não reaplicar manualmente nem executar reset remoto.
+- As cinco migrations existentes foram aplicadas por Supabase CLI **2.116.0**, após dry run, com histórico de migrations. O dry run posterior confirmou `upToDate: true`. Não reaplicar manualmente nem executar reset remoto.
 - A conexão administrativa usou o pooler de sessão `aws-0-us-east-2.pooler.supabase.com:5432`, usuário `postgres.cvxqvfsebpdyshxpoqdj`, TLS `verify-full` e o certificado oficial Supabase. A verificação de TLS não foi desativada.
 
 ### Evidências
@@ -41,6 +41,10 @@ Destino informado: `coach.peth.com.br`. Remetente: `PethCoach <suporte@peth.com.
 - A Data API anônima retornou HTTP 200 com os três problemas publicados e HTTP 401/código 42501 ao tentar ler `assessments` diretamente.
 - O fluxo P4 real pela aplicação local criou, respondeu e concluiu oito perguntas contra o Supabase hospedado. Os registros e rate limits descartáveis do aceite foram limpos logo depois.
 - Verificação final P4: lint/TypeScript e 70 testes aprovados, smoke com 34 cenários desktop/mobile e build de produção aprovado. A geração física de tipos ficou pendente porque Docker não está disponível nesta estação e a CLI remota exige PAT; o overlay estrito foi atualizado e validado.
+- P5 publicou 30 perguntas de quiz v2, manteve as versões v1 para retomada e adicionou avaliação determinística, atômica e versionada em `p5-v1`. `safety_events` tem RLS forçada e acesso direto anônimo retornou HTTP 401/código 42501.
+- O aceite real local contra o projeto hospedado aprovou `CONTINUE`, `REFER` e `BLOCK`, incluindo prioridade de mordida de alto risco sobre suspeita de dor. Os eventos persistidos foram conferidos e todos os dados/rate limits descartáveis foram removidos.
+- A correção de catálogo P5 alinhou as duas chaves de faixa etária do quiz de filhotes ao contrato da API e migra respostas antigas correspondentes. A conferência remota retornou 30 perguntas v2 e zero chaves publicadas inválidas.
+- Verificação final P5 antes do deployment: lint/TypeScript e 94 testes aprovados, smoke com 38 cenários desktop/mobile e build de produção aprovado.
 
 ## Stripe e Resend
 
@@ -62,6 +66,6 @@ Por decisão do responsável, o projeto permanece no Hobby apenas durante a vali
 
 P4 foi concluída tecnicamente no repositório com os três quizzes, persistência anônima segura, rate limit distribuído e registro de início/conclusão. A aplicação mantém `Disallow: /` e `noindex`; revisão editorial/profissional continua obrigatória antes de indexar.
 
-Antes de liberar clientes: concluir P5-P15 e revisar conteúdo, privacidade e termos. Nenhum serviço foi publicado como produto pronto.
+Antes de liberar clientes: concluir P6-P15 e revisar conteúdo, privacidade e termos. Nenhum serviço foi publicado como produto pronto.
 
 Fontes: [Vercel Hobby](https://vercel.com/docs/plans/hobby), [Resend SMTP no Supabase](https://resend.com/docs/send-with-supabase-smtp), [TLS do Supabase](https://supabase.com/docs/guides/platform/ssl-enforcement), [CLI Supabase](https://supabase.com/docs/reference/cli/supabase-db-push), [tipos gerados](https://supabase.com/docs/guides/api/rest/generating-types).
