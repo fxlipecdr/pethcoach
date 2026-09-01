@@ -26,7 +26,8 @@ P5 concluída tecnicamente em 01/09/2026. O gate roda antes de qualquer resultad
 - `pnpm verify`: lint e TypeScript aprovados; 13 arquivos e 94 testes aprovados.
 - `pnpm e2e:smoke`: 38 cenários aprovados em desktop e 360 px.
 - `pnpm build`: bundle de produção Next.js 16.3.3 aprovado.
-- O deployment público e sua verificação serão registrados após o push desta implementação.
+- O commit `946406e` gerou o deployment de produção `dpl_Axtt1ye8exZjL3ZcCPE3ZP1EppFH`, que ficou `READY` e associado a `https://coach.peth.com.br`.
+- No domínio público, home e resultado retornaram HTTP 200, `robots.txt` manteve `Disallow: /`, a criação retornou 201 com dez perguntas e o caso de mordida com ferimento concluiu `BLOCK` com `HIGH_RISK_BITE` e `SUSPECTED_PAIN`. O evento `p5-v1` foi conferido no banco e o assessment/rate limits do teste foram removidos.
 
 ## Limites e próximo passo
 
