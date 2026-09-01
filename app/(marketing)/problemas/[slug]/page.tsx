@@ -176,7 +176,7 @@ export default async function ProblemPage({ params }: ProblemPageProps) {
               </li>
             ))}
           </ol>
-          <div className="mt-5 rounded-2xl bg-warning p-5 text-sm leading-relaxed">
+          <div className="mt-5 rounded-2xl bg-warning-surface p-5 text-sm leading-relaxed">
             <strong className="font-semibold">Evite:</strong>{" "}
             {problem.practice.avoid}
           </div>

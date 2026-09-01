@@ -7,6 +7,31 @@ test("home, navigation, accessibility and responsive layout", async ({
   const errors: string[] = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto("/");
+  const logo = page.getByRole("banner").getByAltText("PethCoach");
+  await expect(logo).toBeVisible();
+  expect(
+    await logo.evaluate(
+      (image: HTMLImageElement) => image.complete && image.naturalWidth > 0,
+    ),
+  ).toBe(true);
+  expect(
+    await page.evaluate(() => {
+      const styles = getComputedStyle(document.documentElement);
+      return {
+        brand: styles.getPropertyValue("--brand-700").trim(),
+        primary: styles.getPropertyValue("--brand-600").trim(),
+        hover: styles.getPropertyValue("--brand-500").trim(),
+        accent: styles.getPropertyValue("--heart").trim(),
+        canvas: styles.getPropertyValue("--canvas").trim(),
+      };
+    }),
+  ).toEqual({
+    brand: "#062549",
+    primary: "#188c83",
+    hover: "#0e6f69",
+    accent: "#fc6f4d",
+    canvas: "#f6faf9",
+  });
   await expect(
     page.getByRole("heading", {
       name: "Um próximo passo. Uma rotina mais leve.",

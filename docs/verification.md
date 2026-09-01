@@ -61,7 +61,7 @@ A inspeção visual identificou um conflito entre as classes `inline-flex` e `hi
 
 Capturas de development preservadas em `tmp/qa/ui-refresh-dev/`; as finais de produção ficam em `test-results/` e `tmp/qa/ui-refresh-prod/`. O servidor local da prévia usa `pnpm start` na porta 3000. Não houve deploy público.
 
-Esses testes não substituem auditoria manual completa com tecnologias assistivas nem validam uma paleta futura. Cores e logo permanecem provisórias; testar novamente contraste e dimensões ao substituí-las.
+Esses testes não substituem auditoria manual completa com tecnologias assistivas. A logo e a paleta oficiais foram integradas depois deste registro; a revalidação correspondente está documentada em `ui-design.md` e na suíte atual.
 
 ## Aceite da P1 — 31/08/2026
 

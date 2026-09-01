@@ -23,7 +23,7 @@ Ao conectar serviços, copie `.env.example` para `.env.local` e preencha apenas 
 - Kit visual interativo: botões, inputs, select, escolhas, badges, progresso, stepper, dialog, feedback Sonner, skeleton e empty state.
 - ChoiceCard reutilizável, Field/Feedback, estados de formulário e loading de botão; Drawer inferior com cancelar/aplicar e foco acessível.
 - Layouts próprios de acesso, área pessoal e administração; fluxo limitado a 720 px e conteúdo geral a 1200 px. Guards reais preservados.
-- Identidade substituível: cores em `app/globals.css`, nome/logo em `lib/brand.ts`; guia em `docs/ui-design.md`.
+- Identidade oficial PethCoach: logo compartilhada e paleta semântica em azul, teal, mint e coral; guia em `docs/ui-design.md`.
 - Clients Supabase browser/server, refresh de sessão e guards no servidor; ausência de configuração nunca libera área privada.
 - Migration de `profiles` com RLS, grants mínimos, timestamps e exclusão em cascata.
 - P2: magic link PKCE, callback, logout, cadastro/edição de cães e conta do tutor; migration de cães, trigger de profiles e atribuição protegida. Configuração em `docs/p2-setup.md` e aceite em `docs/p2-acceptance.md`.
@@ -71,4 +71,4 @@ Para testar também o bundle de produção, rode `pnpm build` e execute `pnpm e2
 | `docs/p1-acceptance.md` | Matriz de aceite, contratos dos componentes e limites da P1 |
 | `docs/roadmap.md` | Sequência das fases e critérios de avanço |
 
-Leia `AGENTS.md`, `docs/architecture.md`, `docs/safety.md`, `docs/testing.md` e `docs/release-checklist.md` antes de continuar. **Próximo passo: iniciar a P4 com quiz e assessments, sem liberar indexação ou cobrança.** Cores e logo permanecem substituíveis por escolha do usuário.
+Leia `AGENTS.md`, `docs/architecture.md`, `docs/safety.md`, `docs/testing.md` e `docs/release-checklist.md` antes de continuar. **Próximo passo: iniciar a P4 com quiz e assessments, sem liberar indexação ou cobrança.** A identidade oficial está documentada em `docs/ui-design.md`.

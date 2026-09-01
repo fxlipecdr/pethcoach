@@ -4,7 +4,7 @@
 
 **Prompt Mestre + P0 + P1 + P2 + P3 implementados e validados tecnicamente. Próxima fase: P4.** Evidências da fundação em `docs/verification.md`; matrizes em `docs/p1-acceptance.md`, `docs/p2-acceptance.md` e `docs/p3-acceptance.md`. Conexão e repetição do aceite do projeto dev: `docs/p2-setup.md`. O documento de origem determina execução sequencial, com qualidade verificada ao final de cada fase.
 
-P1 concluída após o refinamento visual: componentes, estados, home, navegação, layouts de acesso/área pessoal/admin e fluxo com largura limitada. As cores e a logo seguem deliberadamente provisórias, conforme a preferência do usuário. Guia de customização em `docs/ui-design.md`; não ativa fluxos de negócio de P2 em diante.
+P1 concluída após o refinamento visual: componentes, estados, home, navegação, layouts de acesso/área pessoal/admin e fluxo com largura limitada. A logo e a paleta oficiais foram integradas em 01/09/2026. Guia da identidade em `docs/ui-design.md`; isso não ativa fluxos de negócio de P2 em diante.
 
 ## Ordem de implementação
 

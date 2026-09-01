@@ -8,7 +8,7 @@ Implementação inicial do Prompt Mestre (seção 24) e P0 (seção 25) do bluep
 
 - Next.js App Router com Server Components por padrão. Client Components somente em interações e SDKs de navegador.
 - TypeScript strict e `noUncheckedIndexedAccess`. Zod nos boundaries de ambiente e formulário de demonstração.
-- Tailwind v4 com tokens semânticos; paleta provisória do PDF. Geist empacotada localmente, sem dependência do Google Fonts durante build ou navegação.
+- Tailwind v4 com tokens semânticos; paleta oficial PethCoach documentada em `ui-design.md`. Geist empacotada localmente, sem dependência do Google Fonts durante build ou navegação.
 - Componentes próprios com padrão shadcn, CVA, `cn` e primitivas Radix para composição e gerenciamento de foco. Não foi instalado um pacote monolítico de UI.
 - Sem chamadas OpenAI, Stripe ou Resend nesta etapa. Interfaces não fingem sucesso: retornam indisponibilidade tipada. As interfaces finais serão refinadas pelos contratos de P7/P10/P12.
 - Ausência completa de envs é válida. Configuração parcial ou malformada de um serviço é erro. Mensagens de erro mostram apenas nomes das variáveis.
@@ -37,7 +37,7 @@ Sistema visual e marketing shell concluídos conforme `p1-acceptance.md`. `compo
 
 `/dev/layouts/[layout]` aceita somente `auth`, `app`, `flow` e `admin`, com validação Zod e bloqueio fora de development. São fixtures de apresentação sem chamadas de dados ou sessões simuladas. O único estado interativo novo é local aos exemplos do UI kit, como a densidade de um cartão. Não há persistência ou requisição de negócio.
 
-A P1 não altera a migration, Auth, adapters, consentimento ou billing. Perfis de cães e acesso real permanecem em P2. A identidade oficial pode substituir os tokens provisórios sem alterar a semântica dos componentes.
+A P1 não altera a migration, Auth, adapters, consentimento ou billing. A identidade oficial foi integrada depois da validação da P3 sem alterar a semântica dos componentes.
 
 ## Documentação oficial conferida
 

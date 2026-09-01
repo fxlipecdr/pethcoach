@@ -127,8 +127,8 @@ export function UIKit() {
         </div>
         <div className="mt-3 flex flex-wrap gap-3">
           <Badge>Em preparação</Badge>
-          <Badge className="bg-success">Concluído</Badge>
-          <Badge className="bg-warning text-foreground">Atenção</Badge>
+          <Badge className="bg-success-surface">Concluído</Badge>
+          <Badge className="bg-warning-surface text-foreground">Atenção</Badge>
         </div>
       </Card>
       <div className="grid gap-8 md:grid-cols-2">

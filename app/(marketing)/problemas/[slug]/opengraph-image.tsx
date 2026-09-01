@@ -6,9 +6,9 @@ export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 const toneColors = {
-  sage: "#e6eee5",
-  peach: "#f8ebe1",
-  lavender: "#ecebf3",
+  sage: "#ddf3ef",
+  peach: "#fde8e2",
+  lavender: "#e7ebf0",
 };
 
 export default async function Image({
@@ -27,7 +27,7 @@ export default async function Image({
         display: "flex",
         padding: "64px",
         background: toneColors[problem.tone],
-        color: "#143a36",
+        color: "#062549",
       }}
     >
       <div
@@ -36,7 +36,7 @@ export default async function Image({
           display: "flex",
           flexDirection: "column",
           justifyContent: "space-between",
-          border: "2px solid rgba(20,58,54,0.14)",
+          border: "2px solid rgba(6,37,73,0.14)",
           borderRadius: "36px",
           padding: "54px",
           background: "rgba(255,255,255,0.42)",
@@ -73,7 +73,7 @@ export default async function Image({
               maxWidth: 830,
               fontSize: 30,
               lineHeight: 1.35,
-              color: "rgba(20,58,54,0.78)",
+              color: "rgba(6,37,73,0.78)",
             }}
           >
             {problem.description}

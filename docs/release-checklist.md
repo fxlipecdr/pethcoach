@@ -13,6 +13,7 @@
 - [x] P1: componentes, estados, layouts, teclado/foco, 360px/desktop e prévias fechadas em produção.
 - [x] P2: Auth/cães/RLS aceitos no projeto dev e em stack descartável.
 - [x] P3: landings, metadata, OG, canonical condicional e sitemap de páginas prontas validados com `noindex` preservado.
+- [x] Logo e paleta oficiais integradas nos componentes compartilhados e validadas em desktop/360px.
 
 ## Antes de staging funcional
 

@@ -9,11 +9,11 @@ export const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-brand-700",
+        default: "bg-primary text-primary-foreground hover:bg-primary-hover",
         outline: "border border-border bg-card text-foreground hover:bg-muted",
         ghost: "text-primary hover:bg-secondary",
         destructive:
-          "border border-destructive bg-danger text-destructive hover:bg-danger/70",
+          "border border-destructive bg-danger-surface text-destructive hover:bg-danger-surface/70",
       },
     },
     defaultVariants: { variant: "default" },

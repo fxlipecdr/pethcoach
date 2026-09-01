@@ -5,7 +5,7 @@ export function PreviewNotice() {
   return (
     <aside
       aria-label="Aviso da prévia"
-      className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-control border border-border bg-warning px-4 py-3 text-xs"
+      className="mb-6 flex flex-wrap items-center justify-between gap-3 rounded-control border border-border bg-warning-surface px-4 py-3 text-xs"
     >
       <span>Prévia de layout · sem conta, dados ou ações de negócio.</span>
       <Link

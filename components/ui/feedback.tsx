@@ -4,9 +4,9 @@ import { cn } from "@/lib/utils";
 
 const tones = {
   info: { icon: Info, classes: "bg-secondary text-foreground" },
-  success: { icon: CircleCheck, classes: "bg-success text-foreground" },
-  warning: { icon: TriangleAlert, classes: "bg-warning text-foreground" },
-  error: { icon: CircleAlert, classes: "bg-danger text-foreground" },
+  success: { icon: CircleCheck, classes: "bg-success-surface text-foreground" },
+  warning: { icon: TriangleAlert, classes: "bg-warning-surface text-foreground" },
+  error: { icon: CircleAlert, classes: "bg-danger-surface text-foreground" },
 };
 export function Feedback({
   tone = "info",

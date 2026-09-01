@@ -5,6 +5,7 @@ import { brand } from "@/lib/brand";
 import { cn } from "@/lib/utils";
 
 export function Brand({ className }: { className?: string }) {
+  const logo = brand.logo;
   return (
     <Link
       href="/"
@@ -14,14 +15,26 @@ export function Brand({ className }: { className?: string }) {
         className,
       )}
     >
-      {brand.logo ? (
-        <Image
-          src={brand.logo.src}
-          width={brand.logo.width}
-          height={brand.logo.height}
-          alt={brand.name}
-          className="h-9 w-auto max-w-44 object-contain"
-        />
+      {logo ? (
+        <span
+          className="relative block h-10 shrink-0 overflow-hidden"
+          style={{ aspectRatio: `${logo.crop.width} / ${logo.crop.height}` }}
+        >
+          <Image
+            src={logo.src}
+            width={logo.width}
+            height={logo.height}
+            sizes="160px"
+            alt={brand.name}
+            className="absolute max-w-none mix-blend-multiply"
+            style={{
+              left: `${(-logo.crop.x / logo.crop.width) * 100}%`,
+              top: `${(-logo.crop.y / logo.crop.height) * 100}%`,
+              width: `${(logo.width / logo.crop.width) * 100}%`,
+              height: "auto",
+            }}
+          />
+        </span>
       ) : (
         <>
           <span className="flex size-9 items-center justify-center rounded-[11px] bg-primary text-primary-foreground">
