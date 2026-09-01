@@ -11,6 +11,18 @@ export const anonymousContextSchema = z
     problem: z
       .enum(["cachorro-puxa-guia", "filhote-mordendo", "xixi-lugar-errado"])
       .optional(),
+    assessment: z
+      .object({
+        id: z.uuid(),
+        problem: z.enum([
+          "cachorro-puxa-guia",
+          "filhote-mordendo",
+          "xixi-lugar-errado",
+        ]),
+        currentQuestion: z.number().int().min(0).max(9),
+      })
+      .strict()
+      .optional(),
   })
   .strict();
 export type AnonymousContext = z.infer<typeof anonymousContextSchema>;

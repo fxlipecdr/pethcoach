@@ -23,7 +23,7 @@ P1 adiciona `tests/e2e/p1.spec.ts`: radios por teclado, foco visível, loading/d
 
 ## Cobertura ainda necessária
 
-Safety gate, catálogo/planner, consentimento/atribuição real, assessment anônimo/claim, webhooks Stripe, entitlement, check-ins, exportação/exclusão e admin. Testes desses recursos entram junto com sua fase. A CI local não prova que secrets, DNS, provedores, produção ou LGPD estejam prontos.
+Safety gate, catálogo/planner, consentimento/atribuição real, claim do assessment, webhooks Stripe, entitlement, check-ins, exportação/exclusão e admin. Testes desses recursos entram junto com sua fase. A CI local não prova que secrets, DNS, provedores, produção ou LGPD estejam prontos.
 
 ## P2: contratos, ações e RLS
 
@@ -32,3 +32,7 @@ Safety gate, catálogo/planner, consentimento/atribuição real, assessment anô
 ## P3: landings e SEO
 
 `p3-content.test.ts` valida conteúdo exclusivo, duração, orientação baseada em recompensa, encaminhamento de segurança, metadata/canonical, sitemap e bloqueio de indexação. `p3.spec.ts` percorre as três landings em desktop e 360 px, verificando título, descrição, CTA único, aviso de indisponibilidade comercial e encaminhamento. O smoke totaliza 30 casos nos dois projetos; `robots.txt` permanece fechado e o sitemap fica vazio sem `NEXT_PUBLIC_SITE_URL`.
+
+## P4: quiz e assessments anônimos
+
+`p4-contracts.test.ts` cobre schemas, token assinado/expirado, hash, chave de rate limit, same-origin e persistência local sem respostas ou segredo. `p4-api.test.ts` cobre criação, retomada, mutation, cookie HttpOnly, origem inválida, token forjado e conclusão incompleta. `p4-assessments.test.ts` executa a migration completa no PGlite e valida catálogo publicado, grants/RLS, RPCs anônimas, respostas permitidas, expiração, idempotência e limites atômicos. `p4.spec.ts` percorre o quiz em desktop e 360 px, verifica uma pergunta por tela, retorno, reload, conclusão, axe e ausência de token/respostas no localStorage. O modo `E2E_QUIZ_UI_ONLY=1` apenas apresenta a interface em development; as requisições continuam interceptadas pelo teste e não constituem bypass de API.

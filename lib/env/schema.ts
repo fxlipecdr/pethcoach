@@ -45,6 +45,10 @@ export const publicEnvSchema = z
 
 export const serverEnvSchema = z
   .object({
+    ASSESSMENT_TOKEN_SECRET: z.preprocess(
+      (value) => (value === "" ? undefined : value),
+      z.string().min(32).max(256).optional(),
+    ),
     SUPABASE_SECRET_KEY: optionalText,
     OPENAI_API_KEY: optionalText,
     AI_MODEL_PLANNER: optionalText,

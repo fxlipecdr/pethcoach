@@ -17,11 +17,13 @@ Implementação inicial do Prompt Mestre (seção 24) e P0 (seção 25) do bluep
 
 ## Dados e autorização
 
-A baseline cria `profiles`; a migration P2 adiciona `dogs`, `attribution_touches`, onboarding_source protegido e criação automática do profile via trigger privado. `auth.users` é a identidade do Supabase. Colunas de permissão ou billing não são editáveis no perfil. RLS e grants impedem operações cruzadas, mudança de ownership e escrita de atribuição por clientes. A exclusão de conta será um fluxo revisado de P14; a API não permite excluir profiles diretamente.
+A baseline cria `profiles`; a migration P2 adiciona `dogs`, `attribution_touches`, onboarding_source protegido e criação automática do profile via trigger privado. A P4 adiciona `problems`, `quiz_questions`, `assessments` e rate limits no schema privado. `auth.users` é a identidade do Supabase. Colunas de permissão ou billing não são editáveis no perfil. RLS e grants impedem operações cruzadas, mudança de ownership, escrita de atribuição e acesso direto a assessments. A exclusão de conta será um fluxo revisado de P14; a API não permite excluir profiles diretamente.
 
 Browser usa chave publishable e RLS. Server usa o mesmo contexto de usuário com cookies. Proxy renova tokens e desabilita cache das rotas com sessão. `requireUser()` confirma usuário via Auth; `requireAdmin()` consulta somente `app_metadata`, nunca `user_metadata`. Guards de layout protegem as telas-base, mas **cada futuro endpoint/action deve autorizar novamente**.
 
 Não há client service role implementado: o segredo está apenas documentado para futuras operações administrativas autorizadas. Nunca usar segredo para contornar ownership/RLS.
+
+O quiz público usa Route Handlers same-origin e RPCs `SECURITY DEFINER` com contratos estreitos. O navegador recebe um token HMAC em cookie HttpOnly/SameSite=Lax; o banco guarda somente seu SHA-256 e expiração. O localStorage contém apenas o UUID anônimo, problema, assessment e etapa. Os limites de criação, atualização e conclusão são atômicos no PostgreSQL e funcionam entre instâncias. `started_at` e `completed_at` são o registro canônico dos eventos; PostHog permanece inativo sem consentimento. A P4 não interpreta respostas: todo assessment termina com `safety_status = pending` até a P5.
 
 ## Rotas-base
 
@@ -29,7 +31,7 @@ Públicas: `/`, `/problemas/[slug]`, `/quiz/[slug]`, `/resultado/[assessmentId]`
 
 Protegidas: `/app`, `/app/caes`, `/app/caes/novo`, `/app/caes/[dogId]`, `/app/planos/[planId]/hoje`, `/app/planos/[planId]/progresso`, `/app/historico`, `/app/conta`, `/admin`. Callback público `/auth/callback` só cria sessão após troca PKCE válida e confirmação do usuário no Auth.
 
-Técnicas: `/api/health` (liveness somente; não implica readiness de fornecedores), `/dev/ui-kit` (404 fora de development), `/robots.txt` (bloqueado enquanto fundação).
+Técnicas: `/api/health` (liveness somente; não implica readiness de fornecedores), `/api/assessments` e subrotas (criação, resposta e conclusão protegidas), `/dev/ui-kit` (404 fora de development), `/robots.txt` (bloqueado enquanto fundação).
 
 ## P1: apresentação e layouts
 

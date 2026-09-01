@@ -2,7 +2,7 @@
 
 ## Execução atual
 
-**Prompt Mestre + P0 + P1 + P2 + P3 implementados e validados tecnicamente. Próxima fase: P4.** Evidências da fundação em `docs/verification.md`; matrizes em `docs/p1-acceptance.md`, `docs/p2-acceptance.md` e `docs/p3-acceptance.md`. Conexão e repetição do aceite do projeto dev: `docs/p2-setup.md`. O documento de origem determina execução sequencial, com qualidade verificada ao final de cada fase.
+**Prompt Mestre + P0 + P1 + P2 + P3 + P4 implementados e validados tecnicamente. Próxima fase: P5.** Evidências da fundação em `docs/verification.md`; matrizes em `docs/p1-acceptance.md`, `docs/p2-acceptance.md`, `docs/p3-acceptance.md` e `docs/p4-acceptance.md`. Conexão e repetição do aceite do projeto dev: `docs/p2-setup.md`. O documento de origem determina execução sequencial, com qualidade verificada ao final de cada fase.
 
 P1 concluída após o refinamento visual: componentes, estados, home, navegação, layouts de acesso/área pessoal/admin e fluxo com largura limitada. A logo e a paleta oficiais foram integradas em 01/09/2026. Guia da identidade em `docs/ui-design.md`; isso não ativa fluxos de negócio de P2 em diante.
 
@@ -14,7 +14,7 @@ P1 concluída após o refinamento visual: componentes, estados, home, navegaçã
 | P1 | Design system e marketing shell — concluída | Componentes/estados/layouts completos; teclado/foco/360px/desktop e fechamento das prévias em produção validados |
 | P2 | Banco, auth e cães — concluída | Magic link real, criação/edição de cão, RLS no Supabase e preservação do estado anônimo validados |
 | P3 | Landings por problema e SEO — concluída tecnicamente | Copy única, metadata/canonical/sitemap/OG e 360px validados; indexação permanece bloqueada até revisão editorial/profissional |
-| P4 | Quiz e assessments | 6-10 perguntas por problema, navegação/persistência, token anônimo seguro, rate limit e eventos |
+| P4 | Quiz e assessments — concluída tecnicamente | Oito perguntas por problema, navegação/persistência, token anônimo seguro, rate limit distribuído e timestamps/eventos |
 | P5 | Safety gate | Determinístico, cobertura de red flags e safety_events; revisão profissional das mensagens |
 | P6 | Resultado e claim | CONTINUE vs REFER/BLOCK; claim com ownership, sem repetir quiz |
 | P7 | Catálogo e plan engine | Conteúdo revisado/versionado; Outputs estritos; rejeição de IDs inventados; fallback seguro; auditoria |

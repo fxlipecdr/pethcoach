@@ -20,8 +20,8 @@ test("problem landings have unique copy, one real CTA and safety referrals", asy
       /noindex/,
     );
     await expect(
-      page.getByRole("link", { name: "Cadastrar meu cão" }),
-    ).toHaveAttribute("href", "/entrar?next=%2Fapp%2Fcaes%2Fnovo");
+      page.getByRole("link", { name: "Começar avaliação" }),
+    ).toHaveAttribute("href", `/quiz/${problem.slug}`);
     await expect(
       page.getByRole("heading", { name: "Segurança vem antes do treino." }),
     ).toBeVisible();

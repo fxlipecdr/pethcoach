@@ -1,17 +1,32 @@
 import { notFound } from "next/navigation";
 import { findProblem } from "@/content/problems";
-import { FoundationState } from "@/components/pethcoach/foundation-state";
+import { QuizEngine } from "@/features/assessments/quiz-engine";
+import { problemSlugSchema } from "@/features/assessments/contracts";
+import { getPublicEnv } from "@/lib/env/public";
+import { getServerEnv } from "@/lib/env/server";
 export default async function QuizPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  if (!findProblem((await params).slug)) notFound();
+  const parsedSlug = problemSlugSchema.safeParse((await params).slug);
+  if (!parsedSlug.success) notFound();
+  const problem = findProblem(parsedSlug.data);
+  if (!problem) notFound();
+  const publicEnv = getPublicEnv();
+  const available = Boolean(
+    publicEnv.NEXT_PUBLIC_SUPABASE_URL &&
+      publicEnv.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY &&
+      getServerEnv().ASSESSMENT_TOKEN_SECRET,
+  ) ||
+    (process.env.NODE_ENV === "development" &&
+      process.env.E2E_QUIZ_UI_ONLY === "1");
   return (
-    <FoundationState
-      title="Vamos conhecer a rotina de vocês"
-      description="O quiz ainda está em preparação. Quando estiver disponível, você poderá responder sem precisar de cartão."
-      phase="Quiz e triagem de segurança serão implementados nas fases P4 e P5."
-    />
+    <section className="page-width py-10 sm:py-16">
+      <QuizEngine
+        problem={{ slug: parsedSlug.data, title: problem.title }}
+        available={available}
+      />
+    </section>
   );
 }

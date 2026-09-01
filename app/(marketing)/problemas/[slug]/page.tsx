@@ -82,17 +82,17 @@ export default async function ProblemPage({ params }: ProblemPageProps) {
             {problem.hero}
           </p>
           <Link
-            href="/entrar?next=%2Fapp%2Fcaes%2Fnovo"
+            href={`/quiz/${problem.slug}`}
             className={buttonVariants({
               className:
                 "mt-8 min-h-13 w-full justify-between px-6 text-sm sm:w-auto sm:gap-7",
             })}
           >
-            Cadastrar meu cão <ArrowRight aria-hidden="true" />
+            Começar avaliação <ArrowRight aria-hidden="true" />
           </Link>
           <p className="mt-4 max-w-md text-xs leading-relaxed text-muted-foreground">
-            O cadastro do perfil já está disponível. O programa ainda está em
-            preparação e nenhuma cobrança será iniciada.
+            São 8 perguntas sobre situações observáveis. Não é diagnóstico e
+            nenhuma cobrança será iniciada.
           </p>
         </div>
 

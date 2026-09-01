@@ -7,7 +7,7 @@ P3 concluída tecnicamente em 01/09/2026. A implementação prepara aquisição 
 - Três rotas estáticas: puxar a guia, mordidas de filhote e xixi no lugar errado.
 - Copy própria por problema, com sinais para observar, uma prática de 3 a 5 minutos, três passos, condutas a evitar e foco futuro do programa.
 - Orientação exclusivamente baseada em recompensa; mudança súbita, dor, pânico, agressão, autoagressão ou sofrimento acionam encaminhamento explícito conforme o contexto.
-- Um CTA primário real por landing, apontando para o cadastro autenticado do cão. O texto informa que o programa ainda não está disponível e que nenhuma cobrança será iniciada.
+- Um CTA primário real por landing. Na entrega original apontava para o cadastro autenticado; a P4 passou a encaminhá-lo ao quiz do mesmo problema, sem iniciar cobrança.
 - Metadata por rota com título e descrição exclusivos, Open Graph, Twitter e canonical somente quando `NEXT_PUBLIC_SITE_URL` estiver configurada.
 - Imagem Open Graph dinâmica por problema, sem dependências externas.
 - Sitemap limitado à home e às três landings prontas. Sem URL pública configurada, ele retorna vazio.
@@ -23,4 +23,4 @@ P3 concluída tecnicamente em 01/09/2026. A implementação prepara aquisição 
 
 ## Limites e próximo passo
 
-Esta revisão comprova contratos técnicos, acessibilidade exercitada e alinhamento às regras internas de segurança; não substitui revisão editorial, veterinária/comportamental ou jurídica. O conteúdo das landings não é um catálogo publicado e não pode ser usado por um planner. A próxima fase é P4: quiz e assessments com persistência segura, rate limit e eventos, mantendo cobrança, coaching ao vivo e indexação desativados.
+Esta revisão comprova contratos técnicos, acessibilidade exercitada e alinhamento às regras internas de segurança; não substitui revisão editorial, veterinária/comportamental ou jurídica. O conteúdo das landings não é um catálogo publicado e não pode ser usado por um planner. A P4 integrou os CTAs ao quiz; cobrança, coaching ao vivo e indexação continuam desativados.
