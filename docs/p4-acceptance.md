@@ -19,6 +19,7 @@ P4 concluída tecnicamente em 01/09/2026. A fase registra respostas observáveis
 
 - Migration aplicada ao projeto Supabase dev por CLI com TLS `verify-full`; novo dry run confirmou o banco remoto atualizado. A Data API pública retornou os três problemas publicados e negou leitura direta de `assessments` com HTTP 401/código 42501.
 - O fluxo local real, conectado ao Supabase hospedado, criou um assessment via Route Handler, carregou oito perguntas, salvou as oito respostas e concluiu com HTTP 200. Os dois registros e quatro contadores descartáveis gerados durante o aceite foram removidos em seguida.
+- O commit `a54a42a` foi publicado na `main` e o deployment Vercel `dpl_FLcF7hL4Me4j2K6y6GUTp3CyXUyZ` ficou `Ready` no domínio `coach.peth.com.br`. O mesmo fluxo foi repetido em produção: página HTTP 200, criação 201, oito respostas e conclusão 200; o assessment e os três contadores do aceite foram removidos.
 - Integração PGlite valida 3 quizzes/24 perguntas, RLS/grants, token expirado, opção forjada, resposta/conclusão, idempotência e rate limit.
 - Unitários validam contratos, token, persistência local, origem/cookie e Route Handlers.
 - Playwright valida desktop e 360 px, axe, uma pergunta por tela, voltar, reload, conclusão e ausência de credenciais/respostas no localStorage.
