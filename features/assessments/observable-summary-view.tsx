@@ -1,5 +1,9 @@
+"use client";
+
+import { useEffect } from "react";
 import { Check, Sparkles, Target } from "lucide-react";
 import { Badge } from "@/components/ui/primitives";
+import { analytics } from "@/lib/posthog/client";
 import type { ObservableSummary } from "./contracts";
 
 type ObservableSummaryViewProps = {
@@ -7,6 +11,12 @@ type ObservableSummaryViewProps = {
 };
 
 export function ObservableSummaryView({ summary }: ObservableSummaryViewProps) {
+  useEffect(() => {
+    void analytics.capture("result_viewed", {
+      segment: "continue",
+      plan_eligible: true,
+    });
+  }, []);
   return (
     <div className="mt-8 space-y-6">
       <div className="rounded-3xl border border-border/80 bg-card p-6 sm:p-8 shadow-sm">

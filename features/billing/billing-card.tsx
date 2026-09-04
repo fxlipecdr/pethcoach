@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Check, CreditCard, ExternalLink, Sparkles } from "lucide-react";
 import { Badge, Card } from "@/components/ui/primitives";
 import { Button } from "@/components/ui/button";
 import { Feedback } from "@/components/ui/feedback";
+import { analytics } from "@/lib/posthog/client";
 import {
   BILLING_PLANS_CATALOG,
   type BillingPlanType,
@@ -26,9 +27,21 @@ export function BillingCard({ status, dogId }: BillingCardProps) {
   >(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  useEffect(() => {
+    if (!status.hasAccess) {
+      void analytics.capture("paywall_viewed", {
+        plan_type: "full_program",
+      });
+    }
+  }, [status.hasAccess]);
+
   async function handleCheckout(planType: BillingPlanType) {
     setLoadingAction(planType);
     setErrorMessage(null);
+
+    void analytics.capture("checkout_started", {
+      price_id: planType,
+    });
 
     try {
       const result = await createCheckoutSessionAction({

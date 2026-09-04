@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
+import { analytics } from "@/lib/posthog/client";
 import {
   Award,
   CheckCircle2,
@@ -110,10 +111,34 @@ export function PlanView({
   const isDayLocked = selectedDay > 1 && !hasEntitlement;
   const dayCheckin = checkins.find((c) => c.dayNumber === selectedDay);
 
+  useEffect(() => {
+    if (isDayLocked) {
+      void analytics.capture("paywall_viewed", {
+        plan_type: "full_program",
+        variant: `day_${selectedDay}`,
+      });
+    }
+  }, [isDayLocked, selectedDay]);
+
   function handleToggleTask(task: PlanTask) {
     const nextStatus = task.status === "completed" ? "pending" : "completed";
     setActiveTaskId(task.id);
     setFeedback(null);
+
+    if (nextStatus === "completed") {
+      void analytics.capture("task_completed", {
+        task_id: task.id,
+        day_number: task.dayNumber,
+        difficulty: "adequate",
+      });
+
+      if (task.dayNumber === 1 && completedCount === 0) {
+        void analytics.capture("day1_started", {
+          program_slug: plan.problemId ?? "geral",
+          exercise_id: task.id,
+        });
+      }
+    }
 
     if (preview) {
       setTasks((prev) =>
@@ -178,10 +203,19 @@ export function PlanView({
     setIsCheckinSubmitting(true);
     setFeedback(null);
 
+    void analytics.capture("checkin_submitted", {
+      day_number: selectedDay,
+      difficulty: selectedDifficulty,
+      mood: selectedMood,
+    });
+
     const safety = evaluateCheckinSafety(selectedSafetyFlag);
 
     if (preview) {
       if (!safety.safe) {
+        void analytics.capture("plan_adjusted", {
+          reason_code: "safety_pause",
+        });
         setSafetyPause({
           active: true,
           reason: safety.reason!,

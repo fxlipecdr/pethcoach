@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Brand } from "@/components/pethcoach/brand";
 import { MobileNav } from "@/components/pethcoach/mobile-nav";
 import { PethMascot } from "@/components/pethcoach/peth-mascot";
+import { CookiePreferencesButton } from "@/components/pethcoach/cookie-preferences-button";
 import { brand } from "@/lib/brand";
 
 export { Brand } from "@/components/pethcoach/brand";
@@ -87,6 +88,7 @@ export function SiteFooter() {
           <Link className="nav-link hover:text-primary transition-colors" href="/termos">
             Termos
           </Link>
+          <CookiePreferencesButton />
         </nav>
       </div>
       <div className="page-width mt-10 flex flex-wrap justify-between gap-3 border-t border-border/80 pt-6 text-xs text-muted-foreground">

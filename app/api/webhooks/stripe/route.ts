@@ -9,6 +9,8 @@ import {
   recordProcessedWebhookEvent,
   upsertBillingCustomer,
 } from "@/features/billing/data";
+import { captureServerEvent } from "@/lib/posthog/server";
+import { dispatchTransactionalEmail } from "@/features/emails/dispatcher";
 
 export async function POST(req: NextRequest) {
   let env;
@@ -101,6 +103,33 @@ export async function POST(req: NextRequest) {
             stripeSubscriptionId: subscriptionId,
             expiresAt: null,
           });
+
+          const totalCents = session.amount_total ?? 0;
+          await captureServerEvent(
+            "purchase_completed",
+            {
+              amount: totalCents / 100,
+              currency: session.currency ?? "brl",
+              product: planType ?? "full_program",
+            },
+            userId,
+          );
+
+          const customerEmail = session.customer_details?.email;
+          if (customerEmail && userId) {
+            await dispatchTransactionalEmail(
+              {
+                recipientEmail: customerEmail,
+                userId,
+                templateKey: "payment_confirmed",
+                idempotencyKey: `payment_confirmed:${session.id}`,
+                templateData: { planName: "Programa Completo PethCoach" },
+              },
+              { client },
+            ).catch((err) => {
+              console.error("[webhook] Erro ao enviar payment_confirmed:", err);
+            });
+          }
         }
         break;
       }
@@ -219,6 +248,22 @@ export async function POST(req: NextRequest) {
                 status: "past_due",
                 stripeCustomerId: customerId,
                 stripeSubscriptionId: subscriptionId,
+              });
+            }
+
+            const invoiceEmail = (invoice as unknown as { customer_email?: string }).customer_email;
+            if (invoiceEmail) {
+              await dispatchTransactionalEmail(
+                {
+                  recipientEmail: invoiceEmail,
+                  userId: customerRecord.user_id,
+                  templateKey: "payment_failed",
+                  idempotencyKey: `payment_failed:${invoice.id}`,
+                  templateData: {},
+                },
+                { client },
+              ).catch((err) => {
+                console.error("[webhook] Erro ao enviar payment_failed:", err);
               });
             }
           }

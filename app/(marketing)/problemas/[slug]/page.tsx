@@ -16,6 +16,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { findProblem, problems } from "@/content/problems";
 import { getPublicEnv } from "@/lib/env/public";
 import { PethMascot } from "@/components/pethcoach/peth-mascot";
+import { LandingTracker } from "@/features/analytics/landing-tracker";
 
 const problemIcons = { route: Route, dog: Dog, drop: Droplets };
 const tones = { sage: "bg-sage", peach: "bg-peach", lavender: "bg-lavender" };
@@ -66,6 +67,7 @@ export default async function ProblemPage({ params }: ProblemPageProps) {
 
   return (
     <>
+      <LandingTracker slug={problem.slug} />
       <section className="page-width grid gap-10 py-10 md:grid-cols-[1.08fr_0.92fr] md:items-center md:gap-16 md:py-18">
         <div>
           <Link

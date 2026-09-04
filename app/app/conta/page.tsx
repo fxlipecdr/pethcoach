@@ -4,6 +4,8 @@ import { authenticatedData } from "@/features/dogs/data";
 import { AccountForm, SignOutForm } from "@/features/profile/account-forms";
 import { getUserBillingStatus } from "@/features/billing/data";
 import { BillingCard } from "@/features/billing/billing-card";
+import { getOrCreateEmailPreferences } from "@/features/emails/data";
+import { EmailPreferencesCard } from "@/features/emails/email-preferences-card";
 
 export default async function AccountPage() {
   const { client, user } = await authenticatedData("/app/conta");
@@ -16,6 +18,22 @@ export default async function AccountPage() {
     throw new Error("Não foi possível carregar sua conta.");
 
   const billingStatus = await getUserBillingStatus(client, user.id);
+  const emailPrefsRow = await getOrCreateEmailPreferences(user.id, client);
+  const emailPreferences = emailPrefsRow
+    ? {
+        trainingReminders: emailPrefsRow.training_reminders,
+        milestoneCelebrations: emailPrefsRow.milestone_celebrations,
+        billingNotifications: emailPrefsRow.billing_notifications,
+        marketingTips: emailPrefsRow.marketing_tips,
+        unsubscribedAll: emailPrefsRow.unsubscribed_all,
+      }
+    : {
+        trainingReminders: true,
+        milestoneCelebrations: true,
+        billingNotifications: true,
+        marketingTips: false,
+        unsubscribedAll: false,
+      };
 
   return (
     <PageContainer size="flow">
@@ -28,6 +46,7 @@ export default async function AccountPage() {
       </div>
       <div className="space-y-6">
         <BillingCard status={billingStatus} />
+        <EmailPreferencesCard initialPreferences={emailPreferences} />
         <Card>
           <h2 className="mb-5 text-lg font-semibold">Seu perfil</h2>
           <AccountForm name={profile.name} />

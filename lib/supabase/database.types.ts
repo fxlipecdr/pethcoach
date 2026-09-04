@@ -218,6 +218,53 @@ export type ProcessedWebhookEventRow = {
   processed_at: string;
 };
 
+export type EmailPreferencesRow = {
+  id: string;
+  user_id: string;
+  training_reminders: boolean;
+  milestone_celebrations: boolean;
+  billing_notifications: boolean;
+  marketing_tips: boolean;
+  unsubscribed_all: boolean;
+  unsubscribe_token: string;
+  created_at: string;
+  updated_at: string;
+};
+
+export type EmailDeliveryLogRow = {
+  id: string;
+  user_id: string | null;
+  recipient_email: string;
+  template_key: string;
+  idempotency_key: string;
+  status: "pending" | "sent" | "skipped" | "failed";
+  skip_reason: string | null;
+  provider_message_id: string | null;
+  metadata: Json;
+  error_message: string | null;
+  sent_at: string | null;
+  created_at: string;
+};
+
+export type OperatorRoleRow = {
+  id: string;
+  user_id: string;
+  role: "admin" | "reviewer" | "operator";
+  created_at: string;
+  updated_at: string;
+};
+
+export type ModuleRevisionRow = {
+  id: string;
+  module_id: string;
+  operator_id: string;
+  action: "create" | "update" | "submit_review" | "approve_publish" | "archive";
+  from_status: string;
+  to_status: string;
+  notes: string;
+  created_at: string;
+};
+
 /**
  * GeneratedDatabase reflects the physical schema. This refinement also models
  * check constraints and authenticated column grants that pg-meta cannot infer.
@@ -246,8 +293,32 @@ export type Database = Omit<GeneratedDatabase, "public"> & {
       };
       attribution_touches: {
         Row: AttributionRow;
-        Insert: never;
-        Update: never;
+        Insert: {
+          id?: string;
+          anonymous_id?: string | null;
+          user_id?: string | null;
+          touch_type: "first" | "last";
+          source?: string | null;
+          medium?: string | null;
+          campaign?: string | null;
+          referrer?: string | null;
+          landing?: string | null;
+          click_ids?: Json;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<{
+          anonymous_id: string | null;
+          user_id: string | null;
+          touch_type: "first" | "last";
+          source: string | null;
+          medium: string | null;
+          campaign: string | null;
+          referrer: string | null;
+          landing: string | null;
+          click_ids: Json;
+          updated_at: string;
+        }>;
         Relationships: PublicTables["attribution_touches"]["Relationships"];
       };
       problems: {
@@ -276,8 +347,53 @@ export type Database = Omit<GeneratedDatabase, "public"> & {
       };
       modules: {
         Row: ModuleRow;
-        Insert: never;
-        Update: never;
+        Insert: Pick<
+          ModuleRow,
+          | "problem_id"
+          | "slug"
+          | "title"
+          | "category"
+          | "difficulty"
+          | "estimated_duration_minutes"
+          | "setup_instructions"
+          | "steps"
+          | "success_criteria"
+          | "stop_conditions"
+        > &
+          Partial<
+            Pick<
+              ModuleRow,
+              | "id"
+              | "tags"
+              | "contraindications"
+              | "version"
+              | "status"
+              | "reviewed_by"
+              | "reviewed_at"
+              | "created_at"
+              | "updated_at"
+            >
+          >;
+        Update: Partial<
+          Pick<
+            ModuleRow,
+            | "title"
+            | "category"
+            | "difficulty"
+            | "estimated_duration_minutes"
+            | "setup_instructions"
+            | "steps"
+            | "success_criteria"
+            | "stop_conditions"
+            | "tags"
+            | "contraindications"
+            | "version"
+            | "status"
+            | "reviewed_by"
+            | "reviewed_at"
+            | "updated_at"
+          >
+        >;
         Relationships: [];
       };
       plans: {
@@ -416,6 +532,81 @@ export type Database = Omit<GeneratedDatabase, "public"> & {
         Row: ProcessedWebhookEventRow;
         Insert: Pick<ProcessedWebhookEventRow, "event_id" | "event_type"> &
           Partial<Pick<ProcessedWebhookEventRow, "id" | "processed_at">>;
+        Update: never;
+        Relationships: [];
+      };
+      email_preferences: {
+        Row: EmailPreferencesRow;
+        Insert: Pick<EmailPreferencesRow, "user_id" | "unsubscribe_token"> &
+          Partial<
+            Pick<
+              EmailPreferencesRow,
+              | "id"
+              | "training_reminders"
+              | "milestone_celebrations"
+              | "billing_notifications"
+              | "marketing_tips"
+              | "unsubscribed_all"
+            >
+          >;
+        Update: Partial<
+          Pick<
+            EmailPreferencesRow,
+            | "training_reminders"
+            | "milestone_celebrations"
+            | "billing_notifications"
+            | "marketing_tips"
+            | "unsubscribed_all"
+            | "unsubscribe_token"
+          >
+        >;
+        Relationships: [];
+      };
+      email_delivery_logs: {
+        Row: EmailDeliveryLogRow;
+        Insert: Pick<
+          EmailDeliveryLogRow,
+          "recipient_email" | "template_key" | "idempotency_key" | "status"
+        > &
+          Partial<
+            Pick<
+              EmailDeliveryLogRow,
+              | "id"
+              | "user_id"
+              | "skip_reason"
+              | "provider_message_id"
+              | "metadata"
+              | "error_message"
+              | "sent_at"
+            >
+          >;
+        Update: Partial<
+          Pick<
+            EmailDeliveryLogRow,
+            | "status"
+            | "skip_reason"
+            | "provider_message_id"
+            | "metadata"
+            | "error_message"
+            | "sent_at"
+          >
+        >;
+        Relationships: [];
+      };
+      operator_roles: {
+        Row: OperatorRoleRow;
+        Insert: Pick<OperatorRoleRow, "user_id" | "role"> &
+          Partial<Pick<OperatorRoleRow, "id" | "created_at" | "updated_at">>;
+        Update: Partial<Pick<OperatorRoleRow, "role">>;
+        Relationships: [];
+      };
+      module_revisions: {
+        Row: ModuleRevisionRow;
+        Insert: Pick<
+          ModuleRevisionRow,
+          "module_id" | "operator_id" | "action" | "from_status" | "to_status" | "notes"
+        > &
+          Partial<Pick<ModuleRevisionRow, "id" | "created_at">>;
         Update: never;
         Relationships: [];
       };

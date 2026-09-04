@@ -4,7 +4,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   BookOpen,
-  ClipboardCheck,
   History,
   House,
   Menu,
@@ -33,7 +32,11 @@ const navigation = {
     { href: "/app/historico", label: "Histórico", icon: History },
     { href: "/app/conta", label: "Minha conta", icon: Settings },
   ],
-  admin: [{ href: "/admin", label: "Visão geral", icon: ShieldCheck }],
+  admin: [
+    { href: "/admin", label: "Visão geral", icon: ShieldCheck },
+    { href: "/admin/modulos", label: "Catálogo", icon: BookOpen },
+    { href: "/admin/inspector", label: "Inspetor Operacional", icon: SearchCheck },
+  ],
 };
 
 export function WorkspaceNavigation({
@@ -85,27 +88,6 @@ export function WorkspaceNavigation({
           <div key={href}>{link}</div>
         );
       })}
-      {area === "admin" ? (
-        <div className="mt-7 border-t border-border pt-5">
-          <p className="mb-3 px-3 text-[10px] font-semibold tracking-widest text-muted-foreground">
-            EM PREPARAÇÃO
-          </p>
-          {[
-            { label: "Catálogo", icon: BookOpen },
-            { label: "Revisões", icon: ClipboardCheck },
-            { label: "Auditoria", icon: SearchCheck },
-          ].map(({ label, icon: Icon }) => (
-            <span
-              key={label}
-              aria-disabled="true"
-              className="flex min-h-12 items-center gap-3 rounded-control px-3 text-sm text-muted-foreground"
-            >
-              <Icon className="size-4" aria-hidden="true" />
-              {label}
-            </span>
-          ))}
-        </div>
-      ) : null}
     </nav>
   );
 }

@@ -65,6 +65,7 @@ export const serverEnvSchema = z
     STRIPE_PRICE_SINGLE_PROGRAM: optionalText,
     RESEND_API_KEY: optionalText,
     EMAIL_FROM: optionalText,
+    CRON_SECRET: optionalText,
     SENTRY_DSN: optionalUrl,
   })
   .superRefine((env, ctx) => {

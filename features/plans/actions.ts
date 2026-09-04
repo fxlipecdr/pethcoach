@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { aiProvider } from "@/lib/ai/provider";
 import { authLimiter, privateRateKey } from "@/lib/security/rate-limit";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { dispatchTransactionalEmail } from "@/features/emails/dispatcher";
 import { readOwnedAssessment } from "@/features/assessments/data";
 import {
   generatePlanSchema,
@@ -347,6 +348,23 @@ export async function submitDailyCheckinAction(
           description: m.description,
         })),
       );
+
+      if (user.email) {
+        for (const m of newMilestones) {
+          dispatchTransactionalEmail({
+            recipientEmail: user.email,
+            userId: user.id,
+            templateKey: "milestone",
+            idempotencyKey: `milestone:${user.id}:${parsed.data.planId}:${m.key}`,
+            templateData: {
+              milestoneTitle: m.title,
+              milestoneDescription: m.description,
+            },
+          }).catch((err) => {
+            console.error("[submitCheckinAction] Erro ao enviar email de milestone:", err);
+          });
+        }
+      }
     }
 
     // 4. Process adaptation

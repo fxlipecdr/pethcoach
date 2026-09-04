@@ -219,6 +219,7 @@ export function QuizEngine({
           Math.round((Date.now() - Date.parse(assessment.startedAt)) / 1000),
         );
         await analytics.capture("quiz_completed", {
+          problem_slug: problem.slug,
           duration_s: duration,
           safety_status: completion.safetyStatus,
         });

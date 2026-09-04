@@ -7,6 +7,9 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, Badge } from "@/components/ui/primitives";
 import { Feedback } from "@/components/ui/feedback";
 import { PethMascot } from "@/components/pethcoach/peth-mascot";
+import { analytics } from "@/lib/posthog/client";
+import { getOrCreateAnonymousId } from "@/features/analytics/attribution";
+import { linkAttributionAction } from "@/features/analytics/actions";
 import { claimAssessmentAction, type ClaimActionResult } from "./actions";
 
 type DogOption = {
@@ -32,7 +35,17 @@ export function ClaimCard({
     FormData
   >(async (_prev, formData) => {
     const selectedDogId = formData.get("dogId")?.toString() || null;
-    return await claimAssessmentAction(assessmentId, selectedDogId);
+    const res = await claimAssessmentAction(assessmentId, selectedDogId);
+    if (res.status === "success") {
+      void analytics.capture("account_created", {
+        source: "claim",
+      });
+      const anonId = getOrCreateAnonymousId();
+      if (anonId) {
+        void linkAttributionAction(anonId);
+      }
+    }
+    return res;
   }, null);
 
   if (isClaimed || state?.status === "success") {

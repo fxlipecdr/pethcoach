@@ -17,6 +17,7 @@ import {
   assessmentTokenHash,
   verifyAssessmentToken,
 } from "./token";
+import { dispatchTransactionalEmail } from "@/features/emails/dispatcher";
 
 export type ClaimActionResult =
   | {
@@ -85,6 +86,18 @@ export async function claimAssessmentAction(
       tokenHash,
       dogId: parsed.data.dogId ?? null,
     });
+
+    if (user.email) {
+      dispatchTransactionalEmail({
+        recipientEmail: user.email,
+        userId: user.id,
+        templateKey: "welcome",
+        idempotencyKey: `welcome:${user.id}`,
+        templateData: {},
+      }).catch((dispatchErr) => {
+        console.error("[claimAssessmentAction] Erro no envio de welcome:", dispatchErr);
+      });
+    }
 
     revalidatePath("/app", "layout");
     revalidatePath(`/resultado/${parsed.data.assessmentId}`);

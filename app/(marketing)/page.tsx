@@ -22,6 +22,7 @@ import {
   AmbientGlow,
 } from "@/components/pethcoach/organic-decorations";
 import { problems } from "@/content/problems";
+import { LandingTracker } from "@/features/analytics/landing-tracker";
 
 const problemIcons = { route: Route, dog: Dog, drop: Droplets };
 const tones = {
@@ -54,6 +55,7 @@ const steps = [
 export default function Home() {
   return (
     <>
+      <LandingTracker slug="home" />
       {/* HERO SECTION - Asimétrica, moderna, acolhedora e com o mascote Peth */}
       <section className="relative overflow-hidden pt-8 pb-14 md:pt-14 md:pb-20">
         <AmbientGlow

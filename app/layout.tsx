@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getPublicEnv } from "@/lib/env/public";
+import { ConsentBanner } from "@/components/pethcoach/consent-banner";
 import "./globals.css";
 
 export function generateMetadata(): Metadata {
@@ -28,6 +29,7 @@ export default function RootLayout({
           Pular para o conteúdo
         </a>
         {children}
+        <ConsentBanner />
       </body>
     </html>
   );
