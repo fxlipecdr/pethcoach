@@ -83,7 +83,7 @@ test("private routes fail closed and success redirect grants nothing", async ({
   await page.goto("/checkout/sucesso?session_id=forged");
   await expect(
     page.getByRole("heading", {
-      name: "Não há pagamento confirmado nesta versão",
+      name: "Tudo pronto! Seu Plano Completo está Liberado",
     }),
   ).toBeVisible();
   const health = await request.get("/api/health");

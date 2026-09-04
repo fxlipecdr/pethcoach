@@ -29,6 +29,18 @@ import {
   DialogDescription,
   DialogClose,
 } from "@/components/ui/dialog";
+import { PethMascot, type MascotMood } from "@/components/pethcoach/peth-mascot";
+
+const mascotMoods: Array<{ mood: MascotMood; label: string; description: string }> = [
+  { mood: "happy", label: "Feliz", description: "Boas-vindas e incentivo geral" },
+  { mood: "celebrating", label: "Comemorando", description: "Conquistas e fim de etapas" },
+  { mood: "encouraging", label: "Encorajador", description: "Progresso e motivação diária" },
+  { mood: "thinking", label: "Pensando", description: "Perguntas de quiz e reflexão" },
+  { mood: "pointing", label: "Apontando", description: "Focos de atenção e dicas práticas" },
+  { mood: "neutral", label: "Neutro", description: "Instruções objetivas e contexto" },
+  { mood: "surprised", label: "Atento", description: "Gatilhos e estímulos do cão" },
+  { mood: "resting", label: "Descansando", description: "Pausas e descompressão" },
+];
 
 const sampleSchema = z.object({
   name: z
@@ -90,9 +102,9 @@ export function UIKit() {
           </div>
         ))}
       </div>
-      <Card>
-        <h2 className="mb-5 text-xl font-semibold">Ações e estados</h2>
-        <div className="flex flex-wrap gap-3">
+      <Card className="rounded-3xl p-6 sm:p-8">
+        <h2 className="mb-5 text-xl font-bold tracking-tight">Ações e estados</h2>
+        <div className="flex flex-wrap items-center gap-3">
           <Button onClick={() => setFeedback(true)}>Mostrar confirmação</Button>
           <Button variant="outline" onClick={() => setFeedback(false)}>
             Limpar confirmação
@@ -116,7 +128,7 @@ export function UIKit() {
           id="sample-feedback"
           role="status"
           aria-live="polite"
-          className="mt-4 min-h-7 text-sm text-primary"
+          className="mt-4 min-h-7 text-sm font-medium text-primary"
         >
           {feedback ? (
             <span className="flex items-center gap-2">
@@ -127,8 +139,34 @@ export function UIKit() {
         </div>
         <div className="mt-3 flex flex-wrap gap-3">
           <Badge>Em preparação</Badge>
-          <Badge className="bg-success-surface">Concluído</Badge>
+          <Badge className="bg-success-surface text-foreground">Concluído</Badge>
           <Badge className="bg-warning-surface text-foreground">Atenção</Badge>
+        </div>
+      </Card>
+
+      <Card className="rounded-3xl p-6 sm:p-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-6">
+          <div>
+            <h2 className="text-xl font-bold tracking-tight">Mascote Peth (Expressões & Emoções)</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Vetor SVG proprietário com 8 estados emocionais adaptados para microinterações do usuário.
+            </p>
+          </div>
+          <Badge>DESIGN SYSTEM</Badge>
+        </div>
+        <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+          {mascotMoods.map((item) => (
+            <div
+              key={item.mood}
+              className="flex flex-col items-center text-center p-4 rounded-2xl border border-border/70 bg-secondary/40 hover:bg-secondary/70 transition-colors"
+            >
+              <div className="flex size-20 items-center justify-center">
+                <PethMascot mood={item.mood} size={64} />
+              </div>
+              <span className="mt-2 text-sm font-bold text-foreground">{item.label}</span>
+              <span className="text-xs text-muted-foreground mt-0.5">{item.description}</span>
+            </div>
+          ))}
         </div>
       </Card>
       <div className="grid gap-8 md:grid-cols-2">

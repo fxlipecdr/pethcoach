@@ -2,6 +2,9 @@ import { PageContainer } from "@/components/layouts/page-container";
 import { Card } from "@/components/ui/primitives";
 import { authenticatedData } from "@/features/dogs/data";
 import { AccountForm, SignOutForm } from "@/features/profile/account-forms";
+import { getUserBillingStatus } from "@/features/billing/data";
+import { BillingCard } from "@/features/billing/billing-card";
+
 export default async function AccountPage() {
   const { client, user } = await authenticatedData("/app/conta");
   const { data: profile, error } = await client
@@ -11,6 +14,9 @@ export default async function AccountPage() {
     .maybeSingle();
   if (error || !profile)
     throw new Error("Não foi possível carregar sua conta.");
+
+  const billingStatus = await getUserBillingStatus(client, user.id);
+
   return (
     <PageContainer size="flow">
       <div className="mb-8">
@@ -21,6 +27,7 @@ export default async function AccountPage() {
         </p>
       </div>
       <div className="space-y-6">
+        <BillingCard status={billingStatus} />
         <Card>
           <h2 className="mb-5 text-lg font-semibold">Seu perfil</h2>
           <AccountForm name={profile.name} />

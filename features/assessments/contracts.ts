@@ -90,11 +90,51 @@ export const assessmentCompletionSchema = z
   })
   .strict();
 
+export const claimAssessmentSchema = z
+  .object({
+    assessmentId: assessmentIdSchema,
+    dogId: z.uuid().optional().nullable(),
+  })
+  .strict();
+
+export const claimedAssessmentSchema = z
+  .object({
+    assessmentId: assessmentIdSchema,
+    userId: z.uuid(),
+    dogId: z.uuid().nullable(),
+    problemSlug: problemSlugSchema,
+    safetyStatus: z.literal("continue"),
+    claimedAt: z.iso.datetime({ offset: true }),
+  })
+  .strict();
+
+export const observableItemSchema = z
+  .object({
+    key: z.string(),
+    questionPrompt: z.string(),
+    answerLabel: z.string(),
+  })
+  .strict();
+
+export const observableSummarySchema = z
+  .object({
+    problemSlug: problemSlugSchema,
+    problemTitle: z.string(),
+    observations: z.array(observableItemSchema),
+    strengths: z.array(z.string()),
+    focusPoints: z.array(z.string()),
+  })
+  .strict();
+
 export type ProblemSlug = z.infer<typeof problemSlugSchema>;
 export type QuizQuestion = z.infer<typeof quizQuestionSchema>;
 export type QuizDefinition = z.infer<typeof quizDefinitionSchema>;
 export type AssessmentSnapshot = z.infer<typeof assessmentSnapshotSchema>;
 export type QuizSession = z.infer<typeof quizSessionSchema>;
+export type ClaimAssessmentInput = z.infer<typeof claimAssessmentSchema>;
+export type ClaimedAssessment = z.infer<typeof claimedAssessmentSchema>;
+export type ObservableItem = z.infer<typeof observableItemSchema>;
+export type ObservableSummary = z.infer<typeof observableSummarySchema>;
 
 export type AssessmentApiError = {
   error: string;
@@ -104,5 +144,7 @@ export type AssessmentApiError = {
     | "unavailable"
     | "expired"
     | "rate_limited"
-    | "incomplete";
+    | "incomplete"
+    | "not_claimable"
+    | "already_claimed";
 };

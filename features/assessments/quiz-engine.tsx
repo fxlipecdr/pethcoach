@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { ChoiceCard } from "@/components/ui/choice-card";
 import { Feedback } from "@/components/ui/feedback";
 import { Badge, Card, Progress } from "@/components/ui/primitives";
+import { PethMascot } from "@/components/pethcoach/peth-mascot";
 import {
   assessmentAnswersSchema,
   assessmentCompletionSchema,
@@ -238,16 +239,21 @@ export function QuizEngine({
 
   if (phase === "intro" || phase === "error")
     return (
-      <Card className="mx-auto max-w-2xl p-6 sm:p-8">
-        <Badge>QUIZ DO PROBLEMA</Badge>
-        <h1 className="mt-5 text-3xl font-semibold tracking-tight sm:text-4xl">
+      <Card className="mx-auto max-w-2xl p-6 sm:p-10 rounded-3xl shadow-sm border-border/80">
+        <div className="flex items-center justify-between gap-4">
+          <Badge>QUIZ DO PROBLEMA</Badge>
+          <div className="flex size-14 items-center justify-center rounded-2xl bg-secondary/80 p-1">
+            <PethMascot mood="thinking" size={46} />
+          </div>
+        </div>
+        <h1 className="mt-5 text-3xl font-bold tracking-tight sm:text-4xl text-foreground">
           Vamos entender a rotina de vocês
         </h1>
         <p className="mt-4 text-base leading-relaxed text-muted-foreground">
           São até 10 perguntas rápidas sobre situações observáveis. Não é
           diagnóstico veterinário e nenhuma cobrança será iniciada.
         </p>
-        <div className="mt-6 flex items-start gap-3 rounded-card bg-secondary p-4">
+        <div className="mt-6 flex items-start gap-3 rounded-2xl bg-secondary/70 p-4 text-foreground">
           <ShieldCheck className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden="true" />
           <p className="text-sm leading-relaxed">
             Suas respostas ficam associadas a uma credencial segura neste navegador
@@ -266,6 +272,7 @@ export function QuizEngine({
           </Feedback>
         ) : null}
         <Button
+          size="lg"
           className="mt-7 w-full sm:w-auto"
           onClick={() => void start()}
           disabled={!available}
@@ -277,8 +284,11 @@ export function QuizEngine({
 
   if (!quiz || !assessment || !question)
     return (
-      <Card className="mx-auto max-w-2xl py-14 text-center" role="status">
-        <p className="font-medium">Carregando seu quiz…</p>
+      <Card className="mx-auto max-w-2xl py-16 text-center rounded-3xl" role="status">
+        <div className="mx-auto mb-4 flex size-16 items-center justify-center rounded-full bg-secondary/80">
+          <PethMascot mood="thinking" size={50} />
+        </div>
+        <p className="font-semibold text-lg text-foreground">Carregando seu quiz…</p>
         <p className="mt-2 text-sm text-muted-foreground">
           Isso deve levar apenas alguns segundos.
         </p>
@@ -287,17 +297,22 @@ export function QuizEngine({
 
   return (
     <div className="mx-auto max-w-2xl" data-quiz-active="true">
-      <div className="mb-6 flex items-center justify-between gap-4 text-sm text-muted-foreground">
-        <span>
-          Pergunta {current + 1} de {quiz.questions.length}
-        </span>
-        <span>{answeredCount} respondidas</span>
+      <div className="mb-4 flex items-center justify-between gap-4 text-sm font-medium text-muted-foreground">
+        <div className="flex items-center gap-2.5">
+          <div className="flex size-9 items-center justify-center rounded-full bg-secondary/80">
+            <PethMascot mood={current === quiz.questions.length - 1 ? "celebrating" : "encouraging"} size={30} />
+          </div>
+          <span className="font-semibold text-foreground">
+            Pergunta {current + 1} de {quiz.questions.length}
+          </span>
+        </div>
+        <span className="text-xs">{answeredCount} respondidas</span>
       </div>
       <Progress value={progress} label={`Progresso: ${current + 1} de ${quiz.questions.length}`} />
-      <Card className="mt-6 p-5 sm:p-8">
+      <Card className="mt-6 p-6 sm:p-8 rounded-3xl shadow-sm border-border/80">
         <p className="eyebrow">{problem.title}</p>
-        <fieldset className="mt-5">
-          <legend className="text-2xl font-semibold leading-tight tracking-tight sm:text-3xl">
+        <fieldset className="mt-4">
+          <legend className="text-2xl font-bold leading-tight tracking-tight sm:text-3xl text-foreground">
             {question.prompt}
           </legend>
           {question.helpText ? (
@@ -324,11 +339,12 @@ export function QuizEngine({
             {message}
           </Feedback>
         ) : null}
-        <div className="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
+        <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:justify-between">
           <Button variant="ghost" onClick={goBack} disabled={current === 0 || phase !== "active"}>
             <ArrowLeft aria-hidden="true" /> Voltar
           </Button>
           <Button
+            size="lg"
             onClick={() => void continueQuiz()}
             disabled={!selected}
             loading={phase === "loading" || phase === "completing"}

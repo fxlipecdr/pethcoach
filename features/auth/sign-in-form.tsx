@@ -2,12 +2,13 @@
 
 import Link from "next/link";
 import { useActionState, useState, useSyncExternalStore } from "react";
-import { ArrowRight, Mail } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, Input } from "@/components/ui/primitives";
 import { Field } from "@/components/ui/field";
 import { Feedback } from "@/components/ui/feedback";
 import { readAnonymousContext } from "@/features/onboarding/local-context";
+import { PethMascot } from "@/components/pethcoach/peth-mascot";
 import { requestMagicLink } from "./actions";
 import { initialAuthState } from "./contracts";
 
@@ -43,10 +44,10 @@ export function SignInForm({
     () => false,
   );
   return (
-    <Card className="p-6 sm:p-8">
-      <span className="mb-6 inline-flex size-12 items-center justify-center rounded-control bg-secondary text-primary">
-        <Mail className="size-5" aria-hidden="true" />
-      </span>
+    <Card className="p-6 sm:p-10 rounded-3xl shadow-sm border-border/80">
+      <div className="mb-6 flex size-14 items-center justify-center rounded-2xl bg-secondary/80">
+        <PethMascot mood="happy" size={48} />
+      </div>
       <p className="eyebrow mb-3">SUA CONTA PETHCOACH</p>
       <h1 className="app-heading">Um lugar para a rotina de vocês</h1>
       <p className="mt-4 text-sm leading-relaxed text-muted-foreground">

@@ -1,37 +1,53 @@
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Brand } from "@/components/pethcoach/brand";
 import { MobileNav } from "@/components/pethcoach/mobile-nav";
+import { PethMascot } from "@/components/pethcoach/peth-mascot";
 import { brand } from "@/lib/brand";
 
 export { Brand } from "@/components/pethcoach/brand";
 
 export function SiteHeader() {
   return (
-    <header className="border-b border-border/70 bg-background">
-      <div className="page-width flex min-h-21 items-center justify-between gap-4 py-4">
+    <header className="sticky top-0 z-40 border-b border-border/80 bg-background/90 backdrop-blur-md transition-all">
+      <div className="page-width flex min-h-20 items-center justify-between gap-4 py-3.5">
         <Brand />
         <nav
           aria-label="Navegação principal"
-          className="hidden items-center gap-7 text-sm text-muted-foreground md:flex"
+          className="hidden items-center gap-2 rounded-full border border-border/70 bg-card/60 px-4 py-1.5 text-sm font-medium text-muted-foreground shadow-2xs md:flex"
         >
-          <Link href="/#problemas" className="nav-link">
+          <Link
+            href="/#problemas"
+            className="rounded-full px-3.5 py-1.5 transition-colors hover:bg-muted hover:text-primary"
+          >
             Programas
           </Link>
-          <Link href="/#como-funciona" className="nav-link">
+          <Link
+            href="/#como-funciona"
+            className="rounded-full px-3.5 py-1.5 transition-colors hover:bg-muted hover:text-primary"
+          >
             Como funciona
           </Link>
-          <Link href="/ajuda" className="nav-link">
+          <Link
+            href="/ajuda"
+            className="rounded-full px-3.5 py-1.5 transition-colors hover:bg-muted hover:text-primary"
+          >
             Dúvidas
           </Link>
         </nav>
-        <Button asChild variant="outline" className="hidden md:inline-flex">
-          <Link href="/entrar">
-            Entrar <ArrowUpRight aria-hidden="true" />
-          </Link>
-        </Button>
-        <MobileNav />
+        <div className="flex items-center gap-3">
+          <Button
+            asChild
+            variant="outline"
+            className="hidden md:inline-flex rounded-full text-xs font-bold"
+          >
+            <Link href="/entrar">
+              Entrar <ArrowUpRight aria-hidden="true" />
+            </Link>
+          </Button>
+          <MobileNav />
+        </div>
       </div>
     </header>
   );
@@ -39,30 +55,41 @@ export function SiteHeader() {
 
 export function SiteFooter() {
   return (
-    <footer className="border-t border-border bg-card">
-      <div className="page-width grid gap-8 py-10 md:grid-cols-[1fr_auto]">
-        <div>
-          <Brand />
-          <p className="mt-4 max-w-sm text-sm text-muted-foreground">
-            {brand.signature}
-          </p>
+    <footer className="border-t border-border bg-card/70 pt-12 pb-8">
+      <div className="page-width grid gap-10 md:grid-cols-[1.2fr_auto] md:items-center">
+        <div className="flex flex-col sm:flex-row sm:items-center gap-5">
+          <PethMascot
+            mood="encouraging"
+            size={72}
+            className="motion-safe:hover:scale-105 transition-transform"
+          />
+          <div>
+            <Brand />
+            <p className="mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">
+              {brand.signature}
+            </p>
+            <div className="mt-3 flex items-center gap-2 text-xs text-primary font-medium">
+              <Sparkles className="size-3.5" aria-hidden="true" />
+              Treino humanizado, baseado em evidências e reforço positivo.
+            </div>
+          </div>
         </div>
         <nav
           aria-label="Links institucionais"
-          className="flex flex-wrap items-start gap-x-7 gap-y-2 text-sm text-muted-foreground"
+          className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm font-medium text-muted-foreground"
         >
-          <Link className="nav-link" href="/ajuda">
+          <Link className="nav-link hover:text-primary transition-colors" href="/ajuda">
             Ajuda
           </Link>
-          <Link className="nav-link" href="/privacidade">
+          <Link className="nav-link hover:text-primary transition-colors" href="/privacidade">
             Privacidade
           </Link>
-          <Link className="nav-link" href="/termos">
+          <Link className="nav-link hover:text-primary transition-colors" href="/termos">
             Termos
           </Link>
         </nav>
       </div>
-      <div className="page-width flex flex-wrap justify-between gap-3 border-t border-border py-5 text-xs text-muted-foreground">
+      <div className="page-width mt-10 flex flex-wrap justify-between gap-3 border-t border-border/80 pt-6 text-xs text-muted-foreground">
         <span>{brand.name} · Versão de desenvolvimento</span>
         <span>Feito para respeitar o ritmo de vocês.</span>
       </div>

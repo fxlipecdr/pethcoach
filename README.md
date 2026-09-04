@@ -1,6 +1,6 @@
 # PethCoach
 
-Fundação de um SaaS de orientação comportamental canina para o Brasil. **Prompt Mestre + P0 + P1 + P2 + P3 + P4 + P5 concluídos tecnicamente; próxima fase: P6.** Base: `PethCoach_Blueprint_Completo_Codex.pdf` (31/08/2026). Não é o MVP completo e não está liberado para clientes. Configuração externa e evidências: `docs/external-services.md`.
+Fundação de um SaaS de orientação comportamental canina para o Brasil. **Prompt Mestre + P0 + P1 + P2 + P3 + P4 + P5 + P6 + P7 concluídos tecnicamente; próxima fase: P8.** Base: `PethCoach_Blueprint_Completo_Codex.pdf` (31/08/2026). Não é o MVP completo e não está liberado para clientes. Configuração externa e evidências: `docs/external-services.md`.
 
 ## Executar localmente
 
@@ -30,7 +30,9 @@ Ao conectar serviços, copie `.env.example` para `.env.local` e preencha apenas 
 - P3: três landings estáticas por problema com conteúdo próprio, prática curta baseada em recompensa, encaminhamento de segurança, metadata, canonical condicional, sitemap e imagem Open Graph. Aceite em `docs/p3-acceptance.md`.
 - P4: três quizzes versionados com oito perguntas cada, uma pergunta por tela, retomada por sete dias, respostas no Supabase, token assinado em cookie HttpOnly, hash no banco, rate limit distribuído e conclusão idempotente. Aceite em `docs/p4-acceptance.md`.
 - P5: safety gate determinístico e atômico antes de qualquer resultado/IA, quiz v2 com dez perguntas, prioridade BLOCK > REFER > CONTINUE, eventos auditáveis e mensagens fixas sem diagnóstico. Aceite em `docs/p5-acceptance.md`.
-- Prévia `/dev/perfil-cao`: formulário vazio com validação local, sem salvar e sem liberar as rotas privadas; disponível só em development.
+- P6: resultado observável para CONTINUE com síntese estruturada e focos de treino; claim autenticado anti-IDOR via HMAC, vinculando avaliação à conta e ao cão sem repetir o quiz; RLS de isolamento de avaliações do tutor e bloqueio estrito de claim para REFER/BLOCK. Aceite em `docs/p6-acceptance.md`.
+- P7: catálogo versionado de 12 módulos comportamentais aprovados (reforço positivo), motor de planos de 14 dias com 1 a 3 tarefas/dia e duração visível, validação anti-alucinação de catálogo, fallback determinístico seguro e interface mobile-first de plano e progresso. Aceite em `docs/p7-acceptance.md`.
+- Prévias `/dev/perfil-cao` e `/dev/plano-treino`: formulário e plano com validação local, sem salvar e sem liberar as rotas privadas; disponíveis só em development.
 - Validação de ambiente, wrappers PostHog/Sentry e adapters desativados de IA, pagamentos e e-mail.
 - Vitest, testes de RLS com PostgreSQL embarcado, Playwright, axe e GitHub Actions.
 
@@ -73,4 +75,4 @@ Para testar também o bundle de produção, rode `pnpm build` e execute `pnpm e2
 | `docs/p1-acceptance.md` | Matriz de aceite, contratos dos componentes e limites da P1 |
 | `docs/roadmap.md` | Sequência das fases e critérios de avanço |
 
-Leia `AGENTS.md`, `docs/architecture.md`, `docs/safety.md`, `docs/testing.md` e `docs/release-checklist.md` antes de continuar. **Próximo passo: implementar a P6 com resultado observável e claim seguro após login, respeitando integralmente os desfechos P5.** A identidade oficial está documentada em `docs/ui-design.md`.
+Leia `AGENTS.md`, `docs/architecture.md`, `docs/safety.md`, `docs/testing.md` e `docs/release-checklist.md` antes de continuar. **Próximo passo: implementar a P7 com catálogo aprovado/versionado e Plan Engine estruturado com fallback seguro.** A identidade oficial está documentada em `docs/ui-design.md`.

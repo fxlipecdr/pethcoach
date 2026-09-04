@@ -15,6 +15,7 @@ import {
 import { buttonVariants } from "@/components/ui/button";
 import { findProblem, problems } from "@/content/problems";
 import { getPublicEnv } from "@/lib/env/public";
+import { PethMascot } from "@/components/pethcoach/peth-mascot";
 
 const problemIcons = { route: Route, dog: Dog, drop: Droplets };
 const tones = { sage: "bg-sage", peach: "bg-peach", lavender: "bg-lavender" };
@@ -84,8 +85,9 @@ export default async function ProblemPage({ params }: ProblemPageProps) {
           <Link
             href={`/quiz/${problem.slug}`}
             className={buttonVariants({
+              size: "lg",
               className:
-                "mt-8 min-h-13 w-full justify-between px-6 text-sm sm:w-auto sm:gap-7",
+                "mt-8 min-h-13 w-full justify-between px-6 text-sm font-semibold sm:w-auto sm:gap-7",
             })}
           >
             Começar avaliação <ArrowRight aria-hidden="true" />
@@ -97,21 +99,27 @@ export default async function ProblemPage({ params }: ProblemPageProps) {
         </div>
 
         <div
-          className={`relative min-h-80 overflow-hidden rounded-[1.75rem] p-7 sm:p-9 ${tones[problem.tone]}`}
+          className={`relative min-h-80 overflow-hidden rounded-3xl p-7 sm:p-9 shadow-sm ${tones[problem.tone]}`}
           aria-hidden="true"
         >
           <div className="flex items-start justify-between">
-            <span className="rounded-full border border-brand-700/15 bg-white/55 px-3 py-1.5 text-[10px] font-semibold tracking-[0.16em] text-brand-700">
+            <span className="rounded-full border border-brand-700/15 bg-white/70 px-3 py-1.5 text-[10px] font-bold tracking-[0.16em] text-brand-700">
               PONTO DE PARTIDA
             </span>
-            <Icon className="size-12 text-brand-700" strokeWidth={1.15} />
+            <div className="flex size-14 items-center justify-center rounded-2xl bg-white/50 backdrop-blur-xs">
+              <PethMascot mood="encouraging" size={48} />
+            </div>
           </div>
           <div className="absolute right-7 bottom-7 left-7">
-            <p className="max-w-xs text-2xl leading-tight font-medium tracking-tight text-brand-700 sm:text-3xl">
+            <div className="mb-3 inline-flex items-center gap-2 rounded-xl bg-white/40 px-2.5 py-1 text-xs font-semibold text-brand-700">
+              <Icon className="size-4 text-brand-700" strokeWidth={1.5} />
+              <span>{problem.category}</span>
+            </div>
+            <p className="max-w-xs text-2xl leading-tight font-bold tracking-tight text-brand-700 sm:text-3xl">
               {problem.label}
             </p>
-            <div className="mt-6 h-px bg-brand-700/15" />
-            <p className="mt-4 text-xs leading-relaxed text-brand-700/80">
+            <div className="mt-5 h-px bg-brand-700/15" />
+            <p className="mt-3 text-xs leading-relaxed text-brand-700/90 font-medium">
               Recompensa, clareza e progressão no ritmo do cão.
             </p>
           </div>
