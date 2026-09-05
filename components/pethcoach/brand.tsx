@@ -42,7 +42,7 @@ export function Brand({ className }: { className?: string }) {
           </span>
           <span>
             {brand.name}
-            <span className="text-primary">.</span>
+            <span className="text-primary-strong">.</span>
           </span>
         </>
       )}

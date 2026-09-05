@@ -4,30 +4,37 @@ import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/lib/utils";
 import { LoaderCircle } from "lucide-react";
 
+/**
+ * DESIGN.md §18 e §19: o primário sobe 2px e ganha sombra no hover;
+ * a seta interna anda 4px (classe `arrow-nudge`).
+ */
 export const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 rounded-control font-bold select-none transition-all duration-150 motion-safe:active:scale-[0.98] disabled:pointer-events-none disabled:opacity-45 [&_svg]:size-4 [&_svg]:shrink-0 cursor-pointer",
+  "arrow-nudge inline-flex cursor-pointer items-center justify-center gap-2 rounded-control font-semibold select-none transition-[transform,box-shadow,background-color,border-color,color] duration-[250ms] ease-playful disabled:pointer-events-none disabled:opacity-45 [&_svg]:size-4 [&_svg]:shrink-0 motion-safe:active:translate-y-0 motion-safe:active:scale-[0.99]",
   {
     variants: {
       variant: {
         default:
-          "bg-primary text-primary-foreground shadow-tactile border-b-4 border-primary-hover hover:brightness-105 active:border-b-0 active:translate-y-1 active:shadow-none",
+          "bg-primary text-primary-foreground shadow-card hover:bg-primary-hover hover:shadow-card-hover motion-safe:hover:-translate-y-0.5 motion-safe:hover:scale-[1.01]",
         accent:
-          "bg-accent text-[#062549] shadow-tactile-accent border-b-4 border-[#d65231] hover:brightness-105 active:border-b-0 active:translate-y-1 active:shadow-none",
+          "bg-accent text-accent-foreground shadow-card hover:shadow-card-hover motion-safe:hover:-translate-y-0.5 motion-safe:hover:scale-[1.01]",
+        lime: "bg-lime text-ink shadow-soft hover:shadow-card motion-safe:hover:-translate-y-0.5",
         secondary:
-          "bg-secondary text-primary border-2 border-primary/20 hover:bg-secondary/80 active:translate-y-0.5",
+          "bg-secondary text-primary-strong hover:bg-secondary/70 motion-safe:hover:-translate-y-0.5",
         outline:
-          "border-2 border-border bg-card text-foreground hover:border-primary/50 hover:bg-muted active:translate-y-0.5 shadow-xs",
-        ghost: "text-primary hover:bg-secondary active:scale-[0.97]",
+          "border border-border bg-card text-foreground shadow-soft hover:border-primary/40 hover:text-primary-strong motion-safe:hover:-translate-y-0.5",
+        ghost: "text-primary-strong hover:bg-secondary",
+        link: "h-auto min-h-0 gap-1.5 rounded-sm px-0 text-primary-strong underline-offset-4 hover:underline",
         destructive:
-          "border-2 border-destructive bg-danger-surface text-destructive hover:bg-danger-surface/80 active:translate-y-0.5",
+          "border border-destructive/30 bg-danger-surface text-destructive hover:border-destructive/60",
       },
       size: {
-        default: "min-h-12 px-6 py-3 text-sm",
-        sm: "min-h-9 px-4 py-2 text-xs",
-        lg: "min-h-13 px-8 py-3.5 text-base",
-        icon: "size-10 p-0",
+        default: "min-h-13 px-6 py-3 text-sm",
+        sm: "min-h-10 px-4 py-2 text-xs",
+        lg: "min-h-14 px-8 py-3.5 text-base",
+        icon: "size-11 p-0",
       },
     },
+    compoundVariants: [{ variant: "link", size: "default", class: "px-0 py-0" }],
     defaultVariants: { variant: "default", size: "default" },
   },
 );

@@ -1,34 +1,50 @@
 import Link from "next/link";
 import {
-  ArrowDown,
   ArrowRight,
   ArrowUpRight,
-  Heart,
-  Route,
+  Check,
   Dog,
   Droplets,
-  ShieldCheck,
-  Sprout,
   MessageCircle,
   Footprints,
   ChartNoAxesCombined,
-  Sparkles,
+  Route,
+  ShieldCheck,
 } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
 import { ProductPreview } from "@/components/pethcoach/product-preview";
 import { FAQ } from "@/components/pethcoach/faq";
 import { PethMascot } from "@/components/pethcoach/peth-mascot";
 import {
-  AmbientGlow,
-} from "@/components/pethcoach/organic-decorations";
+  Ball,
+  Bone,
+  Collar,
+  HeartDoodle,
+  Paw,
+  Scribble,
+  Spark,
+  StarDoodle,
+  Treat,
+  Wave,
+} from "@/components/pethcoach/doodles";
+import {
+  Achievement,
+  FloatingCard,
+  PetCard,
+  ProgressBar,
+  SectionHeader,
+  Sticker,
+} from "@/components/pethcoach/playground";
 import { problems } from "@/content/problems";
 import { LandingTracker } from "@/features/analytics/landing-tracker";
 
 const problemIcons = { route: Route, dog: Dog, drop: Droplets };
+
+/** Tons de superfície por programa — §7: as cores secundárias são momentos, não uniforme. */
 const tones = {
-  sage: "bg-sage/80 border-primary/20",
-  peach: "bg-peach/80 border-accent/20",
-  lavender: "bg-lavender/80 border-brand-700/20",
+  sage: "bg-mint-soft border-mint",
+  peach: "bg-coral-soft border-coral/50",
+  lavender: "bg-sky-soft border-sky",
 };
 
 const steps = [
@@ -52,177 +68,220 @@ const steps = [
   },
 ];
 
+const exampleDay = [
+  "Passeio curto, com guia leve",
+  "Pausa antes da porta",
+  "Brincadeira com redirecionamento",
+  "Descanso sem cobrança",
+];
+
 export default function Home() {
+  const [lead, ...rest] = problems;
+  const LeadIcon = problemIcons[lead.icon];
+
   return (
     <>
       <LandingTracker slug="home" />
-      {/* HERO SECTION - Asimétrica, moderna, acolhedora e com o mascote Peth */}
-      <section className="relative overflow-hidden pt-8 pb-14 md:pt-14 md:pb-20">
-        <AmbientGlow
-          color="teal"
-          className="-top-24 -left-20 size-[32rem]"
+
+      {/* §14 — hero assimétrico: texto à esquerda, universo visual à direita. */}
+      <section className="relative overflow-hidden pt-8 pb-16 md:pt-14 md:pb-24">
+        <Bone
+          tone="cream"
+          size={70}
+          className="absolute top-52 -left-5 hidden rotate-[-22deg] opacity-80 lg:block"
         />
-        <AmbientGlow
-          color="peach"
-          className="top-1/3 -right-20 size-[28rem]"
+        <StarDoodle
+          tone="lime"
+          size={30}
+          className="absolute top-24 right-[46%] hidden rotate-12 opacity-90 lg:block"
         />
 
-        <div className="page-width relative z-10 grid items-center gap-10 md:grid-cols-[1.1fr_0.9fr] md:gap-12 lg:gap-16">
-          <div className="py-2">
-            {/* Tag de desenvolvimento */}
-            <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-border/80 bg-card/80 px-3.5 py-1.5 text-xs font-semibold text-muted-foreground shadow-2xs backdrop-blur-xs">
-              <span
-                className="size-2 rounded-full bg-primary animate-pulse"
-                aria-hidden="true"
-              />{" "}
+        <div className="page-width relative grid items-center gap-12 md:grid-cols-[1.12fr_0.88fr] md:gap-10 lg:gap-16">
+          <div>
+            <Sticker tone="lime" icon={<Spark tone="coral" size={16} />}>
               Produto em desenvolvimento
-            </div>
+            </Sticker>
 
-            <p className="eyebrow">MENOS DÚVIDAS. MAIS CONEXÃO.</p>
+            <p className="eyebrow mt-7">Menos dúvidas. Mais conexão.</p>
 
-            {/* Título principal grande com peso e tracking acolhedor */}
-            <h1 className="mt-4 max-w-xl text-[2.85rem] leading-[1.06] font-bold tracking-[-0.05em] sm:text-[3.6rem] lg:text-[4.2rem]">
+            <h1 className="display-heading mt-4">
               Um próximo passo.
               <br />
-              <span className="text-primary">
-                Uma rotina
-                <br /> mais leve.
-              </span>
+              Uma rotina <span className="marker-underline">mais leve.</span>
             </h1>
 
-            <p className="mt-5 max-w-[460px] text-base leading-[1.75] text-muted-foreground sm:text-lg">
-              Cuidar do comportamento do seu cão pode começar com mais clareza. E
-              com pequenos passos que cabem na vida de vocês.
+            <p className="mt-7 max-w-[44ch] text-lg leading-relaxed text-muted-foreground">
+              Cuidar do comportamento do seu cão pode começar com mais clareza.
+              E com pequenos passos que cabem na vida de vocês.
             </p>
 
-            {/* Mascote de boas-vindas com balãozinho interativo */}
-            <div className="mt-6 flex items-center gap-4 rounded-2xl border border-primary/20 bg-card/90 p-3.5 shadow-xs max-w-md">
-              <PethMascot mood="happy" size={58} className="drop-shadow-sm shrink-0" />
-              <div className="text-xs sm:text-sm text-foreground">
-                <p className="font-bold text-primary">Oi, eu sou o Peth!</p>
-                <p className="text-muted-foreground mt-0.5">
-                  Vamos construir um dia a dia com menos estresse e mais cooperação?
-                </p>
-              </div>
-            </div>
-
-            {/* CTA principal com sensação tátil Duolingo */}
-            <div className="mt-8 flex flex-col sm:flex-row items-start sm:items-center gap-4">
+            <div className="mt-9 flex flex-col items-start gap-5 sm:flex-row sm:items-center sm:gap-7">
               <Link
                 href="#problemas"
                 className={buttonVariants({
-                  className:
-                    "min-h-13 w-full justify-between px-7 text-sm font-bold sm:w-auto sm:gap-6 shadow-tactile rounded-2xl",
+                  size: "lg",
+                  className: "w-full sm:w-auto",
                 })}
               >
-                Conhecer os programas <ArrowRight className="size-4" aria-hidden="true" />
+                Conhecer os programas
+                <ArrowRight aria-hidden="true" />
+              </Link>
+              <Link
+                href="#como-funciona"
+                className={buttonVariants({
+                  variant: "link",
+                  className: "text-sm",
+                })}
+              >
+                Ver como funciona
+                <ArrowRight aria-hidden="true" />
               </Link>
             </div>
 
-            <p className="mt-5 flex items-center gap-2 text-xs font-semibold text-muted-foreground">
-              <Sprout className="size-4 text-primary shrink-0" aria-hidden="true" />{" "}
+            <p className="mt-9 flex items-center gap-3 text-sm font-semibold text-muted-foreground">
+              <Paw tone="mint" size={24} />
               Recompensa, respeito e consistência.
             </p>
-
-            <div className="mt-7 hidden items-center gap-3 text-xs text-muted-foreground lg:flex">
-              <span className="h-px w-10 bg-border" /> Feito para a rotina real. No
-              tempo de vocês.
-            </div>
           </div>
 
-          {/* Coluna direita: Mockup interativo da experiência */}
+          {/* Composição: mini UI, cartão solto, mascote e objetos flutuantes. */}
           <div className="relative">
+            <Ball
+              tone="coral"
+              size={54}
+              className="float-soft absolute -top-6 -right-2 z-10 hidden sm:block"
+            />
+            <Treat
+              tone="lime"
+              size={38}
+              className="float-soft-delayed absolute top-1/2 -left-7 z-10 hidden rotate-12 lg:block"
+            />
+
             <ProductPreview />
+
+            <FloatingCard
+              delayed
+              className="absolute -bottom-14 -left-8 z-10 hidden w-64 sm:block"
+            >
+              <div className="flex items-center gap-3">
+                <PethMascot mood="happy" size={46} className="shrink-0" />
+                <p className="text-xs leading-relaxed text-muted-foreground">
+                  <strong className="block text-primary-strong">
+                    Oi, eu sou o Peth!
+                  </strong>
+                  Vou acompanhar vocês em cada passo.
+                </p>
+              </div>
+            </FloatingCard>
           </div>
         </div>
       </section>
 
-      {/* STRIP DE VALORES - Cartões acolhedores e arredondados */}
-      <div className="border-y border-border/80 bg-surface-soft/60 py-6">
-        <div className="page-width grid gap-3 sm:grid-cols-3">
-          {[
-            { icon: ShieldCheck, text: "Bem-estar em primeiro lugar", tint: "text-primary bg-secondary/80" },
-            { icon: Heart, text: "Sem punição. Sem culpa.", tint: "text-accent bg-peach/70" },
-            { icon: Sprout, text: "Um passo possível de cada vez", tint: "text-success bg-brand-100/70" },
-          ].map(({ icon: Icon, text, tint }) => (
-            <div
-              key={text}
-              className="flex items-center gap-3.5 rounded-2xl border border-border/60 bg-card/70 p-3.5 text-sm font-semibold text-foreground shadow-2xs sm:justify-center"
-            >
-              <span className={`flex size-8 shrink-0 items-center justify-center rounded-xl ${tint}`}>
-                <Icon className="size-4" strokeWidth={2} aria-hidden="true" />
-              </span>
-              <span>{text}</span>
-            </div>
-          ))}
+      {/* §22 — faixa ink para quebrar o ritmo antes dos programas. */}
+      <div className="bg-strong py-5 text-strong-foreground">
+        <div className="page-width flex flex-wrap items-center justify-center gap-x-7 gap-y-3 text-sm font-semibold sm:justify-between">
+          <span className="flex items-center gap-2.5">
+            <HeartDoodle tone="coral" stroke="var(--cream)" size={22} />
+            Bem-estar em primeiro lugar
+          </span>
+          <span className="flex items-center gap-2.5">
+            <Collar tone="mint" stroke="var(--cream)" size={22} />
+            Sem punição. Sem culpa.
+          </span>
+          <span className="flex items-center gap-2.5">
+            <Spark tone="lime" stroke="var(--cream)" size={22} />
+            Um passo possível de cada vez
+          </span>
         </div>
       </div>
 
-      {/* SEÇÃO PROGRAMAS - 3 cards com cantos 3xl e sensação pet moderna */}
-      <section id="problemas" className="page-width py-16 md:py-24">
-        <div className="mb-10 flex items-end justify-between gap-5">
-          <div>
-            <p className="eyebrow">UM PONTO DE PARTIDA</p>
-            <h2 className="section-heading mt-3">
-              O que vocês precisam melhorar?
-            </h2>
-            <p className="mt-3.5 max-w-lg text-base text-muted-foreground leading-relaxed">
-              Três situações do dia a dia. Conheça a proposta dos programas que
-              estamos preparando.
-            </p>
-          </div>
-          <ArrowDown
-            className="mb-2 hidden size-5 text-primary sm:block"
-            aria-hidden="true"
-          />
-        </div>
+      {/* §23 — bento irregular: um bloco grande e dois menores, nunca três iguais. */}
+      <section id="problemas" className="page-width py-20 md:py-28">
+        <SectionHeader
+          eyebrow="Um ponto de partida"
+          title="O que vocês precisam melhorar?"
+          description="Três situações do dia a dia. Conheça a proposta dos programas que estamos preparando."
+          aside={
+            <Scribble className="hidden w-36 text-primary-strong sm:block" />
+          }
+        />
 
-        <div className="grid gap-6 md:grid-cols-3">
-          {problems.map((problem, index) => {
+        <div className="mt-12 grid gap-5 lg:grid-cols-12">
+          <Link
+            href={`/problemas/${lead.slug}`}
+            className="lift-card group relative flex flex-col justify-between overflow-hidden rounded-panel border border-border bg-card p-7 shadow-card hover:border-primary/40 sm:p-9 lg:col-span-7 lg:row-span-2"
+          >
+            <div
+              className={`relative flex min-h-52 items-end justify-between rounded-card border p-6 ${tones[lead.tone]}`}
+            >
+              <Paw
+                tone="cream"
+                size={92}
+                className="absolute -top-4 -right-3 rotate-12 opacity-70"
+              />
+              <LeadIcon
+                className="size-12 text-ink"
+                strokeWidth={1.4}
+                aria-hidden="true"
+              />
+              <div className="relative text-right">
+                <span className="block text-[11px] font-bold tracking-[0.16em] text-ink/70 uppercase">
+                  {lead.category}
+                </span>
+                <span
+                  className="font-display mt-1 block text-5xl leading-none font-bold tracking-tight text-ink"
+                  aria-hidden="true"
+                >
+                  01
+                </span>
+              </div>
+            </div>
+
+            <div className="mt-7">
+              <h3 className="font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+                {lead.title}
+              </h3>
+              <p className="mt-3 max-w-md leading-relaxed text-muted-foreground">
+                {lead.description}
+              </p>
+              <span className="arrow-nudge mt-7 inline-flex items-center gap-3 text-sm font-bold text-primary-strong">
+                Conhecer a proposta
+                <ArrowUpRight className="size-4" aria-hidden="true" />
+              </span>
+            </div>
+          </Link>
+
+          {rest.map((problem, index) => {
             const Icon = problemIcons[problem.icon];
             return (
               <Link
                 href={`/problemas/${problem.slug}`}
                 key={problem.slug}
-                className="program-card group flex flex-col overflow-hidden rounded-3xl border-2 border-border bg-card shadow-card transition-all duration-200 hover:border-primary/60 hover:shadow-card-hover motion-safe:hover:-translate-y-1.5"
+                className="lift-card group flex gap-5 rounded-card border border-border bg-card p-6 shadow-card hover:border-primary/40 lg:col-span-5"
               >
-                {/* Header tonal com ícone expressivo */}
-                <div
-                  className={`relative m-3 flex min-h-36 items-end justify-between rounded-2xl p-5 border ${tones[problem.tone]}`}
+                <span
+                  className={`flex size-16 shrink-0 items-center justify-center rounded-control border ${tones[problem.tone]}`}
                 >
-                  <div className="flex size-14 items-center justify-center rounded-2xl bg-card/80 shadow-xs backdrop-blur-xs">
-                    <Icon
-                      className="size-8 text-brand-700"
-                      strokeWidth={1.5}
-                      aria-hidden="true"
-                    />
-                  </div>
-                  <div className="text-right">
-                    <span className="block text-[11px] font-bold tracking-widest text-brand-700 uppercase">
-                      {problem.category}
-                    </span>
-                    <span
-                      className="mt-1 block text-3xl font-extrabold tracking-tight text-brand-700"
-                      aria-hidden="true"
-                    >
-                      0{index + 1}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex flex-1 flex-col px-6 pt-3 pb-6">
-                  <h3 className="text-xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">
+                  <Icon
+                    className="size-7 text-ink"
+                    strokeWidth={1.5}
+                    aria-hidden="true"
+                  />
+                </span>
+                <div className="min-w-0">
+                  <span className="text-[11px] font-bold tracking-[0.16em] text-muted-foreground uppercase">
+                    {problem.category} · 0{index + 2}
+                  </span>
+                  <h3 className="font-display mt-1.5 text-xl font-bold tracking-tight text-foreground">
                     {problem.title}
                   </h3>
-                  <p className="mt-2.5 flex-1 text-sm leading-relaxed text-muted-foreground">
+                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
                     {problem.description}
                   </p>
-                  <div className="mt-6 flex items-center justify-between gap-3 border-t border-border/80 pt-4 text-sm font-bold text-primary">
-                    <span>Conhecer a proposta</span>
-                    <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-secondary transition-all group-hover:bg-primary group-hover:text-primary-foreground group-hover:translate-x-1">
-                      <ArrowUpRight className="size-4" aria-hidden="true" />
-                    </span>
-                  </div>
+                  <span className="arrow-nudge mt-4 inline-flex items-center gap-2 text-sm font-bold text-primary-strong">
+                    Conhecer a proposta
+                    <ArrowUpRight className="size-4" aria-hidden="true" />
+                  </span>
                 </div>
               </Link>
             );
@@ -230,123 +289,154 @@ export default function Home() {
         </div>
       </section>
 
-      {/* SEÇÃO COMO FUNCIONA - Alternância com ondas orgânicas Plamev */}
-      <section
-        id="como-funciona"
-        className="relative bg-surface-soft/60 border-y border-border/80 py-16 md:py-24"
-      >
-        <div className="page-width grid gap-12 md:grid-cols-[0.9fr_1.1fr] md:gap-20 md:items-center">
+      {/* §24 — a funcionalidade dentro de uma situação real, sobre superfície branca. */}
+      <Wave fill="var(--card)" />
+      <section id="como-funciona" className="bg-card">
+        <div className="page-width grid items-center gap-14 py-6 md:grid-cols-[0.9fr_1.1fr] md:gap-16 md:py-12">
+          <div className="relative">
+            <PetCard name="Luna" subtitle="Golden Retriever · 2 anos">
+              <p className="text-xs font-bold tracking-[0.14em] text-muted-foreground uppercase">
+                Um dia comum
+              </p>
+              <ul className="mt-3 space-y-2.5">
+                {exampleDay.map((item) => (
+                  <li
+                    key={item}
+                    className="flex items-center gap-3 text-sm text-foreground"
+                  >
+                    <span className="flex size-5 shrink-0 items-center justify-center rounded-pill bg-mint">
+                      <Check
+                        className="size-3 text-ink"
+                        strokeWidth={3}
+                        aria-hidden="true"
+                      />
+                    </span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <ProgressBar
+                className="mt-6"
+                label="Combinados do dia"
+                value={100}
+                hint="4 de 4 — no ritmo de vocês."
+              />
+            </PetCard>
+
+            <Sticker tone="coral" className="absolute -top-3 -right-2">
+              Exemplo ilustrativo
+            </Sticker>
+
+            <Achievement
+              className="mt-4"
+              title="Rotina em dia"
+              description="Sem cobrança e sem contagem de dias perdidos."
+            />
+          </div>
+
           <div>
-            <div className="inline-flex items-center gap-2 rounded-full border border-primary/20 bg-secondary/80 px-3.5 py-1 text-xs font-bold text-primary mb-3">
-              <Sparkles className="size-3.5" aria-hidden="true" />
-              PASSO A PASSO GUIADO
-            </div>
-            <p className="eyebrow">SIMPLES, COMO PRECISA SER</p>
-            <h2 className="section-heading mt-3 max-w-sm">
+            <p className="eyebrow">Simples, como precisa ser</p>
+            <h2 className="section-heading mt-3 max-w-[14ch]">
               Um plano para a vida real.
             </h2>
-            <p className="mt-4 max-w-sm leading-relaxed text-muted-foreground text-base">
+            <p className="mt-4 max-w-md leading-relaxed text-muted-foreground">
               Sem precisar descobrir tudo sozinho. É assim que estamos
               desenhando a sua experiência.
             </p>
 
-            {/* Chamada com mascote pensando */}
-            <div className="mt-6 flex items-center gap-3.5 rounded-2xl border border-border/80 bg-card p-4 shadow-xs max-w-sm">
-              <PethMascot mood="thinking" size={54} className="shrink-0" />
-              <p className="text-xs text-muted-foreground leading-relaxed">
-                Cada cão aprende em um ritmo diferente. Nós ajudamos você a interpretar os sinais.
-              </p>
-            </div>
-
-            <div className="mt-7 inline-flex items-center gap-2 rounded-full bg-card border border-border/80 px-3.5 py-1.5 text-xs font-semibold text-muted-foreground shadow-2xs">
-              <span
-                className="size-2 rounded-full bg-primary"
-                aria-hidden="true"
-              />{" "}
-              Em preparação
-            </div>
-          </div>
-
-          <ol className="space-y-4" aria-label="Passos do funcionamento">
-            {steps.map(({ icon: Icon, title, description }, index) => (
-              <li
-                key={title}
-                className="flex items-start gap-4 rounded-2xl border border-border/70 bg-card p-5 shadow-xs transition-all hover:border-primary/40"
-              >
-                <span className="flex size-11 shrink-0 items-center justify-center rounded-2xl bg-secondary font-extrabold text-primary text-base shadow-2xs">
-                  0{index + 1}
-                </span>
-                <div className="flex-1">
-                  <div className="flex items-center justify-between gap-4">
-                    <h3 className="text-lg font-bold tracking-tight text-foreground">
-                      {title}
-                    </h3>
-                    <Icon
-                      className="size-5 shrink-0 text-primary"
-                      strokeWidth={1.8}
-                      aria-hidden="true"
-                    />
+            <ol className="mt-9 space-y-4" aria-label="Passos do funcionamento">
+              {steps.map(({ icon: Icon, title, description }, index) => (
+                <li
+                  key={title}
+                  className={`lift-card flex items-start gap-4 rounded-card border border-border bg-background p-5 ${
+                    index === 1 ? "md:ml-8" : index === 2 ? "md:ml-4" : ""
+                  }`}
+                >
+                  <span className="font-display flex size-11 shrink-0 items-center justify-center rounded-control bg-secondary text-base font-bold text-primary-strong">
+                    0{index + 1}
+                  </span>
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between gap-4">
+                      <h3 className="font-display text-lg font-bold tracking-tight text-foreground">
+                        {title}
+                      </h3>
+                      <Icon
+                        className="size-5 shrink-0 text-primary-strong"
+                        strokeWidth={1.8}
+                        aria-hidden="true"
+                      />
+                    </div>
+                    <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
+                      {description}
+                    </p>
                   </div>
-                  <p className="mt-1.5 max-w-md text-sm leading-relaxed text-muted-foreground">
-                    {description}
-                  </p>
-                </div>
-              </li>
-            ))}
-          </ol>
+                </li>
+              ))}
+            </ol>
+          </div>
         </div>
+        <Wave fill="var(--background)" />
       </section>
 
-      {/* SEÇÃO NOSSO COMPROMISSO - Card escuro de alta confiança */}
-      <section id="nosso-compromisso" className="page-width pt-16 md:pt-24">
-        <div className="grid gap-8 rounded-[2.25rem] bg-strong p-8 text-strong-foreground shadow-xl md:grid-cols-2 md:gap-16 md:p-14 border border-strong/80">
+      {/* §22 — painel ink de compromisso, com o mascote espiando a borda. */}
+      <section id="nosso-compromisso" className="page-width pt-20 md:pt-24">
+        <div className="relative grid gap-8 rounded-panel bg-strong p-8 text-strong-foreground shadow-card md:grid-cols-2 md:gap-16 md:p-14">
+          <PethMascot
+            mood="encouraging"
+            size={96}
+            className="float-soft absolute -top-11 right-8 hidden md:block"
+          />
           <div>
-            <div className="mb-5 flex size-12 items-center justify-center rounded-2xl bg-white/10 text-white backdrop-blur-xs">
-              <ShieldCheck className="size-7" strokeWidth={1.6} aria-hidden="true" />
+            <div className="mb-5 flex size-12 items-center justify-center rounded-control bg-white/10">
+              <ShieldCheck
+                className="size-7"
+                strokeWidth={1.6}
+                aria-hidden="true"
+              />
             </div>
-            <p className="mb-3 text-[11px] font-bold tracking-[0.16em] uppercase text-brand-100">
-              NOSSO COMPROMISSO
+            <p className="mb-3 text-[11px] font-bold tracking-[0.16em] text-mint uppercase">
+              Nosso compromisso
             </p>
-            <h2 className="section-heading text-white">
-              Cuidar também é<br />
-              conhecer os limites.
+            <h2 className="section-heading">
+              Cuidar também é conhecer os limites.
             </h2>
           </div>
           <div className="self-center">
-            <p className="leading-relaxed text-strong-foreground/90 text-base">
+            <p className="leading-relaxed text-strong-foreground/85">
               Estamos construindo uma experiência baseada em recompensas e
               respeito ao cão. Não fazemos diagnósticos nem substituímos a
               avaliação de um veterinário ou profissional qualificado.
             </p>
             <Link
               href="/ajuda"
-              className="mt-6 inline-flex min-h-12 items-center gap-3 rounded-2xl bg-white/10 px-5 py-2.5 text-sm font-bold text-white transition-colors hover:bg-white/20"
+              className="arrow-nudge mt-7 inline-flex min-h-12 items-center gap-3 rounded-control bg-white/10 px-5 text-sm font-bold text-white transition-colors hover:bg-white/20"
             >
-              Conheça nossos princípios{" "}
+              Conheça nossos princípios
               <ArrowUpRight className="size-4" aria-hidden="true" />
             </Link>
           </div>
         </div>
       </section>
 
-      {/* SEÇÃO FAQ - Acolhedora e sem atrito */}
+      {/* FAQ — composição assimétrica, com o mascote apoiado na coluna. */}
       <section
-        className="page-width grid gap-8 py-16 md:grid-cols-[0.85fr_1.15fr] md:gap-20 md:py-24"
+        className="page-width grid gap-10 py-20 md:grid-cols-[0.8fr_1.2fr] md:gap-16 md:py-28"
         aria-labelledby="faq-heading"
       >
-        <div>
-          <p className="eyebrow">ANTES DO PRIMEIRO PASSO</p>
+        <div className="relative">
+          <p className="eyebrow">Antes do primeiro passo</p>
           <h2 id="faq-heading" className="section-heading mt-3">
             É bom ter clareza.
           </h2>
-          <p className="mt-3.5 max-w-xs text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
             Respostas sobre a proposta e sobre o que já está disponível nesta
             versão.
           </p>
-
-          <div className="mt-8 hidden md:block">
-            <PethMascot mood="neutral" size={88} className="opacity-90 drop-shadow-sm" />
-          </div>
+          <PethMascot
+            mood="thinking"
+            size={104}
+            className="float-soft mt-10 hidden md:block"
+          />
         </div>
         <FAQ />
       </section>

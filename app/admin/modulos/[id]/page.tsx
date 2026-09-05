@@ -102,11 +102,11 @@ export default async function AdminModuloDetailPage({
           <Card className="p-6 space-y-5">
             <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground pb-4 border-b border-border">
               <span className="flex items-center gap-1.5">
-                <Clock className="size-4 text-primary" />
+                <Clock className="size-4 text-primary-strong" />
                 {mod.estimated_duration_minutes} minutos por dia
               </span>
               <span className="flex items-center gap-1.5">
-                <Gauge className="size-4 text-primary" />
+                <Gauge className="size-4 text-primary-strong" />
                 Nível: {mod.difficulty}
               </span>
               <span className="flex items-center gap-1.5">
@@ -187,7 +187,7 @@ export default async function AdminModuloDetailPage({
           {/* Revision History Audit Trail */}
           <Card className="p-6">
             <h3 className="text-base font-semibold text-foreground flex items-center gap-2 mb-4">
-              <History className="size-4 text-primary" />
+              <History className="size-4 text-primary-strong" />
               Histórico de Revisões ({revisions.length})
             </h3>
 

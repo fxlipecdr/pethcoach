@@ -37,7 +37,7 @@ export default async function AdminPage() {
       {/* Operator session badge */}
       <div className="flex flex-wrap items-center justify-between gap-3 rounded-card border border-border bg-card p-4">
         <div className="flex items-center gap-3">
-          <div className="flex size-10 items-center justify-center rounded-control bg-secondary text-primary">
+          <div className="flex size-10 items-center justify-center rounded-control bg-secondary text-primary-strong">
             <ShieldCheck className="size-5" />
           </div>
           <div>
@@ -51,7 +51,7 @@ export default async function AdminPage() {
       {/* Module status metrics */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         <Card className="p-4">
-          <div className="flex items-center gap-2 text-primary">
+          <div className="flex items-center gap-2 text-primary-strong">
             <CheckCircle2 className="size-4" />
             <span className="text-xs font-semibold uppercase tracking-wider">Publicados</span>
           </div>
@@ -91,7 +91,7 @@ export default async function AdminPage() {
       <div className="grid gap-6 md:grid-cols-2">
         <Card className="flex flex-col justify-between p-6">
           <div className="space-y-3">
-            <div className="flex size-10 items-center justify-center rounded-control bg-secondary text-primary">
+            <div className="flex size-10 items-center justify-center rounded-control bg-secondary text-primary-strong">
               <BookOpen className="size-5" />
             </div>
             <h2 className="text-lg font-semibold text-foreground">Catálogo de Treinos</h2>
@@ -108,7 +108,7 @@ export default async function AdminPage() {
 
         <Card className="flex flex-col justify-between p-6">
           <div className="space-y-3">
-            <div className="flex size-10 items-center justify-center rounded-control bg-secondary text-primary">
+            <div className="flex size-10 items-center justify-center rounded-control bg-secondary text-primary-strong">
               <SearchCheck className="size-5" />
             </div>
             <h2 className="text-lg font-semibold text-foreground">Inspetor Operacional (Zero PII)</h2>

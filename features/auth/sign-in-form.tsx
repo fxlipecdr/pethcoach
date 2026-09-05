@@ -130,7 +130,7 @@ export function SignInForm({
         No primeiro acesso, uma conta será criada para salvar os perfis dos seus
         cães. Planos e cobranças ainda não estão disponíveis.
       </p>
-      <Link href="/#problemas" className="nav-link mt-5 text-sm text-primary">
+      <Link href="/#problemas" className="nav-link mt-5 text-sm text-primary-strong">
         Conhecer os programas
       </Link>
     </Card>

@@ -16,6 +16,7 @@ import { Badge, Card } from "@/components/ui/primitives";
 import { Button } from "@/components/ui/button";
 import { Feedback } from "@/components/ui/feedback";
 import { PethMascot } from "@/components/pethcoach/peth-mascot";
+import { ProgressBar } from "@/components/pethcoach/playground";
 import { submitDailyCheckinAction, updatePlanTaskAction } from "./actions";
 import {
   calculateNewMilestones,
@@ -392,7 +393,7 @@ export function PlanView({
         <div
           role="tablist"
           aria-label="Modo de visualização"
-          className="inline-flex rounded-2xl border border-border/80 bg-muted/50 p-1 shadow-xs"
+          className="inline-flex rounded-2xl border border-border/80 bg-muted/50 p-1 shadow-soft"
         >
           <button
             type="button"
@@ -401,7 +402,7 @@ export function PlanView({
             onClick={() => setActiveTab("treino")}
             className={`rounded-xl px-4 py-2 text-xs sm:text-sm font-bold transition-all ${
               activeTab === "treino"
-                ? "bg-card text-foreground shadow-xs border border-border/80"
+                ? "bg-card text-foreground shadow-soft border border-border/80"
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
@@ -414,14 +415,14 @@ export function PlanView({
             onClick={() => setActiveTab("timeline")}
             className={`flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs sm:text-sm font-bold transition-all ${
               activeTab === "timeline"
-                ? "bg-card text-foreground shadow-xs border border-border/80"
+                ? "bg-card text-foreground shadow-soft border border-border/80"
                 : "text-muted-foreground hover:text-foreground"
             }`}
           >
-            <Award className="size-4 text-primary" aria-hidden="true" />
+            <Award className="size-4 text-primary-strong" aria-hidden="true" />
             Marcos & Linha do Tempo
             {milestones.length > 0 ? (
-              <span className="ml-1 rounded-full bg-primary/15 px-2 py-0.5 text-[11px] font-extrabold text-primary">
+              <span className="ml-1 rounded-full bg-primary/15 px-2 py-0.5 text-[11px] font-extrabold text-primary-strong">
                 {milestones.length}
               </span>
             ) : null}
@@ -455,7 +456,7 @@ export function PlanView({
         />
       ) : safetyPause?.active ? (
         /* Tela de Pausa Consciente / Red Flag de Segurança */
-        <Card className="p-8 rounded-3xl border-2 border-warning/40 bg-warning/5 text-center shadow-card">
+        <Card className="p-8 rounded-panel border border-warning/40 bg-warning-surface/50 text-center shadow-card">
           <div className="mx-auto flex size-20 items-center justify-center rounded-3xl bg-warning/15">
             <PethMascot mood="resting" size={64} />
           </div>
@@ -496,43 +497,37 @@ export function PlanView({
       ) : (
         <>
           {/* Header card com mascote e progresso */}
-          <Card className="p-6 rounded-3xl border-2 border-border/90 shadow-card">
-            <div className="flex flex-wrap items-center justify-between gap-4">
-              <div className="flex items-center gap-4">
-                <PethMascot
-                  mood={isAllDayTasksCompleted ? "celebrating" : "encouraging"}
-                  size={64}
-                  className="drop-shadow-xs motion-safe:hover:scale-105 transition-transform"
-                />
-                <div>
-                  <div className="flex items-center gap-2">
-                    <span className="eyebrow">PLANO COMPORTAMENTAL</span>
-                    {plan.plannerType === "deterministic_fallback" ? (
-                      <Badge className="bg-primary/10 text-primary border-primary/20">
-                        Catálogo Aprovado
-                      </Badge>
-                    ) : (
-                      <Badge className="bg-primary/10 text-primary border-primary/20">
-                        <Sparkles className="size-3" aria-hidden="true" />
-                        Personalizado por IA
-                      </Badge>
-                    )}
-                  </div>
-                  <h2 className="mt-1 text-2xl font-bold tracking-tight text-foreground">
-                    Jornada de 14 Dias
-                  </h2>
+          <Card className="rounded-panel border border-border p-5 shadow-card">
+            <div className="flex items-center gap-3.5">
+              <PethMascot
+                mood={isAllDayTasksCompleted ? "celebrating" : "encouraging"}
+                size={52}
+                className="shrink-0"
+              />
+              <div className="min-w-0">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="eyebrow">Plano comportamental</span>
+                  {plan.plannerType === "deterministic_fallback" ? (
+                    <Badge>Catálogo Aprovado</Badge>
+                  ) : (
+                    <Badge>
+                      <Sparkles className="size-3" aria-hidden="true" />
+                      Personalizado por IA
+                    </Badge>
+                  )}
                 </div>
-              </div>
-              <div className="text-right">
-                <p className="text-xs font-semibold text-muted-foreground">
-                  Progresso geral
-                </p>
-                <p className="text-xl font-extrabold text-primary">
-                  {completedCount} de {tasks.length} tarefas ({progressPercent}
-                  %)
-                </p>
+                <h2 className="font-display mt-1 text-xl font-bold tracking-tight text-foreground sm:text-2xl">
+                  Jornada de 14 Dias
+                </h2>
               </div>
             </div>
+
+            <ProgressBar
+              className="mt-4"
+              label="Progresso geral"
+              value={progressPercent}
+              hint={`${completedCount} de ${tasks.length} tarefas`}
+            />
 
             {/* Day selection tabs (mobile-friendly horizontal scroll) */}
             <div className="mt-6">
@@ -568,7 +563,7 @@ export function PlanView({
                         onClick={() => setSelectedDay(day)}
                         className={`flex min-w-16 flex-col items-center justify-center rounded-2xl border-2 px-3 py-2.5 text-xs transition-all duration-150 select-none ${
                           isSelected
-                            ? "border-primary bg-primary text-primary-foreground font-bold shadow-xs scale-102"
+                            ? "border-primary-hover bg-primary-hover text-primary-foreground font-bold shadow-soft scale-102"
                             : isLocked
                               ? "border-border/60 bg-muted/30 text-muted-foreground hover:border-primary/30"
                               : "border-border bg-card text-foreground hover:border-primary/40 hover:bg-muted/40"
@@ -603,9 +598,9 @@ export function PlanView({
                           />
                         ) : isLocked ? (
                           <span
-                            className={`mt-1 text-[9px] font-medium ${
+                            className={`mt-1 text-[10px] font-medium ${
                               isSelected
-                                ? "text-primary-foreground/90"
+                                ? "text-primary-foreground"
                                 : "text-muted-foreground"
                             }`}
                           >
@@ -616,7 +611,7 @@ export function PlanView({
                             className={`mt-1 text-[10px] font-bold ${
                               isSelected
                                 ? "text-primary-foreground underline"
-                                : "text-primary"
+                                : "text-primary-strong"
                             }`}
                           >
                             Hoje
@@ -625,7 +620,7 @@ export function PlanView({
                           <span
                             className={`mt-1 text-[10px] ${
                               isSelected
-                                ? "text-primary-foreground/90"
+                                ? "text-primary-foreground"
                                 : "text-muted-foreground"
                             }`}
                           >
@@ -642,7 +637,7 @@ export function PlanView({
             {/* Daily duration callout */}
             <div className="mt-4 flex items-center gap-2.5 rounded-2xl border border-primary/20 bg-secondary/60 p-3.5 text-xs text-muted-foreground">
               <Clock
-                className="size-4 text-primary shrink-0"
+                className="size-4 text-primary-strong shrink-0"
                 aria-hidden="true"
               />
               <span>
@@ -656,11 +651,11 @@ export function PlanView({
           </Card>
 
           {isDayLocked ? (
-            <Card className="p-8 rounded-3xl border-2 border-primary/30 bg-gradient-to-br from-card via-card to-secondary/30 text-center shadow-card">
+            <Card className="p-8 rounded-panel border border-primary/20 bg-secondary/35 text-center shadow-card">
               <div className="mx-auto flex size-20 items-center justify-center rounded-3xl bg-secondary/80">
                 <PethMascot mood="pointing" size={64} />
               </div>
-              <div className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary">
+              <div className="mt-4 inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-bold text-primary-strong">
                 <Lock className="size-3.5" /> Dia {selectedDay} faz parte do
                 Plano Completo
               </div>
@@ -679,7 +674,7 @@ export function PlanView({
                   onClick={() => {
                     router.push("/app/conta");
                   }}
-                  className="w-full sm:w-auto shadow-tactile font-bold"
+                  className="w-full sm:w-auto font-bold"
                 >
                   Conhecer o programa completo
                 </Button>
@@ -697,7 +692,7 @@ export function PlanView({
               {/* Check-in Diário card quando todas as tarefas do dia foram completadas */}
               {isAllDayTasksCompleted ? (
                 dayCheckin ? (
-                  <Card className="p-6 rounded-3xl border-2 border-success/40 bg-success-surface/30">
+                  <Card className="p-6 rounded-panel border border-success/30 bg-success-surface/50">
                     <div className="flex items-center gap-4">
                       <div className="flex size-14 shrink-0 items-center justify-center rounded-2xl bg-success-surface">
                         <PethMascot mood="celebrating" size={48} />
@@ -737,7 +732,7 @@ export function PlanView({
                     </div>
                   </Card>
                 ) : (
-                  <Card className="p-6 rounded-3xl border-2 border-primary/30 bg-secondary/30">
+                  <Card className="p-6 rounded-panel border border-primary/20 bg-secondary/35">
                     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
                       <div className="flex items-center gap-3.5">
                         <PethMascot
@@ -879,7 +874,7 @@ export function PlanView({
                         onChange={(e) =>
                           setSelectedSafetyFlag(e.target.value as SafetyFlag)
                         }
-                        className="mt-2.5 w-full rounded-xl border border-input bg-background px-3 py-2 text-xs sm:text-sm font-medium shadow-xs focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                        className="mt-2.5 w-full rounded-xl border border-input bg-background px-3 py-2 text-xs sm:text-sm font-medium shadow-soft focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                       >
                         <option value="none">
                           Nenhum sinal (sessão tranquila e segura)
@@ -918,7 +913,7 @@ export function PlanView({
                         value={checkinNotes}
                         onChange={(e) => setCheckinNotes(e.target.value)}
                         placeholder="Ex.: Usamos petisco de frango, respondeu bem ao estímulo."
-                        className="mt-1.5 w-full rounded-2xl border border-input bg-background px-4 py-2.5 text-sm shadow-xs focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                        className="mt-1.5 w-full rounded-2xl border border-input bg-background px-4 py-2.5 text-sm shadow-soft focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                       >
                       </input>
                     </div>
@@ -967,7 +962,7 @@ export function PlanView({
                         key={task.id}
                         className={`transition-all duration-200 p-6 rounded-3xl border-2 ${
                           isCompleted
-                            ? "border-success/50 bg-success-surface/25 shadow-xs"
+                            ? "border-success/50 bg-success-surface/25 shadow-soft"
                             : "border-border bg-card shadow-card hover:border-primary/40"
                         }`}
                       >
@@ -1008,10 +1003,10 @@ export function PlanView({
                             variant={isCompleted ? "outline" : "default"}
                             loading={isTaskPending}
                             onClick={() => handleToggleTask(task)}
-                            className={`rounded-2xl font-bold min-w-40 ${
+                            className={`min-w-40 ${
                               isCompleted
-                                ? "border-2 border-success text-success hover:bg-success/10"
-                                : "shadow-tactile"
+                                ? "border-success/40 text-success hover:border-success hover:text-success"
+                                : ""
                             }`}
                           >
                             {isCompleted ? (
@@ -1054,7 +1049,7 @@ export function PlanView({
                             {/* Success criteria */}
                             <div className="flex items-start gap-2.5 rounded-2xl bg-secondary/40 p-3.5 text-xs text-foreground border border-primary/20">
                               <Info
-                                className="mt-0.5 size-4 text-primary shrink-0"
+                                className="mt-0.5 size-4 text-primary-strong shrink-0"
                                 aria-hidden="true"
                               />
                               <p>

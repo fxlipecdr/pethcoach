@@ -100,7 +100,7 @@ export function ProductPreview() {
   const activeMascotMood: MascotMood = stage === 0 ? currentScenario.mascotMood : currentStage.mascotMood;
 
   return (
-    <div className="preview-shell relative rounded-[2.25rem] border-2 border-border/80 bg-card p-3.5 shadow-preview sm:p-5 transition-all">
+    <div className="preview-shell relative rounded-panel border border-border bg-card p-3.5 shadow-preview sm:p-5 transition-all">
       {/* Barra de status superior simulando app mobile */}
       <div className="flex items-center justify-between gap-2 px-3 pt-1 pb-3 text-xs">
         <div className="flex items-center gap-2">
@@ -109,7 +109,7 @@ export function ProductPreview() {
             Uma ideia da experiência
           </span>
         </div>
-        <span className="inline-flex items-center gap-1 rounded-full border border-primary/20 bg-secondary/60 px-3 py-1 text-[10px] font-bold tracking-wider text-primary">
+        <span className="inline-flex items-center gap-1 rounded-full border border-primary/20 bg-secondary/60 px-3 py-1 text-[10px] font-bold tracking-wider text-primary-strong">
           <Sparkles className="size-3" aria-hidden="true" />
           PRÉVIA
         </span>
@@ -127,7 +127,7 @@ export function ProductPreview() {
             <TabsTrigger
               key={item.id}
               value={item.id}
-              className="rounded-xl font-bold transition-all data-[state=active]:shadow-xs"
+              className="rounded-xl font-bold transition-all data-[state=active]:shadow-soft"
             >
               {item.label}
             </TabsTrigger>
@@ -157,7 +157,7 @@ export function ProductPreview() {
                     className="drop-shadow-md motion-safe:hover:scale-105 transition-transform"
                   />
                   <span
-                    className="absolute -right-2 -bottom-1 flex size-7 items-center justify-center rounded-full bg-card shadow-xs text-xs font-bold text-primary border border-border"
+                    className="absolute -right-2 -bottom-1 flex size-7 items-center justify-center rounded-full bg-card shadow-soft text-xs font-bold text-primary-strong border border-border"
                     aria-hidden="true"
                   >
                     {stage + 1}
@@ -185,7 +185,7 @@ export function ProductPreview() {
                     transition={{ duration: reducedMotion ? 0 : 0.18 }}
                     className="rounded-2xl border border-border/70 bg-muted/20 p-4"
                   >
-                    <div className="mb-2 flex items-center gap-2 text-xs font-bold text-primary">
+                    <div className="mb-2 flex items-center gap-2 text-xs font-bold text-primary-strong">
                       <StageIcon className="size-4" aria-hidden="true" />{" "}
                       {currentStage.label} · Etapa {stage + 1} de 3
                     </div>

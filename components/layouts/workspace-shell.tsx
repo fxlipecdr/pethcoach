@@ -2,6 +2,8 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import { CircleHelp, ShieldCheck } from "lucide-react";
 import { Brand } from "@/components/pethcoach/brand";
+import { PethMascot } from "@/components/pethcoach/peth-mascot";
+import { Paw } from "@/components/pethcoach/doodles";
 import { Badge } from "@/components/ui/primitives";
 import { PageContainer } from "./page-container";
 import { PreviewNotice } from "./preview-notice";
@@ -10,6 +12,7 @@ import {
   WorkspaceNavigation,
   type WorkspaceArea,
 } from "./workspace-navigation";
+import { WorkspaceTabBar } from "./workspace-tabbar";
 
 /** Presentation only. Real route layouts must authorize before rendering this shell. */
 export function WorkspaceShell({
@@ -29,8 +32,9 @@ export function WorkspaceShell({
         className="fixed inset-y-0 left-0 hidden w-64 flex-col border-r border-border bg-card px-5 py-7 lg:flex"
       >
         <Brand />
-        <p className="mt-10 mb-4 px-3 text-[10px] font-semibold tracking-widest text-muted-foreground">
-          {title.toUpperCase()}
+        <p className="mt-10 mb-4 flex items-center gap-2 px-3 text-[10px] font-bold tracking-[0.16em] text-muted-foreground uppercase">
+          <Paw tone="mint" size={16} />
+          {title}
         </p>
         <WorkspaceNavigation
           area={area}
@@ -45,9 +49,12 @@ export function WorkspaceShell({
           >
             <CircleHelp className="size-4" aria-hidden="true" /> Ajuda
           </Link>
-          <p className="mt-3 px-3 text-xs text-muted-foreground">
-            PethCoach · Em desenvolvimento
-          </p>
+          <div className="mt-4 flex items-center gap-3 rounded-card bg-surface-warm px-3 py-3">
+            <PethMascot mood="neutral" size={40} className="float-soft" />
+            <p className="text-xs leading-snug text-muted-foreground">
+              PethCoach · Em desenvolvimento
+            </p>
+          </div>
         </div>
       </aside>
       <div className="lg:pl-64">
@@ -57,7 +64,7 @@ export function WorkspaceShell({
           </div>
           <div className="hidden items-center gap-2 text-sm font-medium lg:flex">
             {area === "admin" ? (
-              <ShieldCheck className="size-4 text-primary" aria-hidden="true" />
+              <ShieldCheck className="size-4 text-primary-strong" aria-hidden="true" />
             ) : null}
             {title}
           </div>
@@ -66,20 +73,34 @@ export function WorkspaceShell({
               {preview ? "Prévia de interface" : "Em desenvolvimento"}
             </Badge>
           </div>
-          <WorkspaceMenu area={area} preview={preview} />
+          {area === "admin" ? (
+            <WorkspaceMenu area={area} preview={preview} />
+          ) : null}
         </header>
-        <main id="conteudo" className="min-w-0 px-4 py-7 sm:px-8 sm:py-10">
+        <main
+          id="conteudo"
+          className="min-w-0 px-4 py-7 pb-28 sm:px-8 sm:py-10 lg:pb-10"
+        >
           <PageContainer>
             {preview ? <PreviewNotice /> : null}
             {children}
           </PageContainer>
         </main>
-        <footer className="px-4 py-6 text-xs text-muted-foreground sm:px-8">
+        <footer className="px-4 py-6 pb-24 text-xs text-muted-foreground sm:px-8 lg:pb-6">
           <PageContainer>
-            Recompensa, respeito e consistência. No ritmo de vocês.
+            <span className="inline-flex items-center gap-2">
+              <Paw tone="lime" size={16} />
+              Recompensa, respeito e consistência. No ritmo de vocês.
+            </span>
           </PageContainer>
         </footer>
       </div>
+      {area === "app" ? (
+        <WorkspaceTabBar
+          preview={preview}
+          activeHref={preview ? "/app" : undefined}
+        />
+      ) : null}
     </div>
   );
 }

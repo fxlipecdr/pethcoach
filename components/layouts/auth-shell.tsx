@@ -1,7 +1,10 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
-import { ArrowLeft, Footprints, Heart, ShieldCheck } from "lucide-react";
+import { ArrowLeft, Footprints, ShieldCheck } from "lucide-react";
 import { Brand } from "@/components/pethcoach/brand";
+import { PethMascot } from "@/components/pethcoach/peth-mascot";
+import { Paw, StarDoodle } from "@/components/pethcoach/doodles";
+import { Sticker } from "@/components/pethcoach/playground";
 import { PreviewNotice } from "./preview-notice";
 
 export function AuthShell({
@@ -17,7 +20,7 @@ export function AuthShell({
         <Brand />
         <Link
           href="/"
-          className="inline-flex min-h-11 items-center gap-2 text-sm text-muted-foreground hover:text-primary"
+          className="inline-flex min-h-11 items-center gap-2 text-sm text-muted-foreground hover:text-primary-strong"
         >
           <ArrowLeft className="size-4" aria-hidden="true" /> Início
         </Link>
@@ -28,17 +31,20 @@ export function AuthShell({
       >
         {preview ? <PreviewNotice /> : null}
         <div className="mx-auto grid w-full max-w-5xl items-center gap-8 md:grid-cols-[1fr_1fr] md:gap-16">
-          <div className="hidden rounded-panel bg-sage p-9 md:block">
-            <Heart
-              className="size-9 text-primary"
-              strokeWidth={1.75}
-              aria-hidden="true"
+          <div className="relative hidden rounded-panel bg-sage p-9 md:block">
+            <StarDoodle
+              tone="lime"
+              size={28}
+              className="absolute top-7 right-8 rotate-12"
             />
-            <p className="eyebrow mt-10">NO RITMO DE VOCÊS</p>
-            <p className="mt-4 text-4xl leading-tight font-medium tracking-[-0.045em]">
+            <PethMascot mood="happy" size={84} className="float-soft" />
+            <Sticker tone="lime" className="mt-7">
+              No ritmo de vocês
+            </Sticker>
+            <p className="font-display mt-5 text-4xl leading-[1.05] font-bold tracking-[-0.045em]">
               Mais clareza.
               <br />
-              Mais conexão.
+              Mais <span className="marker-underline">conexão.</span>
             </p>
             <p className="mt-5 text-sm leading-relaxed text-muted-foreground">
               Um espaço para entender o contexto, organizar a rotina e
@@ -50,10 +56,14 @@ export function AuthShell({
                 { icon: ShieldCheck, text: "Bem-estar em primeiro lugar" },
               ].map(({ icon: Icon, text }) => (
                 <p className="flex items-center gap-3" key={text}>
-                  <Icon className="size-4 text-primary" aria-hidden="true" />
+                  <Icon className="size-4 text-primary-strong" aria-hidden="true" />
                   {text}
                 </p>
               ))}
+              <p className="flex items-center gap-3 pt-1">
+                <Paw tone="mint" size={18} />
+                Recompensa, respeito e consistência.
+              </p>
             </div>
           </div>
           <div className="mx-auto w-full max-w-md">{children}</div>

@@ -1,28 +1,29 @@
 import Link from "next/link";
-import { ArrowUpRight, PawPrint, Plus } from "lucide-react";
+import { ChevronRight, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Card, Badge } from "@/components/ui/primitives";
+import { Card } from "@/components/ui/primitives";
 import { PethMascot } from "@/components/pethcoach/peth-mascot";
+import { PetAvatar } from "@/components/pethcoach/playground";
+import type { DoodleTone } from "@/components/pethcoach/doodles";
 import type { DogRow } from "@/lib/supabase/database.types";
 import { dogOptions } from "./contracts";
+
+/** §4 — cartões não saem todos iguais: o tom alterna por posição. */
+const tones: DoodleTone[] = ["mint", "coral", "sky", "lime"];
 
 export function DogList({ dogs }: { dogs: DogRow[] }) {
   if (!dogs.length)
     return (
-      <Card className="py-12 text-center sm:py-16 border-2 border-dashed border-border/80 bg-card/60">
-        <PethMascot
-          mood="happy"
-          size={96}
-          className="mx-auto mb-5 drop-shadow-sm motion-safe:hover:scale-105 transition-transform"
-        />
-        <h2 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+      <Card className="border-dashed bg-card/70 py-12 text-center sm:py-16">
+        <PethMascot mood="happy" size={96} className="float-soft mx-auto mb-5" />
+        <h2 className="font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
           O primeiro passo tem um nome
         </h2>
         <p className="mx-auto mt-3 max-w-md text-sm leading-relaxed text-muted-foreground sm:text-base">
           Crie o perfil do seu cão para guardar as informações de vocês em um só
           lugar. Você poderá completar os detalhes depois.
         </p>
-        <Button asChild className="mt-7 shadow-tactile rounded-2xl">
+        <Button asChild className="mt-7">
           <Link href="/app/caes/novo">
             <Plus className="size-4" aria-hidden="true" />
             Adicionar meu cão
@@ -32,49 +33,41 @@ export function DogList({ dogs }: { dogs: DogRow[] }) {
     );
 
   return (
-    <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
-      {dogs.map((dog) => (
-        <Link
-          key={dog.id}
-          href={`/app/caes/${dog.id}`}
-          className="group block rounded-3xl"
-        >
-          <Card className="h-full rounded-3xl border-2 border-border bg-card p-6 shadow-card transition-all duration-200 group-hover:border-primary/50 group-hover:shadow-card-hover motion-safe:group-hover:-translate-y-1">
-            <div className="flex items-start justify-between">
-              <span className="flex size-14 items-center justify-center rounded-2xl bg-secondary text-primary shadow-xs border border-primary/10">
-                <PawPrint className="size-7" strokeWidth={1.8} aria-hidden="true" />
+    <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+      {dogs.map((dog, index) => {
+        const details = [
+          dog.breed_text,
+          dog.size ? dogOptions.size[dog.size] : null,
+          dog.sex ? dogOptions.sex[dog.sex] : null,
+        ].filter(Boolean);
+        return (
+          <li key={dog.id}>
+            <Link
+              href={`/app/caes/${dog.id}`}
+              className="lift-card group flex min-h-20 items-center gap-4 rounded-card border border-border bg-card p-4 shadow-card hover:border-primary/40"
+            >
+              <PetAvatar
+                name={dog.name}
+                size={52}
+                tone={tones[index % tones.length]}
+              />
+              <span className="min-w-0 flex-1">
+                <span className="font-display block truncate text-lg font-bold tracking-tight text-foreground">
+                  {dog.name}
+                </span>
+                <span className="mt-0.5 block truncate text-xs text-muted-foreground">
+                  {details.length ? details.join(" · ") : "Perfil a completar"}
+                </span>
               </span>
-              <span className="flex size-9 items-center justify-center rounded-full bg-muted transition-colors group-hover:bg-primary group-hover:text-primary-foreground">
-                <ArrowUpRight className="size-4" aria-hidden="true" />
-              </span>
-            </div>
-
-            <h2 className="mt-5 break-words text-2xl font-bold tracking-tight text-foreground group-hover:text-primary transition-colors">
-              {dog.name}
-            </h2>
-            <p className="mt-1.5 text-sm text-muted-foreground">
-              {dog.breed_text ?? "Raça não informada"}
-            </p>
-
-            <div className="mt-5 flex flex-wrap gap-2">
-              {dog.size ? (
-                <Badge className="bg-secondary/70">
-                  {dogOptions.size[dog.size]}
-                </Badge>
-              ) : null}
-              {dog.sex ? (
-                <Badge className="bg-muted">
-                  {dogOptions.sex[dog.sex]}
-                </Badge>
-              ) : null}
-            </div>
-
-            <div className="mt-6 border-t border-border/70 pt-4 flex items-center justify-between text-sm font-bold text-primary">
-              <span>Ver e editar perfil<span className="sr-only"> de {dog.name}</span></span>
-            </div>
-          </Card>
-        </Link>
-      ))}
-    </div>
+              <ChevronRight
+                className="size-5 shrink-0 text-muted-foreground transition-colors group-hover:text-primary-strong"
+                aria-hidden="true"
+              />
+              <span className="sr-only">Abrir perfil de {dog.name}</span>
+            </Link>
+          </li>
+        );
+      })}
+    </ul>
   );
 }

@@ -9,7 +9,7 @@ export default function CheckoutSucessoPage() {
   return (
     <PageContainer size="flow">
       <div className="py-8">
-        <Card className="max-w-xl mx-auto rounded-3xl border-2 border-success/40 bg-gradient-to-br from-card via-card to-success-surface/20 p-8 sm:p-10 text-center shadow-card">
+        <Card className="max-w-xl mx-auto rounded-panel border border-success/30 bg-success-surface/40 p-8 sm:p-10 text-center shadow-card">
           <div className="mx-auto flex size-24 items-center justify-center rounded-3xl bg-success-surface">
             <PethMascot mood="celebrating" size={80} />
           </div>
@@ -33,7 +33,7 @@ export default function CheckoutSucessoPage() {
             <Button
               asChild
               size="lg"
-              className="w-full sm:w-auto shadow-tactile font-bold"
+              className="w-full sm:w-auto font-bold"
             >
               <Link href="/app">
                 Ir para o Treino de Hoje

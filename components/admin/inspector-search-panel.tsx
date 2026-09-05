@@ -152,7 +152,7 @@ export function InspectorSearchPanel() {
           {results.assessments.length > 0 ? (
             <Card className="p-5">
               <div className="flex items-center gap-2 text-sm font-semibold text-foreground mb-3">
-                <ClipboardList className="size-4 text-primary" />
+                <ClipboardList className="size-4 text-primary-strong" />
                 <h3>Avaliações Comportamentais ({results.assessments.length})</h3>
               </div>
               <div className="divide-y divide-border">
@@ -195,7 +195,7 @@ export function InspectorSearchPanel() {
           {results.entitlements.length > 0 ? (
             <Card className="p-5">
               <div className="flex items-center gap-2 text-sm font-semibold text-foreground mb-3">
-                <CreditCard className="size-4 text-primary" />
+                <CreditCard className="size-4 text-primary-strong" />
                 <h3>Habilitações e Assinaturas ({results.entitlements.length})</h3>
               </div>
               <div className="divide-y divide-border">
@@ -238,7 +238,7 @@ export function InspectorSearchPanel() {
           {results.emailLogs.length > 0 ? (
             <Card className="p-5">
               <div className="flex items-center gap-2 text-sm font-semibold text-foreground mb-3">
-                <Mail className="size-4 text-primary" />
+                <Mail className="size-4 text-primary-strong" />
                 <h3>Logs de Entrega Transacional ({results.emailLogs.length})</h3>
               </div>
               <div className="divide-y divide-border">

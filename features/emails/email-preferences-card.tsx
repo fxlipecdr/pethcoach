@@ -71,7 +71,7 @@ export function EmailPreferencesCard({ initialPreferences }: EmailPreferencesCar
   return (
     <Card id="emails">
       <div className="flex items-center gap-3 mb-4">
-        <div className="p-2 rounded-xl bg-primary/10 text-primary">
+        <div className="p-2 rounded-xl bg-primary/10 text-primary-strong">
           <Bell className="w-5 h-5" aria-hidden="true" />
         </div>
         <div>
@@ -98,7 +98,7 @@ export function EmailPreferencesCard({ initialPreferences }: EmailPreferencesCar
             checked={preferences.trainingReminders && !preferences.unsubscribedAll}
             disabled={isPending || preferences.unsubscribedAll}
             onChange={() => handleToggle("trainingReminders")}
-            className="mt-1 h-5 w-5 rounded border-border text-primary focus:ring-primary focus:ring-2 cursor-pointer disabled:opacity-40"
+            className="mt-1 h-5 w-5 rounded border-border text-primary-strong focus:ring-primary focus:ring-2 cursor-pointer disabled:opacity-40"
             aria-label={CATEGORY_LABELS.training_reminders.title}
           />
         </label>
@@ -118,7 +118,7 @@ export function EmailPreferencesCard({ initialPreferences }: EmailPreferencesCar
             checked={preferences.milestoneCelebrations && !preferences.unsubscribedAll}
             disabled={isPending || preferences.unsubscribedAll}
             onChange={() => handleToggle("milestoneCelebrations")}
-            className="mt-1 h-5 w-5 rounded border-border text-primary focus:ring-primary focus:ring-2 cursor-pointer disabled:opacity-40"
+            className="mt-1 h-5 w-5 rounded border-border text-primary-strong focus:ring-primary focus:ring-2 cursor-pointer disabled:opacity-40"
             aria-label={CATEGORY_LABELS.milestone_celebrations.title}
           />
         </label>
@@ -138,7 +138,7 @@ export function EmailPreferencesCard({ initialPreferences }: EmailPreferencesCar
             checked={preferences.billingNotifications && !preferences.unsubscribedAll}
             disabled={isPending || preferences.unsubscribedAll}
             onChange={() => handleToggle("billingNotifications")}
-            className="mt-1 h-5 w-5 rounded border-border text-primary focus:ring-primary focus:ring-2 cursor-pointer disabled:opacity-40"
+            className="mt-1 h-5 w-5 rounded border-border text-primary-strong focus:ring-primary focus:ring-2 cursor-pointer disabled:opacity-40"
             aria-label={CATEGORY_LABELS.billing_notifications.title}
           />
         </label>
@@ -158,7 +158,7 @@ export function EmailPreferencesCard({ initialPreferences }: EmailPreferencesCar
             checked={preferences.marketingTips && !preferences.unsubscribedAll}
             disabled={isPending || preferences.unsubscribedAll}
             onChange={() => handleToggle("marketingTips")}
-            className="mt-1 h-5 w-5 rounded border-border text-primary focus:ring-primary focus:ring-2 cursor-pointer disabled:opacity-40"
+            className="mt-1 h-5 w-5 rounded border-border text-primary-strong focus:ring-primary focus:ring-2 cursor-pointer disabled:opacity-40"
             aria-label={CATEGORY_LABELS.marketing_tips.title}
           />
         </label>
@@ -186,7 +186,7 @@ export function EmailPreferencesCard({ initialPreferences }: EmailPreferencesCar
 
       {isPending && (
         <div className="mt-3 flex items-center gap-2 text-xs text-muted-foreground">
-          <Loader2 className="w-3.5 h-3.5 animate-spin text-primary" aria-hidden="true" />
+          <Loader2 className="w-3.5 h-3.5 animate-spin text-primary-strong" aria-hidden="true" />
           <span>Salvando alterações...</span>
         </div>
       )}

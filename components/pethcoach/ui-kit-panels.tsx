@@ -94,7 +94,7 @@ export function UIKitPanels() {
             </div>
           </DrawerContent>
         </Drawer>
-        <p aria-live="polite" className="mt-3 min-h-5 text-xs text-primary">
+        <p aria-live="polite" className="mt-3 min-h-5 text-xs text-primary-strong">
           {message}
         </p>
       </Card>

@@ -72,7 +72,7 @@ export function WorkspaceNavigation({
             className={cn(
               "flex min-h-12 items-center gap-3 rounded-control px-3 text-sm transition-colors",
               active
-                ? "bg-secondary font-semibold text-primary"
+                ? "bg-secondary font-semibold text-primary-strong"
                 : "text-muted-foreground hover:bg-muted hover:text-foreground",
             )}
           >
@@ -95,18 +95,34 @@ export function WorkspaceNavigation({
 export function WorkspaceMenu({
   area,
   preview,
+  variant = "header",
 }: {
   area: WorkspaceArea;
   preview?: boolean;
+  /** "tab" desenha o gatilho como quarto item da barra inferior (§29). */
+  variant?: "header" | "tab";
 }) {
   const title = area === "app" ? "Menu da área pessoal" : "Menu administrativo";
   return (
     <div className="lg:hidden">
       <Sheet>
         <SheetTrigger asChild>
-          <Button variant="outline" className="size-11 p-0" aria-label={title}>
-            <Menu aria-hidden="true" />
-          </Button>
+          {variant === "tab" ? (
+            <button
+              type="button"
+              aria-label={title}
+              className="flex min-h-16 w-full cursor-pointer flex-col items-center justify-center gap-1 px-1 py-2 text-[11px] font-bold text-muted-foreground transition-colors duration-[150ms]"
+            >
+              <span className="flex h-7 w-11 items-center justify-center rounded-pill">
+                <Menu className="size-5" aria-hidden="true" />
+              </span>
+              Menu
+            </button>
+          ) : (
+            <Button variant="outline" className="size-11 p-0" aria-label={title}>
+              <Menu aria-hidden="true" />
+            </Button>
+          )}
         </SheetTrigger>
         <SheetContent>
           <SheetTitle className="sr-only">{title}</SheetTitle>

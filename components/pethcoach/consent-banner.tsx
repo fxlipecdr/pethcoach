@@ -105,10 +105,10 @@ export function ConsentBanner() {
       aria-label="Consentimento de privacidade e cookies"
       className="fixed bottom-4 left-4 right-4 z-50 max-w-lg mx-auto sm:left-auto sm:right-6 sm:mx-0 animate-in fade-in slide-in-from-bottom-5 duration-300"
     >
-      <Card className="p-5 sm:p-6 shadow-2xl border-2 border-primary/20 bg-card/95 backdrop-blur-md rounded-2xl">
+      <Card className="p-5 sm:p-6 shadow-card-hover border border-border bg-card/95 backdrop-blur-md rounded-panel">
         <div className="flex items-start justify-between gap-3">
           <div className="flex items-center gap-2.5 text-foreground font-bold text-base">
-            <div className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <div className="flex size-9 items-center justify-center rounded-xl bg-primary/10 text-primary-strong">
               <Cookie className="size-5" aria-hidden="true" />
             </div>
             <span>Privacidade e respeito ao seu ritmo</span>
@@ -133,7 +133,7 @@ export function ConsentBanner() {
           <Button
             size="sm"
             onClick={() => handleChoice("granted")}
-            className="w-full sm:w-auto font-bold shadow-tactile"
+            className="w-full sm:w-auto font-bold"
           >
             Aceitar analíticos
           </Button>
@@ -150,11 +150,11 @@ export function ConsentBanner() {
         <div className="mt-3 flex items-center justify-between text-[11px] text-muted-foreground">
           <Link
             href="/privacidade"
-            className="underline underline-offset-2 hover:text-primary transition-colors inline-flex items-center min-h-6 py-1"
+            className="underline underline-offset-2 hover:text-primary-strong transition-colors inline-flex items-center min-h-6 py-1"
           >
             Política de Privacidade
           </Link>
-          <span className="inline-flex items-center gap-1 text-primary">
+          <span className="inline-flex items-center gap-1 text-primary-strong">
             <ShieldCheck className="size-3.5" aria-hidden="true" />
             Em conformidade com a LGPD
           </span>

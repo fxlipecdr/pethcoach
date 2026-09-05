@@ -255,7 +255,7 @@ export function QuizEngine({
           diagnóstico veterinário e nenhuma cobrança será iniciada.
         </p>
         <div className="mt-6 flex items-start gap-3 rounded-2xl bg-secondary/70 p-4 text-foreground">
-          <ShieldCheck className="mt-0.5 size-5 shrink-0 text-primary" aria-hidden="true" />
+          <ShieldCheck className="mt-0.5 size-5 shrink-0 text-primary-strong" aria-hidden="true" />
           <p className="text-sm leading-relaxed">
             Suas respostas ficam associadas a uma credencial segura neste navegador
             por até sete dias. O resultado e a triagem de segurança entram nas

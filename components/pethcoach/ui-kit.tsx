@@ -128,7 +128,7 @@ export function UIKit() {
           id="sample-feedback"
           role="status"
           aria-live="polite"
-          className="mt-4 min-h-7 text-sm font-medium text-primary"
+          className="mt-4 min-h-7 text-sm font-medium text-primary-strong"
         >
           {feedback ? (
             <span className="flex items-center gap-2">
@@ -283,7 +283,7 @@ export function UIKit() {
       <UIKitPanels />
       <div className="flex gap-3 rounded-2xl border border-border bg-secondary p-5">
         <ShieldCheck
-          className="size-5 shrink-0 text-primary"
+          className="size-5 shrink-0 text-primary-strong"
           aria-hidden="true"
         />
         <div>

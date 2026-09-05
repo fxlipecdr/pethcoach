@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { Brand } from "@/components/pethcoach/site-shell";
 import { UIKit } from "@/components/pethcoach/ui-kit";
+import { UIKitPlayground } from "@/components/pethcoach/ui-kit-playground";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 
@@ -11,7 +12,7 @@ export default function UIKitPage() {
     <main id="conteudo" className="page-width max-w-4xl py-10">
       <Brand />
       <div className="py-10">
-        <p className="text-xs font-semibold tracking-widest text-primary">
+        <p className="text-xs font-semibold tracking-widest text-primary-strong">
           SOMENTE EM DESENVOLVIMENTO
         </p>
         <h1 className="mt-3 text-4xl font-medium tracking-tight">
@@ -57,7 +58,7 @@ export default function UIKitPage() {
               <span className="flex items-center justify-between gap-3 text-sm font-semibold">
                 {item.title}
                 <ArrowUpRight
-                  className="size-4 text-primary"
+                  className="size-4 text-primary-strong"
                   aria-hidden="true"
                 />
               </span>
@@ -68,6 +69,9 @@ export default function UIKitPage() {
           ))}
         </div>
       </section>
+      <div className="mb-10">
+        <UIKitPlayground />
+      </div>
       <UIKit />
     </main>
   );

@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 export function AccessState() {
   return (
     <Card className="p-6 sm:p-8">
-      <span className="mb-6 inline-flex size-12 items-center justify-center rounded-control bg-secondary text-primary">
+      <span className="mb-6 inline-flex size-12 items-center justify-center rounded-control bg-secondary text-primary-strong">
         <Mail className="size-5" aria-hidden="true" />
       </span>
       <Badge className="mb-5 ml-3">Em preparação</Badge>

@@ -22,7 +22,7 @@ export function ObservableSummaryView({ summary }: ObservableSummaryViewProps) {
       <div className="rounded-3xl border border-border/80 bg-card p-6 sm:p-8 shadow-sm">
         <div className="flex items-center gap-2">
           <Badge>
-            <Sparkles className="size-3.5 text-primary" aria-hidden="true" />
+            <Sparkles className="size-3.5 text-primary-strong" aria-hidden="true" />
             SÍNTESE DAS SUAS RESPOSTAS
           </Badge>
         </div>
@@ -53,7 +53,7 @@ export function ObservableSummaryView({ summary }: ObservableSummaryViewProps) {
 
         <div className="mt-6 rounded-2xl bg-secondary/50 p-5 border border-border/60">
           <h3 className="flex items-center gap-2 text-sm font-bold text-foreground">
-            <Target className="size-4 text-primary" aria-hidden="true" />
+            <Target className="size-4 text-primary-strong" aria-hidden="true" />
             Focos prioritários de manejo e treino positivo
           </h3>
           <ul className="mt-3 space-y-2.5 text-sm text-muted-foreground">
@@ -77,7 +77,7 @@ export function ObservableSummaryView({ summary }: ObservableSummaryViewProps) {
                 className="rounded-2xl border border-border/60 bg-secondary/30 p-4 text-xs transition-colors hover:border-primary/40"
               >
                 <p className="font-semibold text-foreground">{item.questionPrompt}</p>
-                <p className="mt-1.5 font-medium text-primary">
+                <p className="mt-1.5 font-medium text-primary-strong">
                   {item.answerLabel}
                 </p>
               </div>

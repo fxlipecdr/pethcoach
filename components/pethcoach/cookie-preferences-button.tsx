@@ -1,13 +1,21 @@
 "use client";
+import { cn } from "@/lib/utils";
 
-export function CookiePreferencesButton() {
+export function CookiePreferencesButton({
+  className,
+}: {
+  className?: string;
+}) {
   return (
     <button
       type="button"
       onClick={() => {
         window.dispatchEvent(new CustomEvent("peth:open_consent_preferences"));
       }}
-      className="nav-link hover:text-primary transition-colors text-left"
+      className={cn(
+        "nav-link text-left transition-colors hover:text-primary-strong",
+        className,
+      )}
     >
       Preferências de cookies
     </button>

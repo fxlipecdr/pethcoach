@@ -69,7 +69,7 @@ export function TimelineView({
       {/* 1. Marcos Comportamentais (Milestones) */}
       <div>
         <div className="flex items-center gap-3">
-          <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-secondary text-primary">
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-secondary text-primary-strong">
             <Award className="size-5" aria-hidden="true" />
           </div>
           <div>
@@ -93,8 +93,8 @@ export function TimelineView({
                 key={m.key}
                 className={`rounded-2xl border-2 p-4 transition-all duration-150 ${
                   isUnlocked
-                    ? "border-primary/40 bg-secondary/30 shadow-xs"
-                    : "border-border/80 bg-card shadow-2xs"
+                    ? "border-primary/40 bg-secondary/30 shadow-soft"
+                    : "border-border/80 bg-card shadow-soft"
                 }`}
               >
                 <div className="flex items-start justify-between gap-3">
@@ -136,7 +136,7 @@ export function TimelineView({
 
       {/* 2. Adaptações Ativas no Cronograma */}
       {adaptations.length > 0 ? (
-        <Card className="rounded-3xl border-2 border-primary/20 bg-secondary/30 p-5">
+        <Card className="rounded-panel border border-primary/20 bg-secondary/35 p-5">
           <div className="flex items-start gap-3.5">
             <PethMascot mood="encouraging" size={48} className="shrink-0" />
             <div>
@@ -157,7 +157,7 @@ export function TimelineView({
       {/* 3. Linha do Tempo de Sessões (Check-ins) */}
       <div>
         <div className="flex items-center gap-3">
-          <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-secondary text-primary">
+          <div className="flex size-10 shrink-0 items-center justify-center rounded-xl bg-secondary text-primary-strong">
             <Clock className="size-5" aria-hidden="true" />
           </div>
           <div>
@@ -183,7 +183,7 @@ export function TimelineView({
               return (
                 <div
                   key={checkin.id}
-                  className="rounded-2xl border-2 border-border bg-card p-4.5 transition-all shadow-xs"
+                  className="rounded-card border border-border bg-card p-4.5 transition-all shadow-soft"
                 >
                   <div className="flex flex-wrap items-center justify-between gap-2">
                     <div className="flex items-center gap-2">

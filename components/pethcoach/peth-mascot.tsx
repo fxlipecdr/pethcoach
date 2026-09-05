@@ -19,10 +19,22 @@ interface PethMascotProps extends ComponentProps<"svg"> {
 }
 
 /**
- * PethMascot: O mascote canino oficial do PethCoach.
- * Um cãozinho carismático, amigável e estilizado em SVG vetorial de alta definição.
- * 100% responsivo, sem dependência de assets externos e alinhado à paleta oficial.
+ * Peth, o mascote do PethCoach — DESIGN.md §15 e §32.
+ *
+ * Desenhado com as mesmas regras dos traços de `doodles.tsx`: cor chapada,
+ * contorno `--ink`, junções arredondadas e nenhuma sombra ou gradiente.
+ * A silhueta é a assinatura: cabeça grande, uma orelha em pé e outra caída,
+ * mancha em volta de um olho e coleira roxa com plaquinha lime.
  */
+const FUR = "#F2B14E";
+const FUR_DARK = "#DC9333";
+const CREAM = "#FFF3E2";
+const INNER_EAR = "#FFC2B4";
+const INK = "#17211B";
+const COLLAR = "#6757E8";
+const TAG = "#DDF56D";
+const TONGUE = "#FF796D";
+
 export function PethMascot({
   mood = "neutral",
   size = 96,
@@ -31,6 +43,9 @@ export function PethMascot({
   ...props
 }: PethMascotProps) {
   const isAccessible = Boolean(ariaLabel);
+  const resting = mood === "resting";
+  const beaming = mood === "happy" || mood === "celebrating";
+  const wideEyed = mood === "surprised";
 
   return (
     <svg
@@ -42,347 +57,366 @@ export function PethMascot({
       role={isAccessible ? "img" : undefined}
       aria-label={ariaLabel}
       aria-hidden={!isAccessible ? "true" : undefined}
-      className={cn("shrink-0 transition-transform duration-200 select-none", className)}
+      stroke={INK}
+      strokeWidth={3}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={cn("shrink-0 select-none", className)}
       {...props}
     >
-      <defs>
-        {/* Sombras suaves para profundidade */}
-        <filter id="mascot-shadow" x="-10%" y="-10%" width="120%" height="120%">
-          <feDropShadow dx="0" dy="2" stdDeviation="2" floodOpacity="0.08" />
-        </filter>
-        {/* Gradiente dourado suave para os pelos */}
-        <linearGradient id="fur-gradient" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#F7B23B" />
-          <stop offset="100%" stopColor="#E59424" />
-        </linearGradient>
-        {/* Orelhas em tom mais acolhedor */}
-        <linearGradient id="ear-gradient" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#E2891E" />
-          <stop offset="100%" stopColor="#C97412" />
-        </linearGradient>
-        {/* Focinho creme suave */}
-        <linearGradient id="muzzle-gradient" x1="0" y1="0" x2="0" y2="1">
-          <stop offset="0%" stopColor="#FFF7EC" />
-          <stop offset="100%" stopColor="#FFEACC" />
-        </linearGradient>
-      </defs>
-
-      {/* Sombra de chão */}
-      <ellipse cx="60" cy="112" rx="36" ry="5" fill="#0B1F33" fillOpacity="0.08" />
-
-      {/* Elementos especiais conforme o mood */}
-      {mood === "celebrating" && (
-        <g className="animate-pulse">
-          {/* Confetes e estrelas de celebração */}
-          <circle cx="20" cy="24" r="3.5" fill="#FC6F4D" />
-          <circle cx="98" cy="22" r="3" fill="#0F766E" />
-          <circle cx="26" cy="40" r="2.5" fill="#2E9E68" />
-          <circle cx="94" cy="42" r="2.5" fill="#FC6F4D" />
-          {/* Estrelinhas */}
-          <path d="M58 8 L60 14 L66 16 L60 18 L58 24 L56 18 L50 16 L56 14 Z" fill="#F7B23B" />
-          <path d="M18 16 L19.5 20 L23.5 21.5 L19.5 23 L18 27 L16.5 23 L12.5 21.5 L16.5 20 Z" fill="#2E9E68" />
-          <path d="M102 14 L103.5 17.5 L107 18.5 L103.5 19.5 L102 23 L100.5 19.5 L97 18.5 L100.5 17.5 Z" fill="#FC6F4D" />
-        </g>
-      )}
-
-      {mood === "thinking" && (
-        <g>
-          {/* Balãozinho de pensamento */}
-          <circle cx="86" cy="28" r="3" fill="#DDF3EF" stroke="#0F766E" strokeWidth="1.2" />
-          <circle cx="92" cy="20" r="4.5" fill="#DDF3EF" stroke="#0F766E" strokeWidth="1.2" />
-          <circle cx="102" cy="12" r="7" fill="#DDF3EF" stroke="#0F766E" strokeWidth="1.5" />
-          <text x="99" y="16" fill="#0F766E" fontSize="10" fontWeight="bold" fontFamily="sans-serif">?</text>
-        </g>
-      )}
-
-      {mood === "encouraging" && (
-        <g>
-          {/* Coraçãozinho flutuante de afeto */}
-          <path
-            d="M96 22 C96 17 103 14 106 19 C109 14 116 17 116 22 C116 28 106 34 106 34 C106 34 96 28 96 22 Z"
-            fill="#FC6F4D"
-            filter="drop-shadow(0 2px 4px rgba(252, 111, 77, 0.3))"
-          />
-        </g>
-      )}
-
-      {mood === "resting" && (
-        <g>
-          {/* Símbolos zZz de sono e descanso tranquilo */}
-          <text x="88" y="22" fill="#586875" fontSize="9" fontWeight="bold" opacity="0.6">z</text>
-          <text x="96" y="16" fill="#586875" fontSize="11" fontWeight="bold" opacity="0.8">Z</text>
-          <text x="106" y="10" fill="#0F766E" fontSize="14" fontWeight="bold">Z</text>
-        </g>
-      )}
-
-      {/* CORPO DO CÃO */}
+      {/* Chão */}
       <ellipse
         cx="60"
-        cy={mood === "resting" ? 84 : 80}
-        rx={mood === "resting" ? 34 : 28}
-        ry={mood === "resting" ? 22 : 26}
-        fill="url(#fur-gradient)"
+        cy="113"
+        rx={resting ? 36 : 30}
+        ry="4"
+        fill={INK}
+        fillOpacity="0.07"
+        stroke="none"
       />
 
-      {/* Mancha peitoral mais clara */}
-      <path
-        d="M50 72 C50 64 70 64 70 72 C70 88 50 88 50 72 Z"
-        fill="url(#muzzle-gradient)"
-        opacity="0.95"
-      />
+      {/* Adereços de humor, atrás do corpo */}
+      {mood === "celebrating" ? (
+        <g>
+          <path
+            d="M60 6c.9 5.2 3.8 8.1 9 9-5.2 1.1-8.1 4-9 9-.9-5-3.8-7.9-9-9 5.2-.9 8.1-3.8 9-9Z"
+            fill={TAG}
+          />
+          <path
+            d="M17 20c.7 3.6 2.6 5.6 6.2 6.3-3.6.7-5.5 2.7-6.2 6.2-.7-3.5-2.7-5.5-6.2-6.2 3.6-.7 5.5-2.7 6.2-6.3Z"
+            fill={TONGUE}
+          />
+          <circle cx="104" cy="24" r="4" fill={COLLAR} />
+          <circle cx="14" cy="47" r="3" fill={TAG} />
+          <circle cx="107" cy="48" r="3.2" fill={TONGUE} />
+        </g>
+      ) : null}
 
-      {/* PATAS TRASEIRAS / CORPO INFERIOR */}
-      {mood !== "resting" ? (
-        <>
-          <ellipse cx="40" cy="104" rx="10" ry="7" fill="url(#ear-gradient)" />
-          <ellipse cx="80" cy="104" rx="10" ry="7" fill="url(#ear-gradient)" />
-          {/* Patas dianteiras padrão */}
-          <ellipse cx="50" cy="105" rx="8" ry="6" fill="#FFEACC" />
-          <ellipse cx="70" cy="105" rx="8" ry="6" fill="#FFEACC" />
-        </>
-      ) : (
-        <>
-          {/* Pata aconchegada */}
-          <ellipse cx="44" cy="98" rx="8" ry="5" fill="#FFEACC" />
-          <ellipse cx="76" cy="98" rx="8" ry="5" fill="#FFEACC" />
-        </>
-      )}
+      {mood === "thinking" ? (
+        <g>
+          <circle cx="93" cy="34" r="3.4" fill={CREAM} />
+          <circle cx="100" cy="25" r="5" fill={CREAM} />
+          <circle cx="108" cy="13" r="8.4" fill={CREAM} />
+          <path
+            d="M105.4 10.2c0-1.9 1.5-3.2 3.2-3.2 1.8 0 3.2 1.2 3.2 3 0 2.6-3 2.6-3 5"
+            strokeWidth="2.2"
+          />
+          <circle cx="108.6" cy="18.4" r="1.2" fill={INK} stroke="none" />
+        </g>
+      ) : null}
 
-      {/* RABO FELIZ */}
-      {mood !== "resting" ? (
+      {mood === "encouraging" ? (
         <path
-          d={
-            mood === "happy" || mood === "celebrating"
-              ? "M84 76 C96 74 104 62 102 54 C100 52 96 56 94 66 C92 72 86 78 84 76 Z"
-              : "M84 78 C94 78 100 70 98 64 C96 62 93 66 90 72 C88 76 84 78 84 78 Z"
-          }
-          fill="url(#ear-gradient)"
+          d="M104 20c2.6-3.6 8-2 8 2.4 0 4-5 8-8 10.6-3-2.6-8-6.6-8-10.6 0-4.4 5.4-6 8-2.4Z"
+          fill={TONGUE}
         />
       ) : null}
 
-      {/* ORELHAS (desenhadas atrás da cabeça) */}
-      {mood === "happy" || mood === "surprised" ? (
-        // Orelhas empinadas de entusiasmo
-        <>
+      {resting ? (
+        <g stroke="none" fill={INK} fillOpacity="0.55">
+          <path d="M88 34h7l-7 8h7" stroke={INK} strokeWidth="2" fill="none" />
           <path
-            d="M34 46 C24 36 24 16 36 24 C44 30 42 46 34 46 Z"
-            fill="url(#ear-gradient)"
-          />
-          <path
-            d="M86 46 C96 36 96 16 84 24 C76 30 78 46 86 46 Z"
-            fill="url(#ear-gradient)"
-          />
-          {/* Parte interna rosada */}
-          <path d="M33 38 C28 30 29 20 36 25 C40 30 38 40 33 38 Z" fill="#FFC7B2" opacity="0.8" />
-          <path d="M87 38 C92 30 91 20 84 25 C80 30 82 40 87 38 Z" fill="#FFC7B2" opacity="0.8" />
-        </>
-      ) : mood === "thinking" ? (
-        // Uma orelha empinada e outra caída
-        <>
-          <path
-            d="M36 46 C24 38 22 22 34 26 C42 30 42 46 36 46 Z"
-            fill="url(#ear-gradient)"
-          />
-          <path
-            d="M84 46 C98 52 102 72 90 74 C82 72 82 56 84 46 Z"
-            fill="url(#ear-gradient)"
-          />
-        </>
-      ) : (
-        // Orelhas caídas carismáticas normais
-        <>
-          <path
-            d="M36 46 C22 52 18 72 30 74 C38 72 38 56 36 46 Z"
-            fill="url(#ear-gradient)"
-          />
-          <path
-            d="M84 46 C98 52 102 72 90 74 C82 72 82 56 84 46 Z"
-            fill="url(#ear-gradient)"
-          />
-          <path d="M29 55 C22 60 21 68 28 70 C33 70 33 61 29 55 Z" fill="#FFC7B2" opacity="0.75" />
-          <path d="M91 55 C98 60 99 68 92 70 C87 70 87 61 91 55 Z" fill="#FFC7B2" opacity="0.75" />
-        </>
-      )}
-
-      {/* CABEÇA */}
-      <circle
-        cx="60"
-        cy={mood === "resting" ? 56 : 50}
-        r="27"
-        fill="url(#fur-gradient)"
-      />
-
-      {/* FOCINHO CREME */}
-      <ellipse
-        cx="60"
-        cy={mood === "resting" ? 64 : 58}
-        rx="16"
-        ry="12"
-        fill="url(#muzzle-gradient)"
-      />
-
-      {/* NARIZ CORAÇÃOZINHO PRETO */}
-      <path
-        d={
-          mood === "resting"
-            ? "M56 59 C56 57 58 56 60 58 C62 56 64 57 64 59 C64 62 60 64 60 64 C60 64 56 62 56 59 Z"
-            : "M55 53 C55 50.5 57.5 49 60 51.5 C62.5 49 65 50.5 65 53 C65 57 60 60 60 60 C60 60 55 57 55 53 Z"
-        }
-        fill="#0B1F33"
-      />
-      {/* Brilho no nariz */}
-      <circle cx="58.5" cy={mood === "resting" ? 59 : 53} r="1" fill="#FFFFFF" opacity="0.9" />
-
-      {/* OLHOS CONFORME O MOOD */}
-      {mood === "happy" || mood === "celebrating" ? (
-        // Olhinhos fechados de pura felicidade (^ _ ^)
-        <g stroke="#0B1F33" strokeWidth="2.8" strokeLinecap="round" fill="none">
-          <path d="M47 44 C49 40 53 40 55 44" />
-          <path d="M65 44 C67 40 71 40 73 44" />
-        </g>
-      ) : mood === "resting" ? (
-        // Olhinhos dormindo calmos
-        <g stroke="#0B1F33" strokeWidth="2.5" strokeLinecap="round" fill="none">
-          <path d="M47 50 C49 53 53 53 55 50" />
-          <path d="M65 50 C67 53 71 53 73 50" />
-        </g>
-      ) : mood === "surprised" ? (
-        // Olhos arregalados curiosos
-        <>
-          <circle cx="51" cy="44" r="6" fill="#0B1F33" />
-          <circle cx="69" cy="44" r="6" fill="#0B1F33" />
-          <circle cx="49.5" cy="42" r="2.2" fill="#FFFFFF" />
-          <circle cx="67.5" cy="42" r="2.2" fill="#FFFFFF" />
-          <circle cx="52.5" cy="45.5" r="1.1" fill="#FFFFFF" />
-          <circle cx="70.5" cy="45.5" r="1.1" fill="#FFFFFF" />
-        </>
-      ) : (
-        // Olhos expressivos padrão brilhantes
-        <>
-          <circle cx="51" cy="44" r="4.8" fill="#0B1F33" />
-          <circle cx="69" cy="44" r="4.8" fill="#0B1F33" />
-          <circle cx="49.5" cy="42.5" r="1.8" fill="#FFFFFF" />
-          <circle cx="67.5" cy="42.5" r="1.8" fill="#FFFFFF" />
-          <circle cx="52" cy="45.5" r="0.9" fill="#FFFFFF" />
-          <circle cx="70" cy="45.5" r="0.9" fill="#FFFFFF" />
-          {/* Sobrancelhas sutis expressivas */}
-          <ellipse cx="51" cy="37" rx="3" ry="1.2" fill="#C97412" />
-          <ellipse cx="69" cy="37" rx="3" ry="1.2" fill="#C97412" />
-        </>
-      )}
-
-      {/* BOCA E LÍNGUA */}
-      {mood === "happy" || mood === "celebrating" ? (
-        // Boca aberta alegre com linguinha rosa
-        <g>
-          <path
-            d="M55 60 C55 66 65 66 65 60 Z"
-            fill="#B42318"
-          />
-          <path
-            d="M57 61 C57 66 63 66 63 61 Z"
-            fill="#FC6F4D"
+            d="M99 20h9l-9 11h9"
+            stroke={INK}
+            strokeWidth="2.4"
+            fill="none"
           />
         </g>
-      ) : mood === "surprised" ? (
-        // Boca redondinha de "ó!"
-        <circle cx="60" cy="63" r="2.5" fill="#0B1F33" />
-      ) : mood === "resting" ? (
-        // Boquinha sutil serena
+      ) : null}
+
+      {/* Rabo */}
+      {!resting ? (
         <path
-          d="M58 65 Q60 67 62 65"
-          stroke="#0B1F33"
-          strokeWidth="1.8"
-          strokeLinecap="round"
-          fill="none"
+          d={
+            beaming
+              ? "M87 82c11-1 18-11 16-21-1-4-6-3-6 2 0 8-4 12-11 13Z"
+              : "M87 86c11 1 19-6 19-15 0-4-5-4-6 1-1 7-6 9-13 8Z"
+          }
+          fill={FUR_DARK}
         />
       ) : (
-        // Sorriso acolhedor em W
         <path
-          d="M55 60 Q57.5 63 60 61 Q62.5 63 65 60"
-          stroke="#0B1F33"
-          strokeWidth="2"
-          strokeLinecap="round"
-          fill="none"
+          d="M92 96c10-2 15-9 13-15-1-3-5-2-5 2-1 5-4 7-9 7Z"
+          fill={FUR_DARK}
         />
       )}
 
-      {/* BOCHECHAS ROSADAS */}
-      <circle cx="44" cy="52" r="3.5" fill="#FC6F4D" fillOpacity="0.25" />
-      <circle cx="76" cy="52" r="3.5" fill="#FC6F4D" fillOpacity="0.25" />
+      {/* Orelhas, atrás da cabeça. A assimetria é a assinatura do Peth. */}
+      {resting ? (
+        <>
+          <path
+            d="M35 52c-11 3-15 17-6 22 6 2 10-8 10-18Z"
+            fill={FUR_DARK}
+          />
+          <path
+            d="M86 52c11 3 15 17 6 22-6 2-10-8-10-18Z"
+            fill={FUR_DARK}
+          />
+        </>
+      ) : (
+        <>
+          {/* Esquerda: em pé. Direita: caída. A assimetria é a assinatura. */}
+          <path
+            d="M39 34C24 33 11 15 21 6c11-9 24 8 26 27Z"
+            fill={FUR_DARK}
+          />
+          <path d="M33 26c-7-7-10-14-6-16 4-2 10 8 12 17Z" fill={INNER_EAR} />
+          <path
+            d={
+              wideEyed || mood === "celebrating"
+                ? "M81 33c12-16 27-16 30-5 3 11-11 19-25 20Z"
+                : "M81 31c17-4 29 8 26 25-3 15-19 15-25 2Z"
+            }
+            fill={FUR_DARK}
+          />
+          <path
+            d={
+              wideEyed || mood === "celebrating"
+                ? "M87 29c7-9 15-10 17-5 2 6-6 11-14 12Z"
+                : "M88 38c9-2 15 5 13 14-2 8-10 7-13-1Z"
+            }
+            fill={INNER_EAR}
+          />
+        </>
+      )}
 
-      {/* COLEIRA TEAL OFICIAL (#0F766E) */}
+      {/* Corpo */}
       <path
         d={
-          mood === "resting"
-            ? "M44 74 C44 71 76 71 76 74 C76 77 44 77 44 74 Z"
-            : "M43 68 C43 64 77 64 77 68 C77 73 43 73 43 68 Z"
+          resting
+            ? "M60 70c19 0 33 10 33 22 0 11-15 15-33 15S27 103 27 92c0-12 14-22 33-22Z"
+            : "M60 62c17 0 29 14 29 29 0 14-13 20-29 20s-29-6-29-20c0-15 12-29 29-29Z"
         }
-        fill="#0F766E"
-      />
-      {/* Detalhe da costura da coleira */}
-      <path
-        d={
-          mood === "resting"
-            ? "M46 74 C50 73 70 73 74 74"
-            : "M45 68.5 C50 67 70 67 75 68.5"
-        }
-        stroke="#DDF3EF"
-        strokeWidth="0.8"
-        strokeDasharray="2 1"
-        fill="none"
+        fill={FUR}
       />
 
-      {/* MEDALHA DE CORAÇÃO CORAL (#FC6F4D) */}
-      <g transform={mood === "resting" ? "translate(0, 6)" : "translate(0, 0)"}>
-        {/* Elo de metal */}
-        <circle cx="60" cy="71" r="2" stroke="#E59424" strokeWidth="1" fill="none" />
-        {/* Coraçãozinho com a cor oficial --heart */}
+      {/* Peito claro */}
+      <path
+        d={
+          resting
+            ? "M60 82c9 0 16 5 16 12s-7 10-16 10-16-3-16-10 7-12 16-12Z"
+            : "M60 76c9 0 16 7 16 15s-7 13-16 13-16-5-16-13 7-15 16-15Z"
+        }
+        fill={CREAM}
+      />
+
+      {/* Patas da frente */}
+      {mood === "celebrating" ? (
+        <>
+          <ellipse
+            cx="29"
+            cy="55"
+            rx="8"
+            ry="11"
+            transform="rotate(-28 29 55)"
+            fill={FUR}
+          />
+          <ellipse
+            cx="91"
+            cy="55"
+            rx="8"
+            ry="11"
+            transform="rotate(28 91 55)"
+            fill={FUR}
+          />
+        </>
+      ) : mood === "pointing" ? (
+        <>
+          <ellipse cx="47" cy="105" rx="9" ry="6.5" fill={CREAM} />
+          <path
+            d="M74 88c10-3 24-5 30-2 4 2 3 7-2 8-8 2-20 2-28 0Z"
+            fill={FUR}
+          />
+          <circle cx="103" cy="89" r="5.5" fill={CREAM} />
+        </>
+      ) : mood === "encouraging" ? (
+        <>
+          <ellipse cx="47" cy="105" rx="9" ry="6.5" fill={CREAM} />
+          <ellipse
+            cx="88"
+            cy="62"
+            rx="7"
+            ry="10"
+            transform="rotate(28 88 62)"
+            fill={FUR}
+          />
+          <circle cx="94" cy="53" r="5.5" fill={CREAM} />
+        </>
+      ) : resting ? (
+        <>
+          <ellipse cx="44" cy="102" rx="10" ry="6" fill={CREAM} />
+          <ellipse cx="76" cy="102" rx="10" ry="6" fill={CREAM} />
+        </>
+      ) : (
+        <>
+          <ellipse cx="47" cy="105" rx="9" ry="6.5" fill={CREAM} />
+          <ellipse cx="73" cy="105" rx="9" ry="6.5" fill={CREAM} />
+        </>
+      )}
+
+      {/* Coleira roxa e plaquinha lime, iguais ao traço `collar` */}
+      <g transform={resting ? "translate(0 8)" : undefined}>
         <path
-          d="M56 74 C56 71.5 59 70.5 60 72.5 C61 70.5 64 71.5 64 74 C64 76.5 60 79.5 60 79.5 C60 79.5 56 76.5 56 74 Z"
-          fill="#FC6F4D"
+          d="M40 68c6 8 34 8 40 0v7c-6 8-34 8-40 0v-7Z"
+          fill={COLLAR}
         />
-        {/* Brilho na medalha */}
-        <circle cx="58" cy="73.5" r="0.8" fill="#FFFFFF" opacity="0.8" />
+        <path d="M60 79v4" strokeWidth="2.4" />
+        <circle cx="60" cy="89" r="6.4" fill={TAG} />
       </g>
 
-      {/* PATAS DIANTEIRAS ESPECIAIS (apontando ou comemorando) */}
-      {mood === "celebrating" && (
-        <g>
-          {/* Patas erguidas para cima! */}
-          <ellipse cx="32" cy="54" rx="7" ry="10" transform="rotate(-30 32 54)" fill="url(#fur-gradient)" />
-          <ellipse cx="88" cy="54" rx="7" ry="10" transform="rotate(30 88 54)" fill="url(#fur-gradient)" />
-          <circle cx="28" cy="46" r="5" fill="#FFEACC" />
-          <circle cx="92" cy="46" r="5" fill="#FFEACC" />
-        </g>
-      )}
+      {/* Cabeça */}
+      <path
+        d={
+          resting
+            ? "M60 26c17 0 30 12 30 27 0 16-13 25-30 25s-30-9-30-25c0-15 13-27 30-27Z"
+            : "M60 14c17 0 30 12 30 29 0 17-13 29-30 29S30 60 30 43c0-17 13-29 30-29Z"
+        }
+        fill={FUR}
+      />
 
-      {mood === "pointing" && (
-        <g>
-          {/* Pata esquerda apoiada, pata direita estendida apontando para a frente */}
-          <ellipse cx="48" cy="80" rx="6" ry="8" fill="url(#fur-gradient)" />
-          {/* Pata apontando */}
-          <path
-            d="M74 76 C82 74 94 72 98 74 C100 75 100 78 96 80 C90 82 80 82 74 80 Z"
-            fill="url(#fur-gradient)"
+      {/* Mancha em volta de um olho — a marca registrada do Peth */}
+      <ellipse
+        cx="74"
+        cy={resting ? 50 : 41}
+        rx="11.5"
+        ry="12.5"
+        transform={`rotate(10 74 ${resting ? 50 : 41})`}
+        fill={FUR_DARK}
+      />
+
+      {/* Focinho */}
+      <ellipse
+        cx="60"
+        cy={resting ? 62 : 56}
+        rx="18"
+        ry={resting ? 12 : 13}
+        fill={CREAM}
+      />
+
+      {/* Nariz */}
+      <path
+        d={
+          resting
+            ? "M54 58c0-2.6 3-4 6-1.4 3-2.6 6-1.2 6 1.4 0 3.4-6 7-6 7s-6-3.6-6-7Z"
+            : "M54 51c0-2.8 3-4.2 6-1.4 3-2.8 6-1.4 6 1.4 0 3.6-6 7.4-6 7.4S54 54.6 54 51Z"
+        }
+        fill={INK}
+        strokeWidth="2"
+      />
+
+      {/* Bochechas */}
+      <circle
+        cx="40"
+        cy={resting ? 58 : 52}
+        r="4.4"
+        fill={TONGUE}
+        fillOpacity="0.32"
+        stroke="none"
+      />
+      <circle
+        cx="80"
+        cy={resting ? 58 : 52}
+        r="4.4"
+        fill={TONGUE}
+        fillOpacity="0.32"
+        stroke="none"
+      />
+
+      {/* Olhos */}
+      {beaming ? (
+        <g strokeWidth="3.2" fill="none">
+          <path d="M43 40c2.4-4 6.6-4 9 0" />
+          <path d="M68 40c2.4-4 6.6-4 9 0" />
+        </g>
+      ) : resting ? (
+        <g strokeWidth="3" fill="none">
+          <path d="M44 50c2.4 4 6.6 4 9 0" />
+          <path d="M67 50c2.4 4 6.6 4 9 0" />
+        </g>
+      ) : mood === "encouraging" ? (
+        <>
+          <circle cx="48" cy="40" r="5.4" fill={INK} strokeWidth="2" />
+          <circle cx="46" cy="38" r="2" fill="#FFFFFF" stroke="none" />
+          <path d="M68 41c2.4-4 6.6-4 9 0" strokeWidth="3.2" fill="none" />
+        </>
+      ) : (
+        <>
+          <circle
+            cx={mood === "thinking" ? 50 : 48}
+            cy={wideEyed ? 39 : 40}
+            r={wideEyed ? 7 : 5.6}
+            fill={INK}
+            strokeWidth="2"
           />
-          <circle cx="98" cy="76" r="4.5" fill="#FFEACC" />
-        </g>
+          <circle
+            cx={mood === "thinking" ? 74 : 72}
+            cy={wideEyed ? 39 : 40}
+            r={wideEyed ? 7 : 5.6}
+            fill={INK}
+            strokeWidth="2"
+          />
+          <circle
+            cx={mood === "thinking" ? 48 : 46}
+            cy={wideEyed ? 36.5 : 38}
+            r={wideEyed ? 2.6 : 2.1}
+            fill="#FFFFFF"
+            stroke="none"
+          />
+          <circle
+            cx={mood === "thinking" ? 72 : 70}
+            cy={wideEyed ? 36.5 : 38}
+            r={wideEyed ? 2.6 : 2.1}
+            fill="#FFFFFF"
+            stroke="none"
+          />
+        </>
       )}
 
-      {mood === "thinking" && (
-        <g>
-          {/* Pata encostada no queixo pensativa */}
-          <ellipse cx="70" cy="68" rx="6" ry="8" transform="rotate(-20 70 68)" fill="url(#fur-gradient)" />
-          <circle cx="68" cy="64" r="5" fill="#FFEACC" />
+      {/* Sobrancelhas — carregam boa parte da expressão */}
+      {!resting && !beaming ? (
+        <g strokeWidth="2.6" fill="none">
+          <path
+            d={
+              wideEyed
+                ? "M42 29c3-2.6 7-2.6 10 0"
+                : mood === "thinking"
+                  ? "M42 32c3-1 7-.4 10 1.6"
+                  : "M42 31c3-1.6 7-1.6 10 0"
+            }
+          />
+          <path
+            d={
+              wideEyed
+                ? "M67 29c3-2.6 7-2.6 10 0"
+                : mood === "thinking"
+                  ? "M67 27c3-2.6 7-2 10 .6"
+                  : "M67 31c3-1.6 7-1.6 10 0"
+            }
+          />
         </g>
-      )}
+      ) : null}
 
-      {mood === "encouraging" && (
+      {/* Boca */}
+      {beaming ? (
         <g>
-          {/* Pata direita levantada acenando */}
-          <ellipse cx="86" cy="62" rx="6" ry="9" transform="rotate(25 86 62)" fill="url(#fur-gradient)" />
-          <circle cx="90" cy="55" r="5" fill="#FFEACC" />
+          <path
+            d="M51 59c0 7 18 7 18 0Z"
+            fill={INK}
+            strokeWidth="2.4"
+          />
+          <path
+            d="M56 63c0 4.4 8 4.4 8 0Z"
+            fill={TONGUE}
+            strokeWidth="2"
+          />
+        </g>
+      ) : wideEyed ? (
+        <ellipse cx="60" cy="63" rx="3.4" ry="4" fill={INK} strokeWidth="2" />
+      ) : resting ? (
+        <path d="M56 70c2.4 2.4 5.6 2.4 8 0" strokeWidth="2.4" fill="none" />
+      ) : (
+        <g strokeWidth="2.6" fill="none">
+          <path d="M53 60c3 3.4 5 3.4 7 .6c2 2.8 4 2.8 7-.6" />
         </g>
       )}
     </svg>

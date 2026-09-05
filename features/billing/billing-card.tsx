@@ -81,10 +81,10 @@ export function BillingCard({ status, dogId }: BillingCardProps) {
   }
 
   return (
-    <Card className="p-6 sm:p-7 rounded-3xl border-2 border-border/80 shadow-card">
+    <Card className="p-6 sm:p-7 rounded-panel border border-border shadow-card">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="flex size-11 items-center justify-center rounded-2xl bg-secondary text-primary">
+          <div className="flex size-11 items-center justify-center rounded-2xl bg-secondary text-primary-strong">
             <CreditCard className="size-5" aria-hidden="true" />
           </div>
           <div>
@@ -166,8 +166,8 @@ export function BillingCard({ status, dogId }: BillingCardProps) {
                   key={plan.id}
                   className={`flex flex-col justify-between rounded-2xl border-2 p-5 transition-all ${
                     isRecommended
-                      ? "border-primary bg-secondary/20 shadow-xs ring-1 ring-primary/20"
-                      : "border-border bg-card shadow-2xs"
+                      ? "border-primary bg-secondary/20 shadow-soft ring-1 ring-primary/20"
+                      : "border-border bg-card shadow-soft"
                   }`}
                 >
                   <div>
@@ -198,7 +198,7 @@ export function BillingCard({ status, dogId }: BillingCardProps) {
                     <ul className="mt-4 space-y-2 text-xs text-foreground">
                       {plan.features.map((feature, idx) => (
                         <li key={idx} className="flex items-start gap-1.5">
-                          <Check className="size-3.5 text-primary shrink-0 mt-0.5" />
+                          <Check className="size-3.5 text-primary-strong shrink-0 mt-0.5" />
                           <span>{feature}</span>
                         </li>
                       ))}

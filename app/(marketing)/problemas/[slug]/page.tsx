@@ -144,7 +144,7 @@ export default async function ProblemPage({ params }: ProblemPageProps) {
                 key={observation.title}
                 className="rounded-2xl border border-border bg-background p-6"
               >
-                <span className="text-xs font-semibold text-primary">
+                <span className="text-xs font-semibold text-primary-strong">
                   0{index + 1}
                 </span>
                 <h3 className="mt-5 text-lg font-medium tracking-tight">
@@ -161,7 +161,7 @@ export default async function ProblemPage({ params }: ProblemPageProps) {
 
       <section className="page-width grid gap-8 py-16 md:grid-cols-[0.82fr_1.18fr] md:gap-16 md:py-24">
         <div>
-          <div className="inline-flex items-center gap-2 rounded-full bg-secondary px-3 py-1.5 text-xs font-medium text-primary">
+          <div className="inline-flex items-center gap-2 rounded-full bg-secondary px-3 py-1.5 text-xs font-medium text-primary-strong">
             <Clock3 className="size-4" aria-hidden="true" />
             {problem.practice.duration}
           </div>
@@ -179,7 +179,7 @@ export default async function ProblemPage({ params }: ProblemPageProps) {
                 key={step}
                 className="grid grid-cols-[2.5rem_1fr] gap-4 rounded-2xl border border-border bg-card p-5"
               >
-                <span className="flex size-10 items-center justify-center rounded-full bg-secondary text-sm font-semibold text-primary">
+                <span className="flex size-10 items-center justify-center rounded-full bg-secondary text-sm font-semibold text-primary-strong">
                   {index + 1}
                 </span>
                 <p className="self-center text-sm leading-relaxed">{step}</p>
@@ -197,7 +197,7 @@ export default async function ProblemPage({ params }: ProblemPageProps) {
         <div className="page-width grid gap-10 md:grid-cols-[0.9fr_1.1fr] md:gap-16">
           <div>
             <Sparkles
-              className="mb-6 size-7 text-primary"
+              className="mb-6 size-7 text-primary-strong"
               strokeWidth={1.5}
               aria-hidden="true"
             />
@@ -214,7 +214,7 @@ export default async function ProblemPage({ params }: ProblemPageProps) {
           <ul className="divide-y divide-border border-y border-border">
             {problem.programFocus.map((focus) => (
               <li key={focus} className="flex items-center gap-4 py-6">
-                <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-secondary text-primary">
+                <span className="flex size-9 shrink-0 items-center justify-center rounded-full bg-secondary text-primary-strong">
                   <Check className="size-4" aria-hidden="true" />
                 </span>
                 <span className="font-medium">{focus}</span>

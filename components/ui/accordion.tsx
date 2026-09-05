@@ -25,7 +25,7 @@ export function AccordionTrigger({
     <Primitive.Header>
       <Primitive.Trigger
         className={cn(
-          "group flex min-h-18 w-full items-center justify-between gap-5 py-5 text-left text-base font-medium transition-colors hover:text-primary [&[data-state=open]_svg]:rotate-45",
+          "group flex min-h-18 w-full items-center justify-between gap-5 py-5 text-left text-base font-medium transition-colors hover:text-primary-strong [&[data-state=open]_svg]:rotate-45",
           className,
         )}
         {...props}

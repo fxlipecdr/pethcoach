@@ -34,7 +34,7 @@ export default function DevAdminPreviewPage() {
         {/* Operator session badge mock */}
         <div className="flex flex-wrap items-center justify-between gap-3 rounded-card border border-border bg-card p-4">
           <div className="flex items-center gap-3">
-            <div className="flex size-10 items-center justify-center rounded-control bg-secondary text-primary">
+            <div className="flex size-10 items-center justify-center rounded-control bg-secondary text-primary-strong">
               <ShieldCheck className="size-5" />
             </div>
             <div>
@@ -52,7 +52,7 @@ export default function DevAdminPreviewPage() {
         {/* Metrics Grid */}
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
           <Card className="p-4">
-            <div className="flex items-center gap-2 text-primary">
+            <div className="flex items-center gap-2 text-primary-strong">
               <CheckCircle2 className="size-4" />
               <span className="text-xs font-semibold uppercase tracking-wider">
                 Publicados
@@ -100,7 +100,7 @@ export default function DevAdminPreviewPage() {
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <h2 className="text-base font-semibold text-foreground flex items-center gap-2">
-              <BookOpen className="size-4 text-primary" />
+              <BookOpen className="size-4 text-primary-strong" />
               Exemplo de Catálogo e Módulos
             </h2>
             <Badge className="bg-muted text-foreground border-border">Prévia de Componentes</Badge>
@@ -179,7 +179,7 @@ export default function DevAdminPreviewPage() {
         <div className="grid gap-6 md:grid-cols-2">
           <Card className="p-6">
             <h2 className="text-base font-semibold text-foreground flex items-center gap-2 mb-2">
-              <History className="size-4 text-primary" />
+              <History className="size-4 text-primary-strong" />
               Auditoria de Transições
             </h2>
             <p className="text-xs text-muted-foreground mb-4">
@@ -207,7 +207,7 @@ export default function DevAdminPreviewPage() {
 
           <Card className="p-6">
             <h2 className="text-base font-semibold text-foreground flex items-center gap-2 mb-2">
-              <SearchCheck className="size-4 text-primary" />
+              <SearchCheck className="size-4 text-primary-strong" />
               Inspetor Operacional (Zero PII)
             </h2>
             <p className="text-xs text-muted-foreground mb-4">

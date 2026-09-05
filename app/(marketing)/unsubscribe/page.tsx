@@ -45,7 +45,7 @@ export default async function UnsubscribePage({ searchParams }: UnsubscribePageP
         <div className="text-center space-y-2">
           <Link href="/" className="inline-block" aria-label="Voltar para a página inicial do PethCoach">
             <span className="text-2xl font-bold tracking-tight text-foreground">
-              Peth<span className="text-primary">Coach</span>
+              Peth<span className="text-primary-strong">Coach</span>
             </span>
           </Link>
           <p className="text-xs uppercase tracking-wider font-semibold text-muted-foreground">
@@ -99,7 +99,7 @@ export default async function UnsubscribePage({ searchParams }: UnsubscribePageP
 
         {/* Privacy Note */}
         <div className="flex items-center justify-center gap-2 text-xs text-muted-foreground text-center">
-          <ShieldCheck className="w-4 h-4 text-primary shrink-0" aria-hidden="true" />
+          <ShieldCheck className="w-4 h-4 text-primary-strong shrink-0" aria-hidden="true" />
           <span>
             Seus dados estão protegidos conforme a LGPD.{" "}
             <Link href="/politica-de-privacidade" className="underline hover:text-foreground">

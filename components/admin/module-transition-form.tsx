@@ -93,7 +93,7 @@ export function ModuleTransitionForm({
   return (
     <Card className="p-6">
       <h3 className="text-base font-semibold text-foreground flex items-center gap-2">
-        <ArrowRight className="size-4 text-primary" />
+        <ArrowRight className="size-4 text-primary-strong" />
         Transição de Ciclo de Vida
       </h3>
       <p className="mt-1 text-xs text-muted-foreground">

@@ -27,6 +27,8 @@ Build a production-grade, mobile-first dog behavior coaching SaaS for Brazil. Pr
 - No lorem ipsum or fake testimonials.
 
 ## UX rules
+- Visual identity follows `DESIGN.md` ("Pet Playground"); `docs/ui-design.md` records how it is implemented.
+- Use `text-primary-strong` for purple text; `primary` is a fill color and fails AA as small text on light purple.
 - Mobile-first; test at 360px width.
 - One primary CTA per screen.
 - No dark patterns, fake urgency, or guilt-based streak mechanics.

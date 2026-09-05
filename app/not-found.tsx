@@ -6,7 +6,7 @@ export default function NotFound() {
     <main id="conteudo" className="page-width py-14">
       <Brand />
       <div className="py-20">
-        <p className="text-sm text-primary">404 · CAMINHO NÃO ENCONTRADO</p>
+        <p className="text-sm text-primary-strong">404 · CAMINHO NÃO ENCONTRADO</p>
         <h1 className="mt-4 text-4xl font-medium">
           Vamos voltar para um lugar conhecido?
         </h1>

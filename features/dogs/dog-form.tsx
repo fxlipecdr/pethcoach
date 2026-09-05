@@ -115,7 +115,7 @@ export function DogForm({
       <input type="hidden" name="mode" value={editing ? "update" : "create"} />
       <Card className="p-5 sm:p-8">
         <div className="mb-7 flex items-center gap-4">
-          <span className="flex size-13 shrink-0 items-center justify-center rounded-2xl bg-secondary text-primary">
+          <span className="flex size-13 shrink-0 items-center justify-center rounded-2xl bg-secondary text-primary-strong">
             <PawPrint className="size-6" aria-hidden="true" />
           </span>
           <div>

@@ -84,7 +84,7 @@ export function ClaimCard({
   if (!isAuthenticated) {
     const nextUrl = `/resultado/${assessmentId}?claim=1`;
     return (
-      <Card className="mt-8 border-primary/25 bg-gradient-to-br from-card via-card to-secondary/30 p-6 sm:p-8 rounded-3xl shadow-sm">
+      <Card className="mt-8 border-primary/20 bg-secondary/35 p-6 sm:p-8 rounded-panel shadow-card">
         <div className="flex items-start justify-between gap-4">
           <div>
             <Badge>PRÓXIMO PASSO</Badge>
@@ -154,7 +154,7 @@ export function ClaimCard({
               id="dogId"
               name="dogId"
               defaultValue={dogs[0]?.id}
-              className="block w-full rounded-2xl border border-input bg-background px-4 py-3 text-sm shadow-xs focus:border-primary focus:outline-none focus:ring-3 focus:ring-primary/20"
+              className="block w-full rounded-2xl border border-input bg-background px-4 py-3 text-sm shadow-soft focus:border-primary focus:outline-none focus:ring-3 focus:ring-primary/20"
             >
               {dogs.map((dog) => (
                 <option key={dog.id} value={dog.id}>

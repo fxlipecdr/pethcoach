@@ -18,19 +18,19 @@ test("home, navigation, accessibility and responsive layout", async ({
     await page.evaluate(() => {
       const styles = getComputedStyle(document.documentElement);
       return {
-        brand: styles.getPropertyValue("--brand-700").trim(),
-        primary: styles.getPropertyValue("--brand-600").trim(),
-        hover: styles.getPropertyValue("--brand-500").trim(),
-        accent: styles.getPropertyValue("--heart").trim(),
-        canvas: styles.getPropertyValue("--canvas").trim(),
+        ink: styles.getPropertyValue("--ink").trim(),
+        cream: styles.getPropertyValue("--cream").trim(),
+        purple: styles.getPropertyValue("--purple").trim(),
+        coral: styles.getPropertyValue("--coral").trim(),
+        lime: styles.getPropertyValue("--lime").trim(),
       };
     }),
   ).toEqual({
-    brand: "#062549",
-    primary: "#0f766e",
-    hover: "#0b5f59",
-    accent: "#fc6f4d",
-    canvas: "#f6faf9",
+    ink: "#17211b",
+    cream: "#fffdf7",
+    purple: "#6757e8",
+    coral: "#ff796d",
+    lime: "#ddf56d",
   });
   await expect(
     page.getByRole("heading", {

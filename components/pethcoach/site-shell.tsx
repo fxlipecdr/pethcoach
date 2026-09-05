@@ -1,99 +1,118 @@
 import Link from "next/link";
-import { ArrowUpRight, Sparkles } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Brand } from "@/components/pethcoach/brand";
-import { MobileNav } from "@/components/pethcoach/mobile-nav";
 import { PethMascot } from "@/components/pethcoach/peth-mascot";
 import { CookiePreferencesButton } from "@/components/pethcoach/cookie-preferences-button";
+import { Paw, Bone, StarDoodle } from "@/components/pethcoach/doodles";
 import { brand } from "@/lib/brand";
 
 export { Brand } from "@/components/pethcoach/brand";
+export { SiteHeader } from "@/components/pethcoach/site-header";
 
-export function SiteHeader() {
-  return (
-    <header className="sticky top-0 z-40 border-b border-border/80 bg-background/90 backdrop-blur-md transition-all">
-      <div className="page-width flex min-h-20 items-center justify-between gap-4 py-3.5">
-        <Brand />
-        <nav
-          aria-label="Navegação principal"
-          className="hidden items-center gap-2 rounded-full border border-border/70 bg-card/60 px-4 py-1.5 text-sm font-medium text-muted-foreground shadow-2xs md:flex"
-        >
-          <Link
-            href="/#problemas"
-            className="rounded-full px-3.5 py-1.5 transition-colors hover:bg-muted hover:text-primary"
-          >
-            Programas
-          </Link>
-          <Link
-            href="/#como-funciona"
-            className="rounded-full px-3.5 py-1.5 transition-colors hover:bg-muted hover:text-primary"
-          >
-            Como funciona
-          </Link>
-          <Link
-            href="/ajuda"
-            className="rounded-full px-3.5 py-1.5 transition-colors hover:bg-muted hover:text-primary"
-          >
-            Dúvidas
-          </Link>
-        </nav>
-        <div className="flex items-center gap-3">
-          <Button
-            asChild
-            variant="outline"
-            className="hidden md:inline-flex rounded-full text-xs font-bold"
-          >
-            <Link href="/entrar">
-              Entrar <ArrowUpRight aria-hidden="true" />
-            </Link>
-          </Button>
-          <MobileNav />
-        </div>
-      </div>
-    </header>
-  );
-}
+const footerColumns = [
+  {
+    title: "Produto",
+    links: [
+      { href: "/#problemas", label: "Programas" },
+      { href: "/#como-funciona", label: "Como funciona" },
+      { href: "/#nosso-compromisso", label: "Nosso compromisso" },
+    ],
+  },
+  {
+    title: "Ajuda",
+    links: [
+      { href: "/ajuda", label: "Dúvidas" },
+      { href: "/entrar", label: "Área de acesso" },
+    ],
+  },
+  {
+    title: "Legal",
+    links: [
+      { href: "/privacidade", label: "Privacidade" },
+      { href: "/termos", label: "Termos" },
+    ],
+  },
+];
 
+/** §35 — o rodapé é o momento mais expressivo da marca: ink, mascote e despedida. */
 export function SiteFooter() {
   return (
-    <footer className="border-t border-border bg-card/70 pt-12 pb-8">
-      <div className="page-width grid gap-10 md:grid-cols-[1.2fr_auto] md:items-center">
-        <div className="flex flex-col sm:flex-row sm:items-center gap-5">
-          <PethMascot
-            mood="encouraging"
-            size={72}
-            className="motion-safe:hover:scale-105 transition-transform"
-          />
+    <footer className="relative mt-24 bg-strong text-strong-foreground">
+      <PethMascot
+        mood="encouraging"
+        size={112}
+        className="float-soft absolute -top-14 left-6 hidden sm:block lg:left-[7%]"
+      />
+      <Bone
+        tone="cream"
+        stroke="var(--ink)"
+        size={44}
+        className="absolute top-16 right-[12%] hidden rotate-12 opacity-90 lg:block"
+      />
+      <StarDoodle
+        tone="lime"
+        stroke="var(--ink)"
+        size={26}
+        className="absolute top-40 right-[7%] hidden -rotate-12 opacity-90 lg:block"
+      />
+
+      <div className="page-width pt-24 pb-10 sm:pt-28">
+        <div className="grid gap-14 md:grid-cols-[1.1fr_1fr]">
           <div>
-            <Brand />
-            <p className="mt-2 max-w-md text-sm leading-relaxed text-muted-foreground">
+            <p className="font-display max-w-[15ch] text-3xl leading-[1.05] font-bold tracking-[-0.04em] sm:text-4xl">
+              Até a próxima aventura.
+            </p>
+            <p className="mt-5 max-w-sm leading-relaxed text-strong-foreground/70">
               {brand.signature}
             </p>
-            <div className="mt-3 flex items-center gap-2 text-xs text-primary font-medium">
-              <Sparkles className="size-3.5" aria-hidden="true" />
-              Treino humanizado, baseado em evidências e reforço positivo.
-            </div>
+            <Button asChild className="mt-8">
+              <Link href="/entrar">
+                Conhecer a área de acesso
+                <ArrowUpRight aria-hidden="true" />
+              </Link>
+            </Button>
+          </div>
+
+          <nav
+            aria-label="Links institucionais"
+            className="grid grid-cols-2 gap-8 sm:grid-cols-3"
+          >
+            {footerColumns.map((column) => (
+              <div key={column.title}>
+                <h2 className="font-display text-xs font-bold tracking-[0.16em] text-mint uppercase">
+                  {column.title}
+                </h2>
+                <ul className="mt-4 space-y-1">
+                  {column.links.map((link) => (
+                    <li key={link.href}>
+                      <Link
+                        href={link.href}
+                        className="nav-link text-sm text-strong-foreground/80 transition-colors hover:text-lime"
+                      >
+                        {link.label}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </nav>
+        </div>
+
+        <div className="mt-16 flex flex-wrap items-center justify-between gap-5 border-t border-white/12 pt-7">
+          <span className="inline-flex items-center rounded-control bg-cream px-4 py-2">
+            <Brand />
+          </span>
+          <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-strong-foreground/60">
+            <CookiePreferencesButton className="hover:text-lime" />
+            <span>{brand.name} · Versão de desenvolvimento</span>
+            <span className="inline-flex items-center gap-2">
+              <Paw tone="lime" stroke="var(--ink)" size={16} />
+              Feito para respeitar o ritmo de vocês.
+            </span>
           </div>
         </div>
-        <nav
-          aria-label="Links institucionais"
-          className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm font-medium text-muted-foreground"
-        >
-          <Link className="nav-link hover:text-primary transition-colors" href="/ajuda">
-            Ajuda
-          </Link>
-          <Link className="nav-link hover:text-primary transition-colors" href="/privacidade">
-            Privacidade
-          </Link>
-          <Link className="nav-link hover:text-primary transition-colors" href="/termos">
-            Termos
-          </Link>
-          <CookiePreferencesButton />
-        </nav>
-      </div>
-      <div className="page-width mt-10 flex flex-wrap justify-between gap-3 border-t border-border/80 pt-6 text-xs text-muted-foreground">
-        <span>{brand.name} · Versão de desenvolvimento</span>
-        <span>Feito para respeitar o ritmo de vocês.</span>
       </div>
     </footer>
   );
