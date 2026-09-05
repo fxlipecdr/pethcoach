@@ -99,7 +99,11 @@ export function BillingCard({ status, dogId }: BillingCardProps) {
 
         {status.hasAccess ? (
           <Badge className="border-success/30 bg-success-surface text-foreground font-bold">
-            {status.hasFullProgram ? "Programa Completo" : "Assinatura Ativa"}
+            {status.hasFullProgram
+              ? "Programa Completo"
+              : status.cancelAtPeriodEnd
+                ? "Assinatura cancelada"
+                : "Assinatura Ativa"}
           </Badge>
         ) : (
           <Badge className="border-border bg-muted/60 text-foreground font-medium">
@@ -123,14 +127,23 @@ export function BillingCard({ status, dogId }: BillingCardProps) {
               <p className="text-sm font-bold text-foreground">
                 {status.hasFullProgram
                   ? "Acesso Vitalício ao Programa Completo"
-                  : "Assinatura PethCoach Pro"}
+                  : status.cancelAtPeriodEnd
+                    ? "Assinatura cancelada"
+                    : "Assinatura PethCoach Pro"}
               </p>
+              {/* Cancelar pelo portal não encerra o acesso na hora: ele vale
+                  até o fim do período pago. Anunciar renovação aqui seria
+                  mentira para quem acabou de cancelar. */}
               <p className="text-xs text-muted-foreground mt-0.5">
                 {status.hasFullProgram
                   ? "Você tem acesso ilimitado a todos os 14 dias de treino estruturado."
-                  : status.expiresAt
-                    ? `Próxima renovação prevista para ${new Date(status.expiresAt).toLocaleDateString("pt-BR")}`
-                    : "Renovação ativa sem pendências."}
+                  : status.cancelAtPeriodEnd && status.expiresAt
+                    ? `Não haverá nova cobrança. Seu acesso continua até ${new Date(status.expiresAt).toLocaleDateString("pt-BR")}.`
+                    : status.cancelAtPeriodEnd
+                      ? "Não haverá nova cobrança. Seu acesso continua até o fim do período já pago."
+                      : status.expiresAt
+                        ? `Próxima renovação prevista para ${new Date(status.expiresAt).toLocaleDateString("pt-BR")}`
+                        : "Renovação ativa sem pendências."}
               </p>
             </div>
 

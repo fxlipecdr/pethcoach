@@ -185,6 +185,10 @@ export async function POST(req: NextRequest) {
             stripeCustomerId: customerId,
             stripeSubscriptionId: subscription.id,
             expiresAt,
+            // Cancelamento pelo portal mantém a assinatura ativa até o fim do
+            // período pago. Sem este sinal, a tela anuncia renovação para quem
+            // acabou de cancelar.
+            cancelAtPeriodEnd: subscription.cancel_at_period_end === true,
           });
         }
         break;

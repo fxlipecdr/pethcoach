@@ -58,10 +58,20 @@ describe("P10 Billing Contracts & Schemas", () => {
       scope: "subscription",
       status: "active",
       expiresAt: new Date(Date.now() + 86400000 * 30).toISOString(),
+      cancelAtPeriodEnd: false,
       stripeCustomerId: "cus_test123",
       stripeSubscriptionId: "sub_test123",
     };
     expect(userBillingStatusSchema.safeParse(activeSub).success).toBe(true);
+
+    // Cancelada no portal: segue com acesso, mas sem renovação.
+    const canceladaComAcesso = {
+      ...activeSub,
+      cancelAtPeriodEnd: true,
+    };
+    expect(
+      userBillingStatusSchema.safeParse(canceladaComAcesso).success,
+    ).toBe(true);
 
     const freeUser = {
       hasActiveSubscription: false,
@@ -70,6 +80,7 @@ describe("P10 Billing Contracts & Schemas", () => {
       scope: null,
       status: null,
       expiresAt: null,
+      cancelAtPeriodEnd: false,
       stripeCustomerId: null,
       stripeSubscriptionId: null,
     };

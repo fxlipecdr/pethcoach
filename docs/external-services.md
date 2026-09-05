@@ -6,7 +6,7 @@ Destino informado: `coach.peth.com.br`. Remetente: `PethCoach <suporte@peth.com.
 
 | Serviço | Configurado | Falta |
 | --- | --- | --- |
-| Supabase Free | Organização PethCoach. **Projeto ativo migrado para São Paulo em 05/09/2026** (`wcxgwjcvhfbddpbncwwf`), com as 14 migrations aplicadas, Auth por e-mail com confirmação e callbacks configurados | SMTP do Resend e templates PT-BR ainda pendentes no projeto novo; variáveis da Vercel ainda apontam para o projeto antigo |
+| Supabase Free | Organização PethCoach. **Projeto ativo migrado para São Paulo em 05/09/2026** (`wcxgwjcvhfbddpbncwwf`): 14 migrations aplicadas, Auth por e-mail com confirmação, callbacks, SMTP do Resend e templates PT-BR configurados. Produção validada com login real | Pausar e depois remover o projeto de Ohio; revogar a chave antiga do Resend só depois disso |
 | Resend | `peth.com.br` verificado; chave `PethCoach Auth Dev` restrita a envio; SMTP autenticado; cinco e-mails reais de acesso entregues no total | Retenção e webhooks pertencem à P12 |
 | Stripe | Sandbox `acct_1UAZB3LaePxLnVtP` acessível no painel; modo de teste ativo; nenhum produto/preço ou webhook | Preços definidos pelo responsável, Checkout e webhook assinado na P10; ativação comercial posterior |
 | Vercel | Projeto `pethcoach` na equipe `pethdeveloper-3373s-projects`, plano Hobby, GitHub conectado, `coach.peth.com.br` com HTTPS, variáveis públicas do Supabase e `ASSESSMENT_TOKEN_SECRET` sensível somente em Production; login confirmado | Manter Preview isolado e migrar para Pro antes da operação comercial |
@@ -21,6 +21,17 @@ Destino informado: `coach.peth.com.br`. Remetente: `PethCoach <suporte@peth.com.
 - A migração foi feita sem transportar dados: o projeto antigo continha apenas contas de teste. Migrar identidades entre projetos exigiria mover o schema `auth`, o que não é suportado no plano gratuito.
 - Site URL atual de desenvolvimento: `http://127.0.0.1:3000`.
 - Procedimento completo da migração de região, com as verificações de cada etapa: `docs/migrar-supabase-sao-paulo.md`.
+
+### Aceite da migração de região, 05/09/2026
+
+Verificado sem transporte de dados, com o projeto antigo mantido no ar como plano B durante toda a troca:
+
+- Região confirmada pela connection string antes de aplicar qualquer migration, e não apenas pelo rótulo do painel — foi o rótulo que induziu ao erro na primeira vez.
+- `supabase db push` aplicou as 14 migrations; `--dry-run` posterior retornou `upToDate: true`. `inspect db table-stats` mostrou 22 tabelas, com 54 perguntas de quiz, 12 módulos, 3 problemas e as 9 regras de limite de P14.
+- Data API anônima: catálogo de problemas legível; `dogs` retornou HTTP 401 e `assessments` retornou 42501. RLS e grants por coluna preservados.
+- `/auth/v1/settings`: e-mail habilitado, cadastro permitido, confirmação de e-mail exigida.
+- Produção redeployada e validada por login real: e-mail entregue pelo Resend a partir de `suporte@peth.com.br` e usuário criado no projeto de São Paulo.
+- `/api/ready` respondeu 401 sem segredo, confirmando `CRON_SECRET` ativo em produção.
 - Callbacks autorizados: `http://127.0.0.1:3000/auth/callback**`, `http://127.0.0.1:3100/auth/callback**` e `https://coach.peth.com.br/auth/callback**`. Autorizar o callback não publica o domínio.
 - Email habilitado, signup habilitado e confirmação de e-mail obrigatória, verificados pela API Auth.
 - SMTP: `smtp.resend.com`, porta `465`, usuário `resend`, remetente acima, intervalo mínimo por usuário de 60 segundos. A senha é a chave restrita Resend, armazenada no painel.

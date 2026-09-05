@@ -82,12 +82,21 @@ Lição para o runbook: um dump de aplicação não é caminho de recuperação 
 
 `pnpm lint`, `pnpm verify`, `pnpm test:integration` (262 testes), `pnpm build`, `pnpm e2e:smoke` (68 testes offline em 1440px e 360px) e `pnpm e2e:funnel` (6 testes contra fornecedores reais) passam.
 
+## Entregue: compra real em test mode, validada em produção — 05/09/2026
+
+Com o Stripe configurado e as chaves publicadas na Vercel, o caminho de pagamento foi validado em `coach.peth.com.br`, não apenas em teste local.
+
+**Rejeição, verificada de fora antes da compra.** Uma requisição ao webhook sem assinatura responde 400 ("assinatura ausente") e uma com assinatura forjada responde 400 do próprio SDK do Stripe ("no signatures found matching the expected signature"). Antes das chaves entrarem, a mesma requisição respondia 503 — o handler recusa operar sem segredo em vez de aceitar qualquer coisa. Ninguém libera acesso pago inventando um evento para essa URL.
+
+**Concessão, verificada pela compra.** Compra com o cartão de teste `4242 4242 4242 4242` no checkout hospedado: o acesso ao programa completo liberou sozinho, sem intervenção. Isso fecha a cadeia inteira — checkout, evento assinado, `grantOrUpdateEntitlement` e abertura do paywall.
+
 ## Pendente para o aceite de P15
 
-1. **Checkout e portal do Stripe em test mode.** O webhook e a concessão de acesso estão cobertos; falta a ida ao checkout hospedado, o portal de gestão e os fluxos de cancelamento e `past_due`, que exigem conta e chaves de teste do Stripe.
-2. **Staging, monitoring e rollback ensaiados.** Depende da conta Vercel, do Sentry com sourcemaps e de um ambiente separado do de validação atual. O `/api/ready` já existe para ser o alvo da checagem pós-deploy.
-3. **Backup e restore no projeto Supabase remoto.** O procedimento está validado localmente; no projeto gerenciado, prefira o backup do próprio Supabase (PITR) a um dump de aplicação.
-4. **Beta controlado** e resolução de incidentes.
+1. **Portal de gestão e ciclo de vida da assinatura.** A compra avulsa está provada. Faltam, todos possíveis no test mode: abrir o portal do cliente, cancelar uma assinatura e conferir a perda de acesso, e simular `invoice.payment_failed` para o estado `past_due`.
+2. **Sentry.** Ainda não configurado: o DSN não aparece no bundle de produção. Sem ele, erro em produção não gera aviso para ninguém.
+3. **Staging e rollback ensaiados.** Depende de um ambiente separado do de validação atual. O `/api/ready` já está no ar e protegido, pronto para ser o alvo da checagem pós-deploy.
+4. **Backup e restore no projeto Supabase remoto.** O procedimento está validado localmente; no projeto gerenciado, prefira o backup do próprio Supabase (PITR) a um dump de aplicação.
+5. **Beta controlado** e resolução de incidentes.
 
 ## Observação sobre o orçamento de performance
 

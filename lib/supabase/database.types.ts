@@ -155,6 +155,7 @@ export type EntitlementRow = {
   stripe_subscription_id?: string | null;
   starts_at: string;
   expires_at: string | null;
+  cancel_at_period_end: boolean;
   created_at: string;
   updated_at: string;
 };
@@ -453,6 +454,7 @@ export type Database = Omit<GeneratedDatabase, "public"> & {
               | "status"
               | "starts_at"
               | "expires_at"
+              | "cancel_at_period_end"
               | "stripe_customer_id"
               | "stripe_subscription_id"
             >
@@ -462,6 +464,7 @@ export type Database = Omit<GeneratedDatabase, "public"> & {
             EntitlementRow,
             | "status"
             | "expires_at"
+            | "cancel_at_period_end"
             | "stripe_customer_id"
             | "stripe_subscription_id"
             | "updated_at"

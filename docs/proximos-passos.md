@@ -36,7 +36,7 @@ Três regras que evitam estrago:
 
 ---
 
-## 0. Decisão sua: a região do Supabase
+## 0. ✅ CONCLUÍDO — a região do Supabase
 
 **Por que importa.** O projeto foi provisionado em **Ohio, nos Estados Unidos**, e não em São Paulo como se pretendia. Isso significa que cada consulta ao banco atravessa o continente: os tutores brasileiros sentem isso como lentidão em toda tela que carrega dados.
 
@@ -47,11 +47,11 @@ Mudar de região **não é possível depois**: exige criar um projeto novo e mig
 - **Recriar em São Paulo agora.** Cria-se um projeto Supabase novo na região `sa-east-1`, aplicam-se as migrações e trocam-se as variáveis de ambiente. Meio dia de trabalho, sem perda porque não há dado real. O procedimento completo, passo a passo, está em **`docs/migrar-supabase-sao-paulo.md`**.
 - **Ficar em Ohio.** Aceitável se a latência extra não incomodar. Registre a decisão para não ser uma surpresa depois.
 
-**Isto é uma decisão de produto, não uma tarefa técnica.** É o único item desta lista que fica mais caro a cada dia que passa.
+**Concluído em 05/09/2026.** O projeto foi recriado em São Paulo (`wcxgwjcvhfbddpbncwwf`), as 14 migrações foram aplicadas e a produção foi validada com login real. Falta apenas pausar e depois remover o projeto de Ohio, e revogar a chave antiga do Resend em seguida. Evidências em `docs/external-services.md`.
 
 ---
 
-## 1. Aplicar as migrações que faltam no banco
+## 1. ✅ CONCLUÍDO — aplicar as migrações
 
 **Por que importa.** "Migração" é um arquivo que altera a estrutura do banco: cria tabela, coluna, regra de segurança. O código novo espera estruturas que ainda não existem no projeto da nuvem. Sem isso, a exclusão de conta falha e o limite de requisições não funciona entre servidores.
 

@@ -29,6 +29,8 @@ export const userBillingStatusSchema = z.object({
   scope: z.enum(["full_program", "subscription"]).nullable(),
   status: z.enum(["active", "past_due", "canceled", "expired"]).nullable(),
   expiresAt: z.string().nullable(),
+  /** Cancelada no portal: mantém acesso até expiresAt e não renova. */
+  cancelAtPeriodEnd: z.boolean(),
   stripeCustomerId: z.string().nullable(),
   stripeSubscriptionId: z.string().nullable(),
 });

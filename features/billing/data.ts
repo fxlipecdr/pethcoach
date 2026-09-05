@@ -75,6 +75,7 @@ export async function grantOrUpdateEntitlement(
     stripeCustomerId?: string | null;
     stripeSubscriptionId?: string | null;
     expiresAt?: string | null;
+    cancelAtPeriodEnd?: boolean;
   },
 ): Promise<void> {
   // If subscription ID is provided, check if it already exists to update
@@ -91,6 +92,7 @@ export async function grantOrUpdateEntitlement(
         .update({
           status: input.status,
           expires_at: input.expiresAt ?? null,
+          cancel_at_period_end: input.cancelAtPeriodEnd ?? false,
           updated_at: new Date().toISOString(),
         })
         .eq("id", existing.id);
@@ -112,6 +114,7 @@ export async function grantOrUpdateEntitlement(
     stripe_customer_id: input.stripeCustomerId ?? null,
     stripe_subscription_id: input.stripeSubscriptionId ?? null,
     expires_at: input.expiresAt ?? null,
+    cancel_at_period_end: input.cancelAtPeriodEnd ?? false,
   });
 
   if (error) {
@@ -128,7 +131,7 @@ export async function getUserBillingStatus(
   const { data: entitlements, error } = await client
     .from("entitlements")
     .select(
-      "id, scope, status, expires_at, stripe_customer_id, stripe_subscription_id",
+      "id, scope, status, expires_at, cancel_at_period_end, stripe_customer_id, stripe_subscription_id",
     )
     .eq("user_id", userId)
     .order("created_at", { ascending: false });
@@ -141,6 +144,7 @@ export async function getUserBillingStatus(
       scope: null,
       status: null,
       expiresAt: null,
+      cancelAtPeriodEnd: false,
       stripeCustomerId: customer?.stripeCustomerId ?? null,
       stripeSubscriptionId: null,
     };
@@ -174,6 +178,9 @@ export async function getUserBillingStatus(
     scope: activeEntitlement?.scope ?? latest?.scope ?? null,
     status: activeEntitlement?.status ?? latest?.status ?? null,
     expiresAt: activeEntitlement?.expires_at ?? latest?.expires_at ?? null,
+    cancelAtPeriodEnd: Boolean(
+      activeEntitlement?.cancel_at_period_end ?? latest?.cancel_at_period_end,
+    ),
     stripeCustomerId:
       activeEntitlement?.stripe_customer_id ??
       customer?.stripeCustomerId ??
