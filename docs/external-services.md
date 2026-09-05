@@ -9,7 +9,7 @@ Destino informado: `coach.peth.com.br`. Remetente: `PethCoach <suporte@peth.com.
 | Supabase Free | Organização PethCoach. **Projeto ativo migrado para São Paulo em 05/09/2026** (`wcxgwjcvhfbddpbncwwf`): 14 migrations aplicadas, Auth por e-mail com confirmação, callbacks, SMTP do Resend e templates PT-BR configurados. Produção validada com login real | Pausar e depois remover o projeto de Ohio; revogar a chave antiga do Resend só depois disso |
 | Resend | `peth.com.br` verificado; chave `PethCoach Auth Dev` restrita a envio; SMTP autenticado; cinco e-mails reais de acesso entregues no total | Retenção e webhooks pertencem à P12 |
 | Stripe | Sandbox `acct_1UAZB3LaePxLnVtP` acessível no painel; modo de teste ativo; nenhum produto/preço ou webhook | Preços definidos pelo responsável, Checkout e webhook assinado na P10; ativação comercial posterior |
-| Vercel | Projeto `pethcoach` na equipe `pethdeveloper-3373s-projects`, plano Hobby, GitHub conectado, `coach.peth.com.br` com HTTPS, variáveis públicas do Supabase e `ASSESSMENT_TOKEN_SECRET` sensível somente em Production; login confirmado | Manter Preview isolado e migrar para Pro antes da operação comercial |
+| Vercel | Projeto `pethcoach` na equipe `pethdeveloper-3373s-projects`, plano Hobby, GitHub conectado, `coach.peth.com.br` com HTTPS, variáveis de Supabase, Stripe, `ASSESSMENT_TOKEN_SECRET` e `CRON_SECRET` em Production | Deploy automático exige commit vinculado à conta do GitHub, ver abaixo; manter Preview isolado e migrar para Pro antes da operação comercial |
 | DNS | Cloudflare confirmada; `coach` aponta por CNAME DNS-only para o destino exclusivo do Vercel; Zoho continua recebendo os e-mails do domínio | Monitorar renovação TLS e manter o registro sem proxy enquanto o Vercel exigir |
 | GitHub | Repositório privado, remote `origin`, código enviado à `main`, SHA remoto conferido e quality gates aprovados no Actions | Não há credenciais no repositório; manter a CI obrigatória nos próximos incrementos |
 
@@ -58,6 +58,24 @@ Verificado sem transporte de dados, com o projeto antigo mantido no ar como plan
 - O aceite real local contra o projeto hospedado aprovou `CONTINUE`, `REFER` e `BLOCK`, incluindo prioridade de mordida de alto risco sobre suspeita de dor. Os eventos persistidos foram conferidos e todos os dados/rate limits descartáveis foram removidos.
 - A correção de catálogo P5 alinhou as duas chaves de faixa etária do quiz de filhotes ao contrato da API e migra respostas antigas correspondentes. A conferência remota retornou 30 perguntas v2 e zero chaves publicadas inválidas.
 - Verificação final P5 antes do deployment: lint/TypeScript e 94 testes aprovados, smoke com 38 cenários desktop/mobile e build de produção aprovado.
+
+## Vercel: por que um `git push` pode não publicar
+
+Em 05/09/2026 uma publicação foi recusada com **"Vercel couldn't find a Git account for the commit author"**, seguida da menção a colaboração no plano Hobby. A mensagem sugere problema de permissão, mas a causa é outra.
+
+O plano Hobby só cria deploy automático quando o **e-mail do autor do commit** está vinculado a uma conta do GitHub. A conta `fxlipecdr` mantém o e-mail privado, e os commits saíam com `fxlipecdr@gmail.com` — endereço que não aparece publicamente ligado a nenhuma conta. A Vercel procura o autor, não encontra, e trata o commit como de terceiro.
+
+O que mascarou o problema: **clicar em *Redeploy* no painel funciona**, porque aí o deploy é atribuído a quem está logado e essa verificação não se aplica. Como os deploys anteriores foram feitos assim, o `git push` parecia estar publicando quando não estava.
+
+Correção aplicada — usar o endereço que o próprio GitHub fornece:
+
+```
+git config user.email "48895216+fxlipecdr@users.noreply.github.com"
+```
+
+Vale só para commits novos; os já feitos continuam com o autor antigo e precisam de *Redeploy* manual ou reescrita de autoria.
+
+**Como conferir que o caminho automático está de pé:** faça um commit e um push, e confirme que aparece um deploy novo na lista **sem clicar em nada**. Vale repetir essa verificação sempre que trocar de máquina ou reinstalar o git, porque o `user.email` é configuração local e volta ao padrão.
 
 ## Stripe e Resend
 
