@@ -28,6 +28,21 @@ function signPayload(payload: string, secret: string, timestamp: number) {
   return `t=${timestamp},v1=${assinatura}`;
 }
 
+/** Evento de assinatura, no formato que o Stripe entrega ao webhook. */
+function eventoDeAssinatura(
+  tipo: string,
+  eventId: string,
+  assinatura: Record<string, unknown>,
+) {
+  return JSON.stringify({
+    id: eventId,
+    object: "event",
+    type: tipo,
+    created: Math.floor(Date.now() / 1000),
+    data: { object: { object: "subscription", ...assinatura } },
+  });
+}
+
 function checkoutCompleto(userId: string, eventId: string) {
   return JSON.stringify({
     id: eventId,
@@ -140,4 +155,95 @@ test("acesso pago só nasce de webhook com assinatura válida", async ({
   // 4. O tutor vê o acesso liberado na própria conta.
   await page.goto("/app/conta");
   await expect(page.getByText(/Programa Completo/i).first()).toBeVisible();
+});
+
+/**
+ * Regressão do bug encontrado em produção em 05/09/2026.
+ *
+ * Cancelar pelo portal do Stripe não encerra o acesso na hora: a assinatura
+ * segue `active` até o fim do período pago, e só então vem o `deleted`. Sem
+ * guardar `cancel_at_period_end`, uma assinatura cancelada ficava idêntica no
+ * banco a uma que ia renovar — e a conta anunciava "próxima renovação" para
+ * quem tinha acabado de cancelar.
+ */
+test("ciclo de vida da assinatura: renovação, cancelamento e falha de pagamento", async ({
+  page,
+  request,
+}) => {
+  const address = uniqueEmail("assinatura");
+  await signIn(page, address);
+  const userId = await userIdPorEmail(address);
+  const subscriptionId = `sub_test_${randomUUID().replace(/-/g, "")}`;
+  const customerId = `cus_test_${randomUUID().slice(0, 8)}`;
+  const fimDoPeriodo = Math.floor(Date.now() / 1000) + 60 * 60 * 24 * 30;
+
+  async function enviar(tipo: string, assinatura: Record<string, unknown>) {
+    const eventId = `evt_test_${randomUUID().replace(/-/g, "")}`;
+    const payload = eventoDeAssinatura(tipo, eventId, {
+      id: subscriptionId,
+      customer: customerId,
+      metadata: { userId },
+      current_period_end: fimDoPeriodo,
+      ...assinatura,
+    });
+    const resposta = await request.post("/api/webhooks/stripe", {
+      headers: {
+        "stripe-signature": signPayload(
+          payload,
+          webhookSecret,
+          Math.floor(Date.now() / 1000),
+        ),
+        "content-type": "application/json",
+      },
+      data: payload,
+    });
+    expect(resposta.status()).toBe(200);
+  }
+
+  async function entitlement() {
+    const linhas = await adminQuery(
+      `entitlements?user_id=eq.${userId}&scope=eq.subscription&select=status,cancel_at_period_end,expires_at`,
+    );
+    expect(linhas).toHaveLength(1);
+    return linhas[0]!;
+  }
+
+  // 1. Assinatura criada e ativa: renova normalmente.
+  await enviar("customer.subscription.created", {
+    status: "active",
+    cancel_at_period_end: false,
+  });
+  expect(await entitlement()).toMatchObject({
+    status: "active",
+    cancel_at_period_end: false,
+  });
+
+  // 2. Cancelada no portal: continua com acesso, mas sem renovação.
+  //    É este o estado que a interface anunciava errado.
+  await enviar("customer.subscription.updated", {
+    status: "active",
+    cancel_at_period_end: true,
+  });
+  const cancelada = await entitlement();
+  expect(cancelada).toMatchObject({
+    status: "active",
+    cancel_at_period_end: true,
+  });
+  expect(cancelada.expires_at).not.toBeNull();
+
+  // 3. A conta precisa dizer a verdade: sem nova cobrança, com prazo.
+  await page.goto("/app/conta");
+  await expect(page.getByText(/Não haverá nova cobrança/i)).toBeVisible();
+  await expect(page.getByText(/Próxima renovação/i)).toBeHidden();
+
+  // 4. Falha de pagamento derruba para past_due.
+  await enviar("customer.subscription.updated", {
+    status: "past_due",
+    cancel_at_period_end: false,
+  });
+  expect(await entitlement()).toMatchObject({ status: "past_due" });
+
+  // 5. Fim do período: o acesso encerra de fato.
+  await enviar("customer.subscription.deleted", { status: "canceled" });
+  expect(await entitlement()).toMatchObject({ status: "canceled" });
 });

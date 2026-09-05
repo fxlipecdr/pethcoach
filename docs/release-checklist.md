@@ -21,7 +21,7 @@
 - [x] Projeto Supabase descartável e Auth/callback reais testados.
 - [x] RLS real via API para todas as tabelas pessoais existentes.
 - [ ] Conteúdo e mensagens de segurança revisados por profissional qualificado.
-- [ ] Checkout, webhook, portal e expiração/cancelamento em Stripe test. **Checkout hospedado, webhook assinado e concessão de acesso validados em produção em 05/09/2026** com o cartão de teste; idempotência coberta por `pnpm e2e:funnel`. Faltam portal de gestão, cancelamento e `past_due`.
+- [ ] Checkout, webhook, portal e expiração/cancelamento em Stripe test. **Checkout hospedado, webhook assinado e concessão de acesso validados em produção em 05/09/2026** com o cartão de teste; idempotência coberta por `pnpm e2e:funnel`. **Portal, cancelamento e `past_due` validados no test mode em 05/09/2026**, com regressão automatizada em `pnpm e2e:funnel`.
 - [ ] Consentimento, atribuição, e-mail e preferências verificados.
 - [ ] Sentry, sourcemaps, alertas e redação de PII testados em staging. O DSN ainda não está em produção.
 - [x] CSP completa com nonces/hashes compatíveis com SSR; rate limits distribuídos nos endpoints mutáveis. Detalhes em `docs/p14-acceptance.md`.

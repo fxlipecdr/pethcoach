@@ -90,10 +90,22 @@ Com o Stripe configurado e as chaves publicadas na Vercel, o caminho de pagament
 
 **Concessão, verificada pela compra.** Compra com o cartão de teste `4242 4242 4242 4242` no checkout hospedado: o acesso ao programa completo liberou sozinho, sem intervenção. Isso fecha a cadeia inteira — checkout, evento assinado, `grantOrUpdateEntitlement` e abertura do paywall.
 
-## Pendente para o aceite de P15
+## Entregue: ciclo de vida da assinatura — e o bug que ele revelou
 
-1. **Portal de gestão e ciclo de vida da assinatura.** A compra avulsa está provada. Faltam, todos possíveis no test mode: abrir o portal do cliente, cancelar uma assinatura e conferir a perda de acesso, e simular `invoice.payment_failed` para o estado `past_due`.
-2. **Sentry.** Ainda não configurado: o DSN não aparece no bundle de produção. Sem ele, erro em produção não gera aviso para ninguém.
+Portal de gestão, cancelamento e `past_due` foram exercitados no test mode. Os três funcionaram, mas o cancelamento expôs um defeito de comunicação.
+
+**O que acontecia.** Cancelar pelo portal do Stripe não encerra o acesso na hora: o padrão é `cancel_at_period_end`, com a assinatura seguindo `active` até o fim do período pago. O acesso continuar está certo — a pessoa pagou por aquele período — e `getUserEntitlements` já respeitava `expires_at`, então o corte aconteceria mesmo se o `deleted` se perdesse.
+
+O defeito estava na leitura. Sem guardar `cancel_at_period_end`, uma assinatura cancelada e uma que ia renovar ficavam idênticas no banco (`status = 'active'` com `expires_at` preenchido), e `/app/conta` anunciava **"Próxima renovação prevista para…"** a quem tinha acabado de cancelar. Num produto pago, isso vira chamado de suporte e desconfiança.
+
+**A correção.** A migração `20260911000000_p15_cancel_at_period_end.sql` adiciona a coluna, o webhook passa a repassar o sinal que o Stripe já enviava e era descartado, e a conta passa a dizer *"Não haverá nova cobrança. Seu acesso continua até DD/MM."*, com o selo mudando para "Assinatura cancelada".
+
+**A regressão ficou coberta.** `tests/e2e-funnel/billing.spec.ts` percorre os quatro estados contra o banco real — criada, cancelada no portal, `past_due` e encerrada — e verifica tanto a linha em `entitlements` quanto o texto que o tutor lê, exigindo que "Próxima renovação" **não** apareça no estado cancelado.
+
+**Lição.** O bug não apareceria em teste automatizado nenhum antes de existir alguém cancelando de verdade. Foi a segunda vez no dia em que testar à mão encontrou o que a suíte não encontrava — a primeira foi a região do banco.
+
+## Pendente para o aceite de P15
+1. **Sentry.** Ainda não configurado: o DSN não aparece no bundle de produção. Sem ele, erro em produção não gera aviso para ninguém.
 3. **Staging e rollback ensaiados.** Depende de um ambiente separado do de validação atual. O `/api/ready` já está no ar e protegido, pronto para ser o alvo da checagem pós-deploy.
 4. **Backup e restore no projeto Supabase remoto.** O procedimento está validado localmente; no projeto gerenciado, prefira o backup do próprio Supabase (PITR) a um dump de aplicação.
 5. **Beta controlado** e resolução de incidentes.
