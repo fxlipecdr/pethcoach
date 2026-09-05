@@ -22,8 +22,9 @@ export const consentStatusSchema = z.enum(["pending", "granted", "denied"]);
 export type ConsentStatus = z.infer<typeof consentStatusSchema>;
 
 // Allowed click ID parameters for traffic attribution
-export const ALLOWED_CLICK_IDS = ["gclid", "fbclid", "ttclid"] as const;
-export type AllowedClickId = (typeof ALLOWED_CLICK_IDS)[number];
+// Reexportado para não quebrar quem já importava daqui. Código de cliente
+// deve importar direto de "./click-ids" para não arrastar o Zod.
+export { ALLOWED_CLICK_IDS, type AllowedClickId } from "./click-ids";
 
 // Event property schemas with strict allowlists (Zero PII)
 export const landingViewPropsSchema = z.object({

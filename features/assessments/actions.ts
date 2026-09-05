@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { cookies } from "next/headers";
-import { authLimiter, privateRateKey } from "@/lib/security/rate-limit";
+import { consumeActionLimit } from "@/lib/security/rate-limit";
 import {
   claimAssessmentSchema,
   type ClaimedAssessment,
@@ -60,7 +60,7 @@ export async function claimAssessmentAction(
 
   const user = session.data.user;
 
-  if (!authLimiter.allow(`claim:${privateRateKey(user.id)}`, 20, 60_000)) {
+  if (!(await consumeActionLimit(runtime.client, "assessment_claim", user.id))) {
     return {
       status: "error",
       message: "Muitas tentativas em pouco tempo. Aguarde um minuto e tente novamente.",

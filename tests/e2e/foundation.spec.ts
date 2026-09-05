@@ -94,6 +94,46 @@ test("private routes fail closed and success redirect grants nothing", async ({
     version: "0.1.0",
   });
   expect(health.headers()["x-content-type-options"]).toBe("nosniff");
+
+  // P14: a resposta de documento carrega a política completa, com nonce.
+  const document = await request.get("/");
+  const headers = document.headers();
+  expect(headers["x-frame-options"]).toBe("DENY");
+  expect(headers["referrer-policy"]).toBe("strict-origin-when-cross-origin");
+  expect(headers["cross-origin-opener-policy"]).toBe("same-origin");
+  const csp = headers["content-security-policy"] ?? "";
+  for (const directive of [
+    "default-src 'self'",
+    "form-action 'self'",
+    "frame-ancestors 'none'",
+    "frame-src 'none'",
+    "object-src 'none'",
+    "base-uri 'self'",
+    "img-src 'self' data: blob:",
+    "style-src 'self' 'unsafe-inline'",
+  ])
+    expect(csp).toContain(directive);
+  expect(csp).toContain("connect-src 'self'");
+  // Rota pública pode ser estática: o bootstrap do Next não recebe nonce.
+  expect(csp).toContain("script-src 'self' 'unsafe-inline'");
+
+  // Rotas sempre dinâmicas usam nonce e não podem aceitar script inline solto.
+  const strict = await request.get("/entrar");
+  const strictCsp = strict.headers()["content-security-policy"] ?? "";
+  const strictScriptSrc = strictCsp.match(/script-src [^;]*/)?.[0] ?? "";
+  expect(strictScriptSrc).toMatch(/script-src 'self' 'nonce-[A-Za-z0-9+/=]+'/);
+  // O inline solto fica proibido justamente onde há dado de usuário.
+  expect(strictScriptSrc).not.toContain("'unsafe-inline'");
+  // Todo script inline dessa página precisa carregar o nonce, senão a
+  // hidratação quebra em produção.
+  const inlineScripts =
+    (await strict.text()).match(/<script(?![^>]*\ssrc=)[^>]*>/g) ?? [];
+  expect(inlineScripts.length).toBeGreaterThan(0);
+  for (const tag of inlineScripts) expect(tag).toContain("nonce=");
+  // Nonces não podem se repetir entre requisições.
+  const secondStrict =
+    (await request.get("/entrar")).headers()["content-security-policy"] ?? "";
+  expect(secondStrict).not.toBe(strictCsp);
   const unknown = await request.get("/problemas/desconhecido");
   expect(unknown.status()).toBe(404);
 });

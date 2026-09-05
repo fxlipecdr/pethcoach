@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useSyncExternalStore } from "react";
-import { motion } from "motion/react";
+import { useState } from "react";
 import {
   ArrowRight,
   ChartNoAxesCombined,
@@ -75,23 +74,9 @@ const stages = [
   },
 ] as const;
 
-function subscribeMotionPreference(callback: () => void) {
-  const query = window.matchMedia("(prefers-reduced-motion: reduce)");
-  query.addEventListener("change", callback);
-  return () => query.removeEventListener("change", callback);
-}
-const getMotionPreference = () =>
-  window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-const getServerMotionPreference = () => true;
-
 export function ProductPreview() {
   const [scenario, setScenario] = useState("passeio");
   const [stage, setStage] = useState(0);
-  const reducedMotion = useSyncExternalStore(
-    subscribeMotionPreference,
-    getMotionPreference,
-    getServerMotionPreference,
-  );
   const currentStage = stages[stage] ?? stages[0];
   const nextStage = stages[(stage + 1) % stages.length] ?? stages[0];
   const StageIcon = currentStage.icon;
@@ -178,12 +163,12 @@ export function ProductPreview() {
                   aria-atomic="true"
                   className="mt-6 min-h-32"
                 >
-                  <motion.div
+                  {/* A troca de `key` remonta o bloco e a animação CSS
+                      recomeça; `prefers-reduced-motion` desliga tudo pela
+                      regra global. */}
+                  <div
                     key={`${item.id}-${stage}`}
-                    initial={reducedMotion ? false : { opacity: 0.6, y: 5 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: reducedMotion ? 0 : 0.18 }}
-                    className="rounded-2xl border border-border/70 bg-muted/20 p-4"
+                    className="preview-stage rounded-2xl border border-border/70 bg-muted/20 p-4"
                   >
                     <div className="mb-2 flex items-center gap-2 text-xs font-bold text-primary-strong">
                       <StageIcon className="size-4" aria-hidden="true" />{" "}
@@ -195,7 +180,7 @@ export function ProductPreview() {
                     <p className="mt-1.5 text-sm leading-relaxed text-muted-foreground">
                       {stage === 0 ? item.context : currentStage.detail}
                     </p>
-                  </motion.div>
+                  </div>
                 </div>
 
                 <Button

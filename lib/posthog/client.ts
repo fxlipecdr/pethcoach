@@ -1,11 +1,10 @@
 "use client";
 
-import { getPublicEnv } from "@/lib/env/public";
-import {
-  eventSchemas,
-  type AnalyticsProvider,
-  type ClientProductEvent,
-  type EventPropertiesMap,
+import { getPublicEnvClient } from "@/lib/env/public-client";
+import type {
+  AnalyticsProvider,
+  ClientProductEvent,
+  EventPropertiesMap,
 } from "@/features/analytics/contracts";
 
 let consent = false;
@@ -49,7 +48,7 @@ export async function setAnalyticsConsent(granted: boolean): Promise<void> {
     return;
   }
 
-  const env = getPublicEnv();
+  const env = getPublicEnvClient();
   if (!env.NEXT_PUBLIC_POSTHOG_KEY || !env.NEXT_PUBLIC_POSTHOG_HOST) return;
 
   const key = env.NEXT_PUBLIC_POSTHOG_KEY;
@@ -82,7 +81,10 @@ export const analytics: AnalyticsProvider = {
   ): Promise<void> {
     if (!consent) return;
 
-    // Runtime validation with strict allowlist
+    // A lista estrita de propriedades é uma proteção de privacidade e
+    // continua valendo. O import é dinâmico só para tirar o Zod do bundle
+    // inicial: nada aqui roda antes do consentimento e de uma interação.
+    const { eventSchemas } = await import("@/features/analytics/contracts");
     const schema = eventSchemas[event];
     const parsed = schema.safeParse(properties);
     if (!parsed.success) {

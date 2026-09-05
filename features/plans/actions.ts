@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { aiProvider } from "@/lib/ai/provider";
-import { authLimiter, privateRateKey } from "@/lib/security/rate-limit";
+import { consumeActionLimit } from "@/lib/security/rate-limit";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { dispatchTransactionalEmail } from "@/features/emails/dispatcher";
 import { readOwnedAssessment } from "@/features/assessments/data";
@@ -82,10 +82,12 @@ export async function generatePlanAction(
   }
   const user = session.data.user;
 
-  if (!authLimiter.allow(`plan:${privateRateKey(user.id)}`, 20, 60_000)) {
+  // Geração de plano chama o provedor de IA: o teto é por hora, não por minuto.
+  if (!(await consumeActionLimit(client, "plan_generate", user.id))) {
     return {
       status: "error",
-      message: "Muitas solicitações recentes. Aguarde um minuto e tente novamente.",
+      message:
+        "Muitas solicitações recentes. Aguarde um pouco antes de gerar outro plano.",
     };
   }
 
@@ -213,6 +215,12 @@ export async function updatePlanTaskAction(input: {
   }
   const user = session.data.user;
 
+  if (!(await consumeActionLimit(client, "plan_task_write", user.id)))
+    return {
+      status: "error",
+      message: "Muitas atualizações em pouco tempo. Aguarde um minuto.",
+    };
+
   // Server-side authorization and entitlement check
   const taskPlan = await getPlanTaskWithPlan(client, input.taskId);
   if (!taskPlan || taskPlan.plan.user_id !== user.id) {
@@ -281,6 +289,12 @@ export async function submitDailyCheckinAction(
     return { status: "error", message: "Não autorizado." };
   }
   const user = session.data.user;
+
+  if (!(await consumeActionLimit(client, "checkin_write", user.id)))
+    return {
+      status: "error",
+      message: "Muitos check-ins em pouco tempo. Aguarde um minuto.",
+    };
 
   // 1. Non-negotiable product rule: Safety gate on daily check-in
   const safety = evaluateCheckinSafety(parsed.data.safetyFlag);

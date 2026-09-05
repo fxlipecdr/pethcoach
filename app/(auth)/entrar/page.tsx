@@ -3,6 +3,7 @@ import { SignInForm } from "@/features/auth/sign-in-form";
 import { getAuthConfig } from "@/features/auth/config";
 import { safeReturnPath } from "@/features/auth/contracts";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { isAnonymizedAccount } from "@/lib/security/auth";
 export const dynamic = "force-dynamic";
 export default async function SignInPage({
   searchParams,
@@ -16,7 +17,13 @@ export default async function SignInPage({
     const client = await createSupabaseServerClient();
     if (client) {
       const { data, error } = await client.auth.getUser();
-      if (!error && data.user) redirect(next);
+      // Conta anonimizada mantém cookie válido, mas não deve voltar ao app.
+      if (
+        !error &&
+        data.user &&
+        !(await isAnonymizedAccount(client, data.user.id))
+      )
+        redirect(next);
     }
   }
   return (
@@ -24,6 +31,7 @@ export default async function SignInPage({
       enabled={enabled}
       next={next}
       linkError={query.error === "link"}
+      accountRemoved={query.conta === "removida"}
     />
   );
 }

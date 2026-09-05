@@ -4,6 +4,7 @@ const mocks = vi.hoisted(() => ({
   client: vi.fn(),
   config: vi.fn(),
   allow: vi.fn(),
+  consumeAction: vi.fn(),
   getUser: vi.fn(),
   from: vi.fn(),
   otp: vi.fn(),
@@ -18,6 +19,8 @@ vi.mock("@/features/auth/config", () => ({ getAuthConfig: mocks.config }));
 vi.mock("@/lib/security/rate-limit", () => ({
   authLimiter: { allow: mocks.allow },
   privateRateKey: (value: string) => value,
+  // O limite compartilhado tem teste próprio em tests/integration.
+  consumeActionLimit: mocks.consumeAction,
 }));
 vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidate }));
 vi.mock("next/navigation", () => ({
@@ -53,6 +56,7 @@ beforeEach(() => {
     origin: "http://127.0.0.1:3000",
   });
   mocks.allow.mockReturnValue(true);
+  mocks.consumeAction.mockResolvedValue(true);
   mocks.client.mockResolvedValue({
     auth: {
       getUser: mocks.getUser,

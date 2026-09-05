@@ -28,10 +28,12 @@ export function SignInForm({
   enabled,
   next,
   linkError,
+  accountRemoved = false,
 }: {
   enabled: boolean;
   next: string;
   linkError: boolean;
+  accountRemoved?: boolean;
 }) {
   const [state, action, pending] = useActionState(
     requestMagicLink,
@@ -68,6 +70,13 @@ export function SignInForm({
         >
           O link pode ter expirado, já ter sido usado ou ter sido aberto em
           outro navegador. Solicite um novo link abaixo.
+        </Feedback>
+      ) : null}
+      {accountRemoved ? (
+        <Feedback className="mt-6" title="Esta conta foi removida">
+          Seus dados pessoais e o histórico de treino foram apagados a seu
+          pedido. Os registros de pagamento já realizados são mantidos por
+          obrigação fiscal e não contêm mais identificação.
         </Feedback>
       ) : null}
       {hasDraft ? (

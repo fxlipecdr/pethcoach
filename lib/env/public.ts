@@ -1,4 +1,7 @@
 import { parseEnvironment, publicEnvSchema } from "./schema";
+import type { z } from "zod";
+
+export type PublicEnv = z.infer<typeof publicEnvSchema>;
 
 export function getPublicEnv() {
   // Explicit property access is required for Next.js browser replacement.

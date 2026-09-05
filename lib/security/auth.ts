@@ -8,6 +8,23 @@ import type { Database } from "@/lib/supabase/database.types";
 
 export type OperatorRole = "admin" | "reviewer" | "operator";
 
+/**
+ * P14: uma conta anonimizada a pedido do titular pode ter sessão válida em
+ * outro dispositivo. O perfil marcado com `deleted_at` encerra o acesso.
+ */
+export async function isAnonymizedAccount(
+  client: SupabaseClient<Database>,
+  userId: string,
+): Promise<boolean> {
+  const { data, error } = await client
+    .from("profiles")
+    .select("deleted_at")
+    .eq("id", userId)
+    .maybeSingle();
+  if (error) return false;
+  return Boolean(data?.deleted_at);
+}
+
 export async function requireUser(next?: string): Promise<User> {
   const login = next
     ? `/entrar?next=${encodeURIComponent(safeReturnPath(next))}`
@@ -16,6 +33,8 @@ export async function requireUser(next?: string): Promise<User> {
   if (!client) redirect(login);
   const { data, error } = await client.auth.getUser();
   if (error || !data.user) redirect(login);
+  if (await isAnonymizedAccount(client, data.user.id))
+    redirect("/entrar?conta=removida");
   return data.user;
 }
 

@@ -6,7 +6,7 @@ Destino informado: `coach.peth.com.br`. Remetente: `PethCoach <suporte@peth.com.
 
 | Serviço | Configurado | Falta |
 | --- | --- | --- |
-| Supabase Free | Organização PethCoach, projeto `pethcoach-dev`, migrations P0/P2/P4/P5 aplicadas, Auth por e-mail, SMTP, callbacks e templates PT-BR; P2 hospedada/local aceita e safety gate P5 validado nos três desfechos | Monitorar drift de schema e repetir o aceite após mudanças de Auth/RLS |
+| Supabase Free | Organização PethCoach. **Projeto ativo migrado para São Paulo em 05/09/2026** (`wcxgwjcvhfbddpbncwwf`), com as 14 migrations aplicadas, Auth por e-mail com confirmação e callbacks configurados | SMTP do Resend e templates PT-BR ainda pendentes no projeto novo; variáveis da Vercel ainda apontam para o projeto antigo |
 | Resend | `peth.com.br` verificado; chave `PethCoach Auth Dev` restrita a envio; SMTP autenticado; cinco e-mails reais de acesso entregues no total | Retenção e webhooks pertencem à P12 |
 | Stripe | Sandbox `acct_1UAZB3LaePxLnVtP` acessível no painel; modo de teste ativo; nenhum produto/preço ou webhook | Preços definidos pelo responsável, Checkout e webhook assinado na P10; ativação comercial posterior |
 | Vercel | Projeto `pethcoach` na equipe `pethdeveloper-3373s-projects`, plano Hobby, GitHub conectado, `coach.peth.com.br` com HTTPS, variáveis públicas do Supabase e `ASSESSMENT_TOKEN_SECRET` sensível somente em Production; login confirmado | Manter Preview isolado e migrar para Pro antes da operação comercial |
@@ -16,9 +16,11 @@ Destino informado: `coach.peth.com.br`. Remetente: `PethCoach <suporte@peth.com.
 ## Supabase
 
 - Organização: `qcjalvyabqpxjxokgvjz`.
-- Projeto: `cvxqvfsebpdyshxpoqdj`; URL: `https://cvxqvfsebpdyshxpoqdj.supabase.co`.
-- Região efetiva confirmada pelo painel e pelo pooler: **Ohio, `us-east-2`**. A seleção inicial de São Paulo não foi a região efetivamente provisionada; não houve recriação automática. Reavaliar região antes de produção, quando ainda não houver dados de clientes.
+- **Projeto ativo: `wcxgwjcvhfbddpbncwwf`**; URL: `https://wcxgwjcvhfbddpbncwwf.supabase.co`. Região **São Paulo**, confirmada na connection string antes de qualquer migração.
+- Projeto anterior: `cvxqvfsebpdyshxpoqdj`, região **Ohio, `us-east-2`** — a seleção inicial de São Paulo não foi a região efetivamente provisionada, e foi isso que motivou a migração. **Ainda no ar como plano B**; pausar apenas depois que a Vercel estiver apontando para o projeto novo e o login real tiver sido validado. Só apagar depois de alguns dias de uso normal.
+- A migração foi feita sem transportar dados: o projeto antigo continha apenas contas de teste. Migrar identidades entre projetos exigiria mover o schema `auth`, o que não é suportado no plano gratuito.
 - Site URL atual de desenvolvimento: `http://127.0.0.1:3000`.
+- Procedimento completo da migração de região, com as verificações de cada etapa: `docs/migrar-supabase-sao-paulo.md`.
 - Callbacks autorizados: `http://127.0.0.1:3000/auth/callback**`, `http://127.0.0.1:3100/auth/callback**` e `https://coach.peth.com.br/auth/callback**`. Autorizar o callback não publica o domínio.
 - Email habilitado, signup habilitado e confirmação de e-mail obrigatória, verificados pela API Auth.
 - SMTP: `smtp.resend.com`, porta `465`, usuário `resend`, remetente acima, intervalo mínimo por usuário de 60 segundos. A senha é a chave restrita Resend, armazenada no painel.

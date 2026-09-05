@@ -1,7 +1,7 @@
-import { getPublicEnv } from "@/lib/env/public";
+import { getPublicEnvClient } from "@/lib/env/public-client";
 import { scrubDiagnosticEvent } from "@/lib/observability/scrub";
 
-const dsn = getPublicEnv().NEXT_PUBLIC_SENTRY_DSN;
+const dsn = getPublicEnvClient().NEXT_PUBLIC_SENTRY_DSN;
 if (dsn) {
   void import("@sentry/nextjs").then((sentry) => {
     sentry.init({

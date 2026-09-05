@@ -1,6 +1,7 @@
 "use server";
 
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { consumeActionLimit } from "@/lib/security/rate-limit";
 import {
   emailPreferencesSchema,
   unsubscribeInputSchema,
@@ -55,6 +56,12 @@ export async function updateEmailPreferencesAction(
   if (!parsed.success) {
     return { ok: false, error: "Dados de preferências inválidos." };
   }
+
+  if (!(await consumeActionLimit(supabase, "email_preferences_write", user.id)))
+    return {
+      ok: false,
+      error: "Muitas alterações em pouco tempo. Aguarde um minuto.",
+    };
 
   const updated = await updateEmailPreferences(user.id, parsed.data);
   if (!updated) {

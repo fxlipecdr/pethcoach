@@ -20,7 +20,8 @@
     "test:p2:live": "node --experimental-strip-types scripts/p2-live-acceptance.ts",
     "test:p2:session": "node --experimental-strip-types scripts/p2-local-session-acceptance.ts",
     "e2e:smoke": "playwright test",
-    "verify": "pnpm lint && pnpm typecheck && pnpm test"
+    "verify": "pnpm lint && pnpm typecheck && pnpm test",
+    "e2e:funnel": "playwright test --config playwright.funnel.config.ts"
   },
   "dependencies": {
     "@fontsource-variable/geist": "^5.3.0",
@@ -37,7 +38,6 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^1.37.0",
-    "motion": "^13.1.1",
     "next": "16.3.3",
     "posthog-js": "^1.422.5",
     "react": "19.2.8",

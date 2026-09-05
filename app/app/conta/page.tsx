@@ -2,6 +2,7 @@ import { PageContainer } from "@/components/layouts/page-container";
 import { Card } from "@/components/ui/primitives";
 import { authenticatedData } from "@/features/dogs/data";
 import { AccountForm, SignOutForm } from "@/features/profile/account-forms";
+import { DataRightsCard } from "@/features/profile/data-rights-card";
 import { getUserBillingStatus } from "@/features/billing/data";
 import { BillingCard } from "@/features/billing/billing-card";
 import { getOrCreateEmailPreferences } from "@/features/emails/data";
@@ -55,11 +56,11 @@ export default async function AccountPage() {
           <h2 className="text-lg font-semibold">Acesso por e-mail</h2>
           <p className="mt-3 break-all text-sm">{user.email}</p>
           <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
-            O endereço foi confirmado no acesso à conta. Alteração de e-mail,
-            exportação e exclusão de dados serão disponibilizadas antes da
-            abertura ao público.
+            O endereço foi confirmado no acesso à conta. A alteração de e-mail
+            será disponibilizada antes da abertura ao público.
           </p>
         </Card>
+        <DataRightsCard />
         <Card>
           <h2 className="text-lg font-semibold">Encerrar sessão</h2>
           <p className="mt-3 mb-5 text-sm leading-relaxed text-muted-foreground">

@@ -10,24 +10,30 @@ const nextConfig: NextConfig = {
     browserToTerminal: false,
   },
   async headers() {
-    return [
+    // O Content-Security-Policy é montado por requisição em `proxy.ts`, porque
+    // depende de um nonce. Aqui ficam apenas os cabeçalhos estáticos.
+    const headers = [
+      { key: "X-Content-Type-Options", value: "nosniff" },
+      { key: "X-Frame-Options", value: "DENY" },
+      { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
       {
-        source: "/:path*",
-        headers: [
-          { key: "X-Content-Type-Options", value: "nosniff" },
-          { key: "X-Frame-Options", value: "DENY" },
-          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
-          {
-            key: "Permissions-Policy",
-            value: "camera=(), microphone=(), geolocation=()",
-          },
-          {
-            key: "Content-Security-Policy",
-            value: "frame-ancestors 'none'; object-src 'none'; base-uri 'self'",
-          },
-        ],
+        key: "Permissions-Policy",
+        value:
+          "camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()",
       },
+      { key: "Cross-Origin-Opener-Policy", value: "same-origin" },
+      { key: "X-Permitted-Cross-Domain-Policies", value: "none" },
     ];
+
+    if (process.env.NODE_ENV === "production") {
+      // HSTS só faz sentido sobre HTTPS e é ignorado pelo navegador em http.
+      headers.push({
+        key: "Strict-Transport-Security",
+        value: "max-age=63072000; includeSubDomains; preload",
+      });
+    }
+
+    return [{ source: "/:path*", headers }];
   },
 };
 

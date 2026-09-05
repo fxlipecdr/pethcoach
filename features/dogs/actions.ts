@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-import { authLimiter, privateRateKey } from "@/lib/security/rate-limit";
+import { consumeActionLimit } from "@/lib/security/rate-limit";
 import {
   dogMutationSchema,
   dogFormValues,
@@ -48,7 +48,7 @@ export async function saveDog(
       values,
     };
   }
-  if (!authLimiter.allow(`dog:${privateRateKey(auth.user.id)}`, 30, 60_000))
+  if (!(await consumeActionLimit(client, "dog_write", auth.user.id)))
     return {
       status: "error",
       message:

@@ -2,7 +2,7 @@
 
 ## Execução atual
 
-**Prompt Mestre + P0 + P1 + P2 + P3 + P4 + P5 + P6 + P7 + P8 + P9 + P10 + P11 + P12 + P13 implementados e validados tecnicamente. Próxima fase: P14 (Segurança e privacidade).** Evidências da fundação em `docs/verification.md`; matrizes em `docs/p1-acceptance.md` a `docs/p13-acceptance.md`. Conexão e repetição do aceite do projeto dev: `docs/p2-setup.md`. O documento de origem determina execução sequencial, com qualidade verificada ao final de cada fase.
+**Prompt Mestre + P0 a P14 implementados e validados tecnicamente. Fase atual: P15 (Release candidate), em andamento.** Cabeçalhos de segurança, Content Security Policy completa, exportação e exclusão de dados (LGPD), limite de requisições compartilhado entre instâncias e auditoria de IDOR entregues e verificados. Resta a revisão jurídica de privacidade e termos, que é trabalho humano. Evidências da fundação em `docs/verification.md`; matrizes em `docs/p1-acceptance.md` a `docs/p13-acceptance.md` situação de P14 em `docs/p14-acceptance.md` e da fase atual em `docs/p15-acceptance.md`. Conexão e repetição do aceite do projeto dev: `docs/p2-setup.md`. O documento de origem determina execução sequencial, com qualidade verificada ao final de cada fase.
 
 P1 concluída após o refinamento visual: componentes, estados, home, navegação, layouts de acesso/área pessoal/admin e fluxo com largura limitada. A logo e a paleta oficiais foram integradas em 01/09/2026. Guia da identidade em `docs/ui-design.md`; isso não ativa fluxos de negócio de P2 em diante.
 
@@ -24,8 +24,8 @@ P1 concluída após o refinamento visual: componentes, estados, home, navegaçã
 | P11 | Analytics e atribuição — concluída tecnicamente | Consentimento, first/last touch, eventos deduplicados e compra no servidor |
 | P12 | E-mail e retenção — concluída tecnicamente | Templates, preferências, unsubscribe, jobs idempotentes e entrega testada |
 | P13 | Admin e conteúdo — concluída tecnicamente | RBAC, draft/reviewed/published, revisões, validação anti-aversiva e inspector sem PII |
-| P14 | Segurança e privacidade | IDOR, entitlement bypass, rate limits, CSP completa, exportação/exclusão e revisão jurídica |
-| P15 | Release candidate | E2E do funil real e billing; performance, staging, monitoring e rollback |
+| P14 | Segurança e privacidade — escopo de código concluído | IDOR e entitlement bypass auditados, rate limits compartilhados, CSP completa, exportação/exclusão entregues; revisão jurídica pendente |
+| P15 | Release candidate — **em andamento** | Funil real ponta a ponta, webhook de billing, readiness protegido, backup/restore ensaiado e performance reduzida em 41%; faltam checkout hospedado do Stripe, staging, monitoring e rollback, que dependem de contas externas |
 | P16 | Vídeo, somente V2 | Não executar antes dos gates abaixo |
 
 ## Gates de V2

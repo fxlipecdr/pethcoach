@@ -273,6 +273,8 @@ export type Database = Omit<GeneratedDatabase, "public"> & {
   public: Omit<GeneratedDatabase["public"], "Tables" | "Functions"> & {
     Tables: {
       profiles: {
+        // Só `anonymize_account` escreve em `deleted_at`, por isso a coluna
+        // aparece em Row mas fica fora de Insert e Update.
         Row: PublicTables["profiles"]["Row"];
         Insert: Pick<
           PublicTables["profiles"]["Insert"],
@@ -612,6 +614,14 @@ export type Database = Omit<GeneratedDatabase, "public"> & {
       };
     };
     Functions: {
+      anonymize_account: {
+        Args: never;
+        Returns: undefined;
+      };
+      consume_action_rate_limit: {
+        Args: { p_action: string };
+        Returns: boolean;
+      };
       claim_assessment: {
         Args: {
           p_assessment_id: string;

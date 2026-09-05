@@ -1,4 +1,4 @@
-import { ALLOWED_CLICK_IDS } from "./contracts";
+import { ALLOWED_CLICK_IDS } from "./click-ids";
 
 export const ANONYMOUS_ID_STORAGE_KEY = "peth_anonymous_id";
 
