@@ -36,18 +36,27 @@ test("home, navigation, accessibility and responsive layout", async ({
   });
   await expect(
     page.getByRole("heading", {
-      name: "Um próximo passo. Uma rotina mais leve.",
+      name: "Um plano de 14 dias para o problema de vocês.",
     }),
   ).toBeVisible();
   // O selo carrega a oferta real. Já foi "Produto em desenvolvimento", frase
   // que passou a desencorajar a compra depois que a cobrança entrou no ar.
   await expect(
-    page.getByText("Primeiro dia grátis", { exact: true }),
+    page.getByText("Primeiro dia grátis, sem cartão", { exact: true }),
   ).toBeVisible();
-  await page.getByRole("link", { name: "Conhecer os programas" }).click();
+  // O preço aparece no primeiro quadro: quem chega de anúncio não deveria
+  // precisar de dois cliques para saber quanto custa.
+  await expect(page.getByText(/Programa completo por/)).toBeVisible();
+  await page.getByRole("link", { name: "Começar pelo dia grátis" }).first().click();
   await expect(page).toHaveURL(/#problemas$/);
   await expect(
     page.getByRole("heading", { name: "O que vocês precisam melhorar?" }),
+  ).toBeVisible();
+  // Os planos ficam logo depois das dores, na mesma página.
+  await expect(
+    page.getByRole("heading", {
+      name: "Comece de graça. Continue se fizer sentido.",
+    }),
   ).toBeVisible();
   expect(
     await page.evaluate(

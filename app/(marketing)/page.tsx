@@ -40,6 +40,8 @@ import {
   Sticker,
 } from "@/components/pethcoach/playground";
 import { problems } from "@/content/problems";
+import { resolvePublicPlanPrices } from "@/features/billing/pricing";
+import { PlanCards } from "@/components/pethcoach/plan-cards";
 import { LandingTracker } from "@/features/analytics/landing-tracker";
 
 const problemIcons = {
@@ -88,7 +90,15 @@ const exampleDay = [
   "Descanso sem cobrança",
 ];
 
-export default function Home() {
+/**
+ * A home lê o preço do Stripe para exibir os planos. Revalidação curta mantém
+ * a página estática para quem chega de anúncio, e o valor atualiza sozinho
+ * quando muda no painel.
+ */
+export const revalidate = 300;
+
+export default async function Home() {
+  const precos = await resolvePublicPlanPrices();
   const [lead, ...rest] = problems;
   const LeadIcon = problemIcons[lead.icon];
 
@@ -112,23 +122,25 @@ export default function Home() {
         <div className="page-width relative grid items-center gap-12 md:grid-cols-[1.12fr_0.88fr] md:gap-10 lg:gap-16">
           <div>
             <Sticker tone="lime" icon={<Spark tone="coral" size={16} />}>
-              Primeiro dia grátis
+              Primeiro dia grátis, sem cartão
             </Sticker>
 
-            <p className="eyebrow mt-7">Menos dúvidas. Mais conexão.</p>
+            <p className="eyebrow mt-7">Puxa a guia? Late? Não fica sozinho?</p>
 
             <h1 className="display-heading mt-4">
-              Um próximo passo.
+              Um plano de 14 dias
               <br />
-              Uma rotina <span className="marker-underline">mais leve.</span>
+              para o problema{" "}
+              <span className="marker-underline">de vocês.</span>
             </h1>
 
-            <p className="mt-7 max-w-[44ch] text-lg leading-relaxed text-muted-foreground">
-              Cuidar do comportamento do seu cão pode começar com mais clareza.
-              E com pequenos passos que cabem na vida de vocês.
+            <p className="mt-7 max-w-[46ch] text-lg leading-relaxed text-muted-foreground">
+              Você conta o que está acontecendo e recebe exercícios de poucos
+              minutos por dia, na ordem certa, com critério de parada. Sem
+              tranco, sem grito, sem promessa mágica.
             </p>
 
-            <div className="mt-9 flex flex-col items-start gap-5 sm:flex-row sm:items-center sm:gap-7">
+            <div className="mt-9 flex flex-col items-start gap-4 sm:flex-row sm:items-center">
               <Link
                 href="#problemas"
                 className={buttonVariants({
@@ -136,24 +148,32 @@ export default function Home() {
                   className: "w-full sm:w-auto",
                 })}
               >
-                Conhecer os programas
+                Começar pelo dia grátis
                 <ArrowRight aria-hidden="true" />
               </Link>
               <Link
-                href="#como-funciona"
+                href="#planos"
                 className={buttonVariants({
-                  variant: "link",
-                  className: "text-sm",
+                  variant: "outline",
+                  size: "lg",
+                  className: "w-full sm:w-auto",
                 })}
               >
-                Ver como funciona
-                <ArrowRight aria-hidden="true" />
+                Ver preços
               </Link>
             </div>
 
-            <p className="mt-9 flex items-center gap-3 text-sm font-semibold text-muted-foreground">
-              <Paw tone="mint" size={24} />
-              Recompensa, respeito e consistência.
+            {/* Sinal de preço no primeiro quadro: quem vem de anúncio não
+                deveria precisar de dois cliques para saber quanto custa. */}
+            <p className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
+              <span className="flex items-center gap-2 font-semibold">
+                <Paw tone="mint" size={22} />
+                Programa completo por{" "}
+                <strong className="text-foreground">
+                  {precos.single_program.priceFormatted}
+                </strong>
+              </span>
+              <span>7 dias para desistir, sem justificar</span>
             </p>
           </div>
 
@@ -221,86 +241,113 @@ export default function Home() {
           }
         />
 
-        <div className="mt-12 grid gap-5 lg:grid-cols-12">
-          <Link
-            href={`/problemas/${lead.slug}`}
-            className="lift-card group relative flex flex-col justify-between overflow-hidden rounded-panel border border-border bg-card p-7 shadow-card hover:border-primary/40 sm:p-9 lg:col-span-7 lg:row-span-2"
+        {/* Banner do programa em destaque, depois seis cards iguais em três
+            colunas. Com sete itens, a grade de 12 colunas anterior deixava
+            duas colunas vazias nas duas últimas fileiras. */}
+        <Link
+          href={`/problemas/${lead.slug}`}
+          className="lift-card group mt-12 grid gap-7 overflow-hidden rounded-panel border border-border bg-card p-7 shadow-card hover:border-primary/40 sm:p-9 lg:grid-cols-[0.85fr_1.15fr] lg:items-center"
+        >
+          <div
+            className={`relative flex min-h-44 items-end justify-between rounded-card border p-6 ${tones[lead.tone]}`}
           >
-            <div
-              className={`relative flex min-h-52 items-end justify-between rounded-card border p-6 ${tones[lead.tone]}`}
-            >
-              <Paw
-                tone="cream"
-                size={92}
-                className="absolute -top-4 -right-3 rotate-12 opacity-70"
-              />
-              <LeadIcon
-                className="size-12 text-ink"
-                strokeWidth={1.4}
+            <Paw
+              tone="cream"
+              size={88}
+              className="absolute -top-4 -right-3 rotate-12 opacity-70"
+            />
+            <LeadIcon
+              className="size-12 text-ink"
+              strokeWidth={1.4}
+              aria-hidden="true"
+            />
+            <div className="relative text-right">
+              <span className="block text-[11px] font-bold tracking-[0.16em] text-ink/70 uppercase">
+                {lead.category}
+              </span>
+              <span
+                className="font-display mt-1 block text-5xl leading-none font-bold tracking-tight text-ink"
                 aria-hidden="true"
-              />
-              <div className="relative text-right">
-                <span className="block text-[11px] font-bold tracking-[0.16em] text-ink/70 uppercase">
-                  {lead.category}
-                </span>
-                <span
-                  className="font-display mt-1 block text-5xl leading-none font-bold tracking-tight text-ink"
-                  aria-hidden="true"
-                >
-                  01
-                </span>
-              </div>
-            </div>
-
-            <div className="mt-7">
-              <h3 className="font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
-                {lead.title}
-              </h3>
-              <p className="mt-3 max-w-md leading-relaxed text-muted-foreground">
-                {lead.description}
-              </p>
-              <span className="arrow-nudge mt-7 inline-flex items-center gap-3 text-sm font-bold text-primary-strong">
-                Ver o programa
-                <ArrowUpRight className="size-4" aria-hidden="true" />
+              >
+                01
               </span>
             </div>
-          </Link>
+          </div>
 
+          <div>
+            <h3 className="font-display text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+              {lead.title}
+            </h3>
+            <p className="mt-3 max-w-lg leading-relaxed text-muted-foreground">
+              {lead.description}
+            </p>
+            <span className="arrow-nudge mt-6 inline-flex items-center gap-3 text-sm font-bold text-primary-strong">
+              Ver o programa
+              <ArrowUpRight className="size-4" aria-hidden="true" />
+            </span>
+          </div>
+        </Link>
+
+        <div className="mt-5 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {rest.map((problem, index) => {
             const Icon = problemIcons[problem.icon];
             return (
               <Link
                 href={`/problemas/${problem.slug}`}
                 key={problem.slug}
-                className="lift-card group flex gap-5 rounded-card border border-border bg-card p-6 shadow-card hover:border-primary/40 lg:col-span-5"
+                className="lift-card group flex flex-col rounded-card border border-border bg-card p-6 shadow-card hover:border-primary/40"
               >
                 <span
-                  className={`flex size-16 shrink-0 items-center justify-center rounded-control border ${tones[problem.tone]}`}
+                  className={`flex size-14 shrink-0 items-center justify-center rounded-control border ${tones[problem.tone]}`}
                 >
                   <Icon
-                    className="size-7 text-ink"
+                    className="size-6 text-ink"
                     strokeWidth={1.5}
                     aria-hidden="true"
                   />
                 </span>
-                <div className="min-w-0">
-                  <span className="text-[11px] font-bold tracking-[0.16em] text-muted-foreground uppercase">
-                    {problem.category} · 0{index + 2}
-                  </span>
-                  <h3 className="font-display mt-1.5 text-xl font-bold tracking-tight text-foreground">
-                    {problem.title}
-                  </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
-                    {problem.description}
-                  </p>
-                  <span className="arrow-nudge mt-4 inline-flex items-center gap-2 text-sm font-bold text-primary-strong">
-                    Ver o programa
-                    <ArrowUpRight className="size-4" aria-hidden="true" />
-                  </span>
-                </div>
+                <span className="mt-5 text-[11px] font-bold tracking-[0.16em] text-muted-foreground uppercase">
+                  {problem.category} · 0{index + 2}
+                </span>
+                <h3 className="font-display mt-1.5 text-lg font-bold tracking-tight text-foreground">
+                  {problem.title}
+                </h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  {problem.description}
+                </p>
+                <span className="arrow-nudge mt-auto inline-flex items-center gap-2 pt-5 text-sm font-bold text-primary-strong">
+                  Ver o programa
+                  <ArrowUpRight className="size-4" aria-hidden="true" />
+                </span>
               </Link>
             );
           })}
+        </div>
+      </section>
+
+      {/* Preço logo depois da dor: quem se reconheceu num programa precisa
+          saber quanto custa antes de qualquer outra coisa. */}
+      <section id="planos" className="page-width pb-20 md:pb-28">
+        <SectionHeader
+          eyebrow="Quanto custa"
+          title="Comece de graça. Continue se fizer sentido."
+          description="O Dia 1 é completo e gratuito, sem pedir cartão. Um adestrador cobra de R$ 80 a R$ 200 por aula."
+        />
+
+        <PlanCards prices={precos} className="mt-12 max-w-4xl" />
+
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 text-sm text-muted-foreground">
+          <span className="flex items-center gap-2">
+            <ShieldCheck className="size-4 text-primary-strong" aria-hidden="true" />
+            7 dias para desistir, sem justificar
+          </span>
+          <span className="flex items-center gap-2">
+            <Paw tone="mint" size={20} />
+            Cancele sozinho, sem falar com atendimento
+          </span>
+          <Link href="/planos" className="nav-link font-semibold text-primary-strong">
+            Ver detalhes dos planos
+          </Link>
         </div>
       </section>
 
