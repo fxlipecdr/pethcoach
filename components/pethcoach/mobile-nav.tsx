@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Menu, ArrowUpRight } from "lucide-react";
 import { Brand } from "./brand";
 import { Button } from "@/components/ui/button";
+import { AccountCta } from "@/components/pethcoach/account-cta";
 import {
   Sheet,
   SheetTrigger,
@@ -61,7 +62,7 @@ export function MobileNav() {
             </p>
             <SheetClose asChild>
               <Button asChild className="w-full">
-                <Link href="/entrar">Entrar</Link>
+                <AccountCta variant="menu" />
               </Button>
             </SheetClose>
           </div>

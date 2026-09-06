@@ -1,10 +1,10 @@
 "use client";
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Brand } from "@/components/pethcoach/brand";
 import { MobileNav } from "@/components/pethcoach/mobile-nav";
+import { AccountCta } from "@/components/pethcoach/account-cta";
 import { cn } from "@/lib/utils";
 
 const links = [
@@ -60,9 +60,7 @@ export function SiteHeader() {
             size="sm"
             className="hidden rounded-pill md:inline-flex"
           >
-            <Link href="/entrar">
-              Entrar <ArrowUpRight aria-hidden="true" />
-            </Link>
+            <AccountCta />
           </Button>
           <MobileNav />
         </div>
