@@ -89,9 +89,22 @@ export async function createCheckoutSessionAction(
           "O sistema de pagamentos da Stripe está em preparação para este ambiente.",
       };
     }
+    /**
+     * A mensagem crua do Stripe não vai para o tutor.
+     *
+     * Ela vem em inglês, cita painel e parâmetro de API, e descreve um
+     * problema de configuração que só o operador pode resolver. Um cliente
+     * lendo "no valid payment method types" não aprende nada e desiste da
+     * compra; o operador precisa do detalhe, e é ele que vai para o log.
+     */
+    if ("error" in result) {
+      console.error(`[checkout] falha ao criar sessão: ${result.error}`);
+    }
     return {
       status: "error",
-      message: "error" in result ? result.error : "Não foi possível iniciar o checkout.",
+      message:
+        "Não foi possível abrir o pagamento agora. Tente de novo em alguns " +
+        "minutos — se continuar, fale com a gente pelo suporte.",
     };
   }
 

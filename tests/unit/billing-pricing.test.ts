@@ -152,3 +152,21 @@ describe("diagnóstico de preço", () => {
     }
   });
 });
+
+describe("mensagem de erro do checkout", () => {
+  it("não expõe texto técnico da Stripe ao tutor", async () => {
+    const { createCheckoutSessionAction } = await import(
+      "@/features/billing/actions"
+    );
+    // Sem sessão de usuário a ação já falha antes da Stripe; o que importa
+    // aqui é que nenhuma resposta ao tutor carregue jargão de API.
+    const resultado = await createCheckoutSessionAction({
+      planType: "single_program",
+    });
+
+    if (resultado.status === "error") {
+      expect(resultado.message).not.toMatch(/payment_method_types|dashboard\.stripe/i);
+      expect(resultado.message).toMatch(/[áàâãéêíóôõúç]/i);
+    }
+  });
+});

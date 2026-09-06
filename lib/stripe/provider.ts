@@ -182,51 +182,75 @@ class StripePaymentProvider implements PaymentProvider {
     const mode =
       input.planType === "single_program" ? "payment" : "subscription";
 
-    try {
-      /**
-       * `payment_method_types` é deliberadamente omitido.
-       *
-       * Quando o campo é enviado, o Stripe exige que **todos** os métodos
-       * listados estejam ativos na conta e **rejeita a criação da sessão** se
-       * algum não estiver. Fixar `["card", "pix"]` no código quebraria o
-       * checkout inteiro enquanto o Pix não estivesse aprovado — e no Brasil o
-       * Pix é liberado só por convite, após no mínimo 60 dias processando
-       * pagamentos.
-       *
-       * Omitindo o campo, o Stripe usa os métodos configurados no Dashboard e
-       * escolhe os relevantes para o cliente. O Pix passa a aparecer sozinho no
-       * dia em que for aprovado, sem tocar em código e sem risco de derrubar a
-       * venda enquanto não for.
-       */
-      const session = await stripe.checkout.sessions.create({
-        customer: input.stripeCustomerId ?? undefined,
-        customer_email: input.stripeCustomerId ? undefined : input.userEmail,
-        client_reference_id: input.userId,
-        mode,
-        line_items: [
-          {
-            price: priceId,
-            quantity: 1,
-          },
-        ],
-        success_url:
-          input.successUrl ?? "http://127.0.0.1:3000/checkout/sucesso",
-        cancel_url: input.cancelUrl ?? "http://127.0.0.1:3000/app/conta",
-        metadata: {
-          userId: input.userId,
-          ...(input.planType ? { planType: input.planType } : {}),
-          ...input.metadata,
+    /**
+     * Formas de pagamento: o painel decide, com o cartão como rede de proteção.
+     *
+     * A primeira tentativa **omite** `payment_method_types`, deixando o Stripe
+     * usar o que estiver ativo no Dashboard. É o que faz o Pix aparecer sozinho
+     * no dia em que a conta for aprovada — no Brasil ele é liberado só por
+     * convite, depois de no mínimo 60 dias processando pagamentos — sem tocar
+     * em código.
+     *
+     * Só que essa escolha passa a depender de uma configuração que vive fora do
+     * repositório, e que é **separada entre modo teste e produção**. Uma conta
+     * recém-ativada em produção pode não ter nenhuma forma habilitada, e aí o
+     * Stripe recusa a sessão inteira com "no valid payment method types".
+     *
+     * Perder uma venda por causa disso é inaceitável. Então, e apenas nesse
+     * erro específico, a sessão é recriada pedindo cartão explicitamente. O
+     * cliente compra; o alerta no log diz ao operador que o painel precisa ser
+     * configurado.
+     */
+    const parametros: Stripe.Checkout.SessionCreateParams = {
+      customer: input.stripeCustomerId ?? undefined,
+      customer_email: input.stripeCustomerId ? undefined : input.userEmail,
+      client_reference_id: input.userId,
+      mode,
+      line_items: [
+        {
+          price: priceId,
+          quantity: 1,
         },
-        subscription_data:
-          mode === "subscription"
-            ? {
-                metadata: {
-                  userId: input.userId,
-                  ...(input.planType ? { planType: input.planType } : {}),
-                },
-              }
-            : undefined,
-      });
+      ],
+      success_url:
+        input.successUrl ?? "http://127.0.0.1:3000/checkout/sucesso",
+      cancel_url: input.cancelUrl ?? "http://127.0.0.1:3000/app/conta",
+      metadata: {
+        userId: input.userId,
+        ...(input.planType ? { planType: input.planType } : {}),
+        ...input.metadata,
+      },
+      subscription_data:
+        mode === "subscription"
+          ? {
+              metadata: {
+                userId: input.userId,
+                ...(input.planType ? { planType: input.planType } : {}),
+              },
+            }
+          : undefined,
+    };
+
+    try {
+      let session: Stripe.Checkout.Session;
+      try {
+        session = await stripe.checkout.sessions.create(parametros);
+      } catch (erroAutomatico) {
+        const mensagem =
+          erroAutomatico instanceof Error ? erroAutomatico.message : "";
+        if (!/no valid payment method types/i.test(mensagem)) {
+          throw erroAutomatico;
+        }
+        console.warn(
+          "[stripe] nenhuma forma de pagamento ativa no painel para esta moeda; " +
+            "usando cartão como contingência. Configure em " +
+            "dashboard.stripe.com/settings/payment_methods",
+        );
+        session = await stripe.checkout.sessions.create({
+          ...parametros,
+          payment_method_types: ["card"],
+        });
+      }
 
       if (!session.url) {
         return { ok: false, error: "Stripe não retornou URL de checkout." };
