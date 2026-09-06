@@ -31,6 +31,7 @@ export default async function SignInPage({
       enabled={enabled}
       next={next}
       linkError={query.error === "link"}
+      oauthCancelado={query.error === "oauth"}
       accountRemoved={query.conta === "removida"}
     />
   );

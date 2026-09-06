@@ -41,6 +41,10 @@ export default defineConfig({
       NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: "",
       // Enables only the quiz UI in development; API calls remain intercepted by P4 E2E.
       E2E_QUIZ_UI_ONLY: "1",
+      // Sem isto o botão do Google não é renderizado e ficaria sem cobertura de
+      // acessibilidade. Aqui ele aparece desabilitado, porque o Supabase está
+      // em branco — que é exatamente o estado que precisa passar no axe.
+      NEXT_PUBLIC_GOOGLE_AUTH_ENABLED: "true",
     },
     command: production ? "pnpm start --port 3100" : "pnpm dev --port 3100",
     url: "http://127.0.0.1:3100/api/health",

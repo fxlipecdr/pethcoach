@@ -29,5 +29,8 @@ export function getPublicEnvClient(): PublicEnv {
     NEXT_PUBLIC_POSTHOG_HOST: present(process.env.NEXT_PUBLIC_POSTHOG_HOST),
     NEXT_PUBLIC_SENTRY_DSN: present(process.env.NEXT_PUBLIC_SENTRY_DSN),
     NEXT_PUBLIC_META_PIXEL_ID: present(process.env.NEXT_PUBLIC_META_PIXEL_ID),
+    NEXT_PUBLIC_GOOGLE_AUTH_ENABLED: present(
+      process.env.NEXT_PUBLIC_GOOGLE_AUTH_ENABLED,
+    ) as "true" | "false" | undefined,
   };
 }

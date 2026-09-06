@@ -9,6 +9,7 @@ import { Field } from "@/components/ui/field";
 import { Feedback } from "@/components/ui/feedback";
 import { readAnonymousContext } from "@/features/onboarding/local-context";
 import { PethMascot } from "@/components/pethcoach/peth-mascot";
+import { GoogleSignIn } from "./google-sign-in";
 import { requestMagicLink } from "./actions";
 import { initialAuthState } from "./contracts";
 
@@ -28,11 +29,13 @@ export function SignInForm({
   enabled,
   next,
   linkError,
+  oauthCancelado = false,
   accountRemoved = false,
 }: {
   enabled: boolean;
   next: string;
   linkError: boolean;
+  oauthCancelado?: boolean;
   accountRemoved?: boolean;
 }) {
   const [state, action, pending] = useActionState(
@@ -53,8 +56,8 @@ export function SignInForm({
       <p className="eyebrow mb-3">SUA CONTA PETHCOACH</p>
       <h1 className="app-heading">Um lugar para a rotina de vocês</h1>
       <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
-        Entre ou crie sua conta com um link no e-mail. Sem precisar lembrar de
-        mais uma senha.
+        Entre com sua conta Google, ou receba um link por e-mail. Sem precisar
+        lembrar de mais uma senha.
       </p>
       {!enabled ? (
         <Feedback className="mt-6" title="Acesso aguardando configuração">
@@ -72,6 +75,12 @@ export function SignInForm({
           outro navegador. Solicite um novo link abaixo.
         </Feedback>
       ) : null}
+      {oauthCancelado ? (
+        <Feedback className="mt-6" title="Acesso pelo Google não concluído">
+          Você pode tentar de novo ou entrar com um link no seu e-mail. Nenhuma
+          conta foi criada.
+        </Feedback>
+      ) : null}
       {accountRemoved ? (
         <Feedback className="mt-6" title="Esta conta foi removida">
           Seus dados pessoais e o histórico de treino foram apagados a seu
@@ -85,6 +94,8 @@ export function SignInForm({
           esse contexto.
         </p>
       ) : null}
+      <GoogleSignIn next={next} disabled={!enabled} />
+
       <form action={action} className="mt-6 space-y-5">
         <input type="hidden" name="next" value={next} />
         <Field

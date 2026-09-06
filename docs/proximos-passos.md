@@ -262,6 +262,84 @@ Só a Meta está implementada, porque foi a sua escolha. Google Ads e TikTok exi
 
 ---
 
+## 6.7 Ligar o "Continuar com Google"
+
+O código está pronto e o botão **não aparece** até você concluir os passos abaixo. Isso é proposital: botão de login quebrado espanta mais do que login com atrito, porque a pessoa tenta, falha e conclui que o site não funciona.
+
+Guarde estes dois valores, você vai colar os dois no Google:
+
+| O que | Valor |
+|---|---|
+| URL de redirecionamento | `https://wcxgwjcvhfbddpbncwwf.supabase.co/auth/v1/callback` |
+| Origem do site | `https://coach.peth.com.br` |
+
+### Parte 1 — Google Cloud
+
+**1.1** Entre em [console.cloud.google.com](https://console.cloud.google.com) com a conta Google da empresa. No topo, crie um projeto (pode chamar `PethCoach`) ou selecione um existente.
+
+**1.2** No menu de busca do topo, procure por **Google Auth Platform** e abra. Se for a primeira vez, ele pede para configurar:
+
+- **Nome do app:** PethCoach
+- **E-mail de suporte:** suporte@peth.com.br
+- **Público (Audience):** escolha **Externo**. "Interno" só funciona para contas da mesma organização Google Workspace.
+- **Dados de contato do desenvolvedor:** seu e-mail
+
+**1.3** Em **Branding**, preencha:
+
+- **Página inicial:** `https://coach.peth.com.br`
+- **Política de privacidade:** `https://coach.peth.com.br/privacidade`
+- **Termos de serviço:** `https://coach.peth.com.br/termos`
+
+O Google exige esses links. É por isso que aquelas páginas precisavam existir de verdade.
+
+**1.4** Em **Escopos (Scopes)**, confirme que estão marcados `openid`, `.../auth/userinfo.email` e `.../auth/userinfo.profile`. **Não adicione mais nada.** Escopo sensível dispara verificação do Google, que leva dias.
+
+**1.5** Vá em **Clients → Criar cliente**:
+
+- **Tipo:** Aplicativo da Web
+- **Nome:** PethCoach Web
+- **Origens JavaScript autorizadas:** `https://coach.peth.com.br`
+- **URIs de redirecionamento autorizados:** `https://wcxgwjcvhfbddpbncwwf.supabase.co/auth/v1/callback`
+
+Atenção: o redirecionamento aponta para o **Supabase**, não para o seu site. Errar isso é o motivo mais comum de o login falhar.
+
+**1.6** Ao salvar, o Google mostra o **ID do cliente** e a **Chave secreta do cliente**. Copie os dois agora — a chave secreta pode não aparecer de novo.
+
+**1.7 — O passo que quase todo mundo esquece.** Em **Público (Audience)**, se estiver escrito **"Em teste"**, clique em **Publicar app**.
+
+Enquanto estiver em teste, **só e-mails cadastrados como testadores conseguem entrar** — no máximo 100. Cliente real receberia erro. Como você usa apenas escopos básicos, publicar não exige revisão do Google: é imediato.
+
+### Parte 2 — Supabase
+
+No painel do Supabase, em **Authentication → Providers → Google**: ative, cole o **ID do cliente** e a **Chave secreta**, e salve.
+
+Confira que a URL de callback mostrada ali é a mesma que você colou no Google.
+
+### Parte 3 — Vercel
+
+Adicione a variável, marcando **Production**:
+
+```
+NEXT_PUBLIC_GOOGLE_AUTH_ENABLED=true
+```
+
+E faça **redeploy** — essa variável é embutida no build, salvar sem rebuildar não muda nada.
+
+### Como saber que funcionou
+
+Abra `/entrar`: o botão "Continuar com Google" aparece acima do campo de e-mail.
+
+Teste os **dois** caminhos:
+
+1. **Entrar de verdade** — você deve voltar logado.
+2. **Cancelar na tela do Google** — deve voltar para `/entrar` com "Acesso pelo Google não concluído", e **não** com a mensagem de link de e-mail expirado.
+
+Se o botão não aparecer, faltou o redeploy. Se aparecer e der erro no Google, quase sempre é a URI de redirecionamento diferente da do Supabase, ou o app ainda em modo de teste.
+
+O link mágico continua funcionando abaixo do botão, para quem não usa Google.
+
+---
+
 ## 6.6 Ligar a IA que personaliza o plano (Gemini)
 
 Sem isso, o produto funciona — mas todo mundo com o mesmo problema recebe os **mesmos 14 dias**, porque o planner determinístico não recebe as respostas do questionário.

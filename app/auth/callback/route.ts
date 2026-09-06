@@ -26,6 +26,19 @@ export async function GET(request: NextRequest) {
     });
   const next = safeReturnPath(request.nextUrl.searchParams.get("next"));
   const failure = `/entrar?error=link&next=${encodeURIComponent(next)}`;
+
+  /**
+   * O provedor externo devolve `error` quando a pessoa cancela o consentimento.
+   * Sem distinguir esse caso, quem desistiu na tela do Google receberia
+   * "seu link pode ter expirado" — mensagem de e-mail, num fluxo que não teve
+   * e-mail nenhum. O código do erro não é propagado: é texto de terceiro.
+   */
+  if (request.nextUrl.searchParams.get("error")) {
+    return finish(
+      `/entrar?error=oauth&next=${encodeURIComponent(next)}`,
+    );
+  }
+
   const code = codeSchema.safeParse(request.nextUrl.searchParams.get("code"));
   if (
     !enabled ||

@@ -22,6 +22,15 @@ export const publicEnvSchema = z
     NEXT_PUBLIC_SENTRY_DSN: optionalUrl,
     /** Pixel da Meta. Só carrega no navegador depois do aceite de cookies. */
     NEXT_PUBLIC_META_PIXEL_ID: optionalText,
+    /**
+     * Liga o botão "Continuar com Google". Só ativar depois de configurar o
+     * provedor no Supabase: botão de login quebrado espanta mais do que login
+     * com atrito, porque a pessoa tenta, falha e conclui que o site não
+     * funciona.
+     */
+    NEXT_PUBLIC_GOOGLE_AUTH_ENABLED: z
+      .enum(["true", "false"])
+      .optional(),
   })
   .superRefine((env, ctx) => {
     for (const [url, key] of [
