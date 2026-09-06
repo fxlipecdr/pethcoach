@@ -124,7 +124,44 @@ function compile() {
   };
 }
 
+/**
+ * Política de contingência, usada só quando o ambiente não pode ser lido.
+ *
+ * Montar a CSP depende de ler as origens configuradas, e ler o ambiente pode
+ * falhar. Sem esta saída, uma variável mal preenchida derrubaria toda página do
+ * site — foi o que aconteceu em produção pela inicialização do servidor.
+ *
+ * Ela é mais restritiva que a normal, não menos: sem Supabase, sem PostHog,
+ * sem Sentry e sem Meta em `connect-src`. Isso quebra funcionalidade que
+ * depende dessas origens, e é intencional — a alternativa seria afrouxar a
+ * segurança justamente quando a configuração está errada.
+ */
+const POLITICA_DE_CONTINGENCIA = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline'",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob:",
+  "font-src 'self' data:",
+  "connect-src 'self'",
+  "form-action 'self'",
+  "frame-ancestors 'none'",
+  "frame-src 'none'",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "manifest-src 'self'",
+  "worker-src 'self' blob:",
+].join("; ");
+
 export function buildContentSecurityPolicy(nonce: string | null): string {
-  cached ??= compile();
+  try {
+    cached ??= compile();
+  } catch (err) {
+    console.error(
+      `[csp] ambiente ilegível ao montar a política: ${
+        err instanceof Error ? err.message : "erro desconhecido"
+      }. Usando política de contingência.`,
+    );
+    return POLITICA_DE_CONTINGENCIA;
+  }
   return nonce ? cached.withNonce(nonce) : cached.open;
 }
