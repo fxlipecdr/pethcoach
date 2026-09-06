@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import { waitForTransitions } from "./settle";
 
 test("P12 - Unsubscribe page without token renders fallback guidance and passes accessibility", async ({
   page,
@@ -20,6 +21,7 @@ test("P12 - Unsubscribe page without token renders fallback guidance and passes 
   ).toBeVisible();
 
   // WCAG 2.2 AA accessibility test
+  await waitForTransitions(page);
   const axeResults = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
     .analyze();
@@ -66,6 +68,7 @@ test("P12 - Unsubscribe page with valid token and category renders 1-click optio
   await expect(unsubAllBtn).toBeVisible();
 
   // WCAG 2.2 AA accessibility test
+  await waitForTransitions(page);
   const axeResults = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
     .analyze();

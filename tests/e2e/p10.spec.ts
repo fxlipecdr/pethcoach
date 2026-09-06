@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import { waitForTransitions } from "./settle";
 
 test("P10 - Checkout success page renders celebrating mascot and direct CTAs", async ({
   page,
@@ -34,6 +35,7 @@ test("P10 - Checkout success page renders celebrating mascot and direct CTAs", a
   await expect(accountLink).toHaveAttribute("href", "/app/conta");
 
   // WCAG 2.2 AA compliance check
+  await waitForTransitions(page);
   const axeResults = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
     .analyze();
@@ -78,6 +80,7 @@ test("P10 - Locked day upgrade card provides clear CTA to complete program", asy
   await expect(upgradeButton).toBeVisible();
 
   // WCAG check
+  await waitForTransitions(page);
   const axeResults = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
     .analyze();

@@ -29,6 +29,8 @@ test("readiness reporta o estado real das dependências", async ({ request }) =>
   const corpo = await resposta.json();
   expect(corpo.pronto).toBe(true);
   expect(resposta.headers()["cache-control"]).toContain("no-store");
+  // Identifica a versão no ar; em produção vem o SHA curto do commit.
+  expect(corpo.commit).toBe("local");
 
   const porNome = Object.fromEntries(
     (corpo.dependencias as { nome: string; estado: string }[]).map((d) => [

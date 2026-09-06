@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import { waitForTransitions } from "./settle";
 
 test("P11 - Consent banner renders on initial visit and allows essential-only choice", async ({
   page,
@@ -16,6 +17,7 @@ test("P11 - Consent banner renders on initial visit and allows essential-only ch
   ).toBeVisible();
 
   // WCAG 2.2 AA accessibility test on the banner
+  await waitForTransitions(page);
   const axeResults = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
     .analyze();

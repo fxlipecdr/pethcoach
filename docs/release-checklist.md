@@ -20,12 +20,13 @@
 - [x] P2-P14 concluídas e testadas, exceto a revisão jurídica e profissional listada abaixo.
 - [x] Projeto Supabase descartável e Auth/callback reais testados.
 - [x] RLS real via API para todas as tabelas pessoais existentes.
-- [ ] Conteúdo e mensagens de segurança revisados por profissional qualificado.
+- [ ] Conteúdo e mensagens de segurança revisados por profissional qualificado. Pré-revisão técnica com achados e perguntas dirigidas em `docs/pre-revisao-conteudo-e-juridica.md`. O revisor fictício foi removido em 05/09/2026 pela migração `20260912000000_p15_revisor_real_do_catalogo.sql`: `reviewed_by` agora é nulo, e nulo significa sem revisão profissional.
+  **Estado em 05/09/2026: risco assumido pelo controlador.** Felipe Cordeiro de Paula leu e aprovou o conteúdo comportamental e a copy de segurança na condição de responsável pela empresa. Não houve revisão por médico-veterinário nem por adestrador com credencial em reforço positivo, e por isso `reviewed_by` permanece nulo — a coluna registra profissional, não aprovação do controlador. Os 12 módulos seguem `published`. Este item continua desmarcado porque o que ele exige é revisão profissional, que não ocorreu; a decisão de lançar assim é do controlador e está registrada aqui.
 - [ ] Checkout, webhook, portal e expiração/cancelamento em Stripe test. **Checkout hospedado, webhook assinado e concessão de acesso validados em produção em 05/09/2026** com o cartão de teste; idempotência coberta por `pnpm e2e:funnel`. **Portal, cancelamento e `past_due` validados no test mode em 05/09/2026**, com regressão automatizada em `pnpm e2e:funnel`.
 - [ ] Consentimento, atribuição, e-mail e preferências verificados.
-- [ ] Sentry, sourcemaps, alertas e redação de PII testados em staging. O DSN ainda não está em produção.
+- [ ] Sentry, sourcemaps, alertas e redação de PII testados em staging. **DSN em produção desde 05/09/2026**, com redação de PII já implementada; faltam sourcemaps (`SENTRY_AUTH_TOKEN`) e configuração de alertas.
 - [x] CSP completa com nonces/hashes compatíveis com SSR; rate limits distribuídos nos endpoints mutáveis. Detalhes em `docs/p14-acceptance.md`.
-- [ ] Termos, privacidade, controlador e canal de suporte revisados e reais.
+- [ ] Termos, privacidade, controlador e canal de suporte revisados e reais. **Escritos e publicados em 05/09/2026**, com controlador, encarregado, bases legais, prazos de retenção, operadores, transferência internacional e o direito de arrependimento do art. 49 do CDC; dados factuais centralizados em `content/legal.ts` e presença travada por `tests/e2e/legal.spec.ts`. **Estado em 05/09/2026: risco assumido pelo controlador.** Felipe Cordeiro de Paula leu e aprovou os dois documentos como responsável pela empresa. Não houve revisão por advogado: o texto é redação técnica fiel ao que o sistema faz. Este item continua desmarcado porque o que ele exige é revisão profissional; a decisão de publicar assim é do controlador e está registrada aqui. Falta também operar o processo de reembolso quando houver o primeiro pedido.
 
 ## Antes de produção
 
@@ -33,8 +34,9 @@
 - [x] Domínio próprio de validação configurado com DNS e HTTPS.
 - [ ] Secrets por ambiente e hospedagem comercial apropriada.
 - [ ] Indexação liberada apenas para landings prontas; conteúdo privado permanece noindex.
-- [x] Backup e restore ensaiados na stack local, com procedimento validado e modo de falha documentado em `docs/p15-acceptance.md`. Falta ensaiar no projeto remoto e o rollback de deploy.
+- [x] Backup, restore e rollback ensaiados. Backup e restore na stack local com procedimento validado e modo de falha documentado; **rollback de deploy exercitado em produção em 05/09/2026**, com `/api/ready` informando o commit publicado. Falta ensaiar backup no projeto Supabase remoto.
 - [ ] Nenhum conteúdo draft acessível pelo planner.
+- [ ] **Situação fiscal compatível com a venda.** O CNAE principal do CNPJ 68.660.298/0001-08 é 4789-0/04 (comércio varejista de animais e artigos para pets), não serviço digital; a inclusão do CNAE adequado precisa acontecer **antes da primeira nota fiscal**, não antes do lançamento do site. O enquadramento MEI tem teto anual de receita, com migração para LTDA planejada: acompanhar o faturamento para migrar antes de estourar, sob pena de cobrança retroativa. Detalhe em `docs/proximos-passos.md`, seção 6.
 - [x] Exclusão e exportação de dados implementadas e exercitadas contra Postgres real; retenção de e-mail segue de P12.
 
 ## Orçamento de performance

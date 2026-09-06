@@ -1,5 +1,6 @@
 import { AxeBuilder } from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
+import { waitForTransitions } from "./settle";
 
 const assessmentId = "11111111-1111-4111-8111-111111111111";
 
@@ -23,6 +24,7 @@ test("P5 replaces the result funnel with deterministic referral guidance", async
       .getByRole("main")
       .locator('a[href*="checkout"], a[href*="entrar"]'),
   ).toHaveCount(0);
+  await waitForTransitions(page);
   expect(
     (await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa"]).analyze())
       .violations,

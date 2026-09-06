@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import { waitForTransitions } from "./settle";
 
 test("P13 - Admin preview fixture renders full operational layout and passes accessibility", async ({
   page,
@@ -35,6 +36,7 @@ test("P13 - Admin preview fixture renders full operational layout and passes acc
   ).toBeVisible();
 
   // WCAG 2.2 AA accessibility test
+  await waitForTransitions(page);
   const axeResults = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
     .analyze();

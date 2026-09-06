@@ -71,7 +71,7 @@ Docker 29.6.1 e Supabase CLI 2.116.0 estão operacionais. `pnpm exec supabase st
 ## Limites antes de disponibilizar publicamente
 
 - Substituir o limitador em memória por armazenamento compartilhado atômico para múltiplas instâncias; manter rate limits do fornecedor e avaliar CAPTCHA. O atual é uma defesa adicional de desenvolvimento, não um limitador distribuído.
-- Concluir privacidade, canal do controlador, retenção, exportação/exclusão e revisão jurídica (P14). Não abrir cadastros ao público com páginas jurídicas provisórias.
+- Concluir privacidade, canal do controlador, retenção e exportação/exclusão (P14). ✅ As páginas jurídicas deixaram de ser provisórias em 05/09/2026; a revisão por advogado não ocorreu, por decisão do controlador registrada em `docs/release-checklist.md`.
 - Regerar os tipos após migrations e repetir os aceites P2 antes de mudanças em Auth/RLS. O deploy Vercel possui somente as variáveis públicas do Supabase em Production, bloqueia indexação e serve apenas para validação; Preview continua sem acesso ao banco de desenvolvimento.
 - O app omite logs de argumentos de Server Actions e URLs de acesso no Next dev. Configurar também redaction de query strings de `/auth/*` nos logs de gateway/CDN/provedor; a configuração do Next dev não controla infraestrutura externa.
 - Captura/consentimento de atribuição: P11. Assessment e claim seguro: P4/P6. Plano/coaching/pagamento: fases posteriores.

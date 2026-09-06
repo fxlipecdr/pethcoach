@@ -124,13 +124,13 @@ Depois de criar, copie o **Signing secret** (começa com `whsec_`). É com ele q
 
 ---
 
-## 3. Sentry: enxergar os erros
+## 3. ✅ CONCLUÍDO — Sentry
 
 **Por que importa.** Hoje, se um tutor encontrar um erro, ninguém fica sabendo. O Sentry avisa quando algo quebra em produção. O código já está preparado e já remove dados pessoais antes de enviar qualquer relatório.
 
 **O que fazer.** Crie conta em `sentry.io`, crie um projeto do tipo **Next.js** e copie o **DSN** — um endereço que começa com `https://` e identifica o projeto.
 
-**Como saber que deu certo.** Você tem o DSN copiado. Ele vai em duas variáveis no passo seguinte.
+**Concluído em 05/09/2026.** DSN configurado e confirmado no bundle de produção. Falta apenas o `SENTRY_AUTH_TOKEN`, opcional, que faz os erros aparecerem com o código legível em vez de minificado.
 
 ---
 
@@ -186,17 +186,54 @@ Depois, faça uma compra de mentira: entre no site, vá até a tela de planos e 
 
 ---
 
-## 6. Duas revisões humanas que travam o lançamento
+## 6. Dados cadastrais: um confirmado, dois adiados
 
-Estas não são tarefas de computador. São as duas coisas que impedem o produto de ser aberto ao público, e nenhuma delas eu posso fazer.
+Os documentos legais já estão escritos e publicados. Para preenchê-los, consultei o CNPJ **68.660.298/0001-08** na base pública da Receita Federal. Aqui fica o estado de cada ponto, com as suas decisões de 05/09/2026.
 
-**6.1 — Revisão do conteúdo por profissional qualificado.** Todo o texto de orientação comportamental e as mensagens de segurança precisam ser lidos por médico-veterinário ou adestrador que trabalhe com métodos de reforço positivo. O produto orienta pessoas sobre o comportamento de um animal: conteúdo errado causa dano real. Enquanto isso não acontecer, a indexação no Google deve continuar bloqueada — e está.
+**6.1 — Endereço: ✅ confirmado, nada a fazer.**
 
-**6.2 — Revisão jurídica.** Política de privacidade, termos de uso, identificação do controlador de dados e canal de suporte precisam ser revisados por advogado, à luz da LGPD. O produto coleta dados pessoais e cobra dinheiro; os dois pontos têm exigência legal específica.
+O endereço correto é o do cadastro:
+
+> Rua Joaquim Emanoel Igreja, 36 — Centro — União da Vitória/PR — CEP 84600-113
+
+É o que está em `content/legal.ts`, e portanto o que aparece na política, nos termos e no rodapé. A *Rua Valentin Varacoski* foi engano de memória, não mudança de endereço.
+
+**6.2 — CNAE: divergente, atualização adiada por decisão sua.**
+
+O CNAE principal do cadastro é **4789-0/04 — comércio varejista de animais vivos e de artigos e alimentos para animais de estimação**. O PethCoach não vende animais nem produtos: vende acesso a conteúdo digital por assinatura.
+
+Você optou por resolver depois. Fica registrado o que isso implica enquanto não for resolvido: o problema aparece **na emissão da nota fiscal**, não no site — vender serviço fora da atividade registrada é irregularidade fiscal. Então o prazo real não é "antes do lançamento", é **antes da primeira nota**. Se a cobrança começar antes da atualização, cada venda entra irregular.
+
+A inclusão do CNAE de serviço é pedida pelo contador e é rápida.
+
+**6.3 — MEI: teto de faturamento, migração para LTDA planejada.**
+
+A empresa está hoje como **Empresário Individual, enquadrada como MEI**. Você pretende migrar para LTDA mais adiante.
+
+Enquanto isso não acontece, o que importa acompanhar é o **teto anual de receita do MEI**: estourar sem ter migrado gera cobrança retroativa dos tributos do enquadramento correto. A migração é planejamento, não emergência — mas quem decide a hora é o faturamento, não o calendário, então vale combinar com o contador o número que dispara a mudança e acompanhá-lo.
+
+Quando a migração acontecer, **três campos de `content/legal.ts` mudam**: `razaoSocial`, `cnpj` e `naturezaJuridica`. Alterar ali corrige a política, os termos e o rodapé de uma vez; `tests/e2e/legal.spec.ts` precisa do CNPJ novo na constante do topo.
 
 ---
 
-## 7. Só quando for vender de verdade
+## 7. As duas revisões profissionais — decisão tomada em 05/09/2026
+
+Estas nunca foram tarefas de computador, e nenhuma delas eu posso fazer.
+
+**Você decidiu seguir sem elas.** Leu e aprovou, como responsável pela empresa, tanto os documentos jurídicos quanto o conteúdo comportamental e a copy de segurança. A decisão está registrada em `docs/release-checklist.md` e `docs/pre-revisao-conteudo-e-juridica.md` como **risco assumido pelo controlador** — não como revisão profissional, porque não foi.
+
+O que isso significa na prática, sem rodeio: se houver reclamação no Procon, questionamento da ANPD ou um acidente com um cão que seguiu um plano do produto, o que existe é a sua palavra como responsável. Não há advogado nem veterinário respondendo junto. Isso não impede lançar; muda quem responde.
+
+Dois efeitos concretos no código e na operação:
+
+- **`reviewed_by` dos 12 módulos continua nulo.** A coluna guarda nome e registro de profissional. Sua aprovação não é isso, e gravá-la ali recriaria o revisor fictício que a migração `20260912000000_p15_revisor_real_do_catalogo.sql` acabou de remover.
+- **A indexação no Google continua bloqueada** e é uma escolha separada desta. Ela estava condicionada à revisão do conteúdo; agora depende de você decidir liberar. Está em `robots.txt`, controlado por `NEXT_PUBLIC_SITE_URL`, e é o item "Indexação liberada apenas para landings prontas" do checklist.
+
+**Se mudar de ideia mais adiante**, o caminho fica pronto: leve ao advogado os dois documentos e ao profissional de comportamento o `docs/pre-revisao-conteudo-e-juridica.md`, que traz o levantamento factual já verificável no código — o trabalho deles começa pela metade. Com nome e registro em mãos, é uma migração curta para gravar `reviewed_by` e `reviewed_at` reais.
+
+---
+
+## 8. Só quando for vender de verdade
 
 - **Trocar o plano da Vercel para Pro.** O plano Hobby não autoriza uso comercial.
 - **Trocar o Stripe para modo de produção.** Isso significa refazer os produtos e o webhook com as chaves reais (`sk_live_`, `whsec_` de produção) e atualizar a Vercel.
@@ -213,7 +250,8 @@ Estas não são tarefas de computador. São as duas coisas que impedem o produto
 4. Criar o projeto no Sentry
 5. Preencher as variáveis na Vercel e refazer o deploy
 6. Conferir `/api/ready` e fazer uma compra de teste
-7. Mandar revisar: conteúdo com profissional, textos legais com advogado
-8. Migrar para planos comerciais e liberar indexação
+7. Atualizar o CNAE com o contador — **antes da primeira nota fiscal**
+8. ✅ Decidido: seguir sem revisão profissional, com o risco assumido por você
+9. Migrar para planos comerciais e liberar indexação
 
-Os passos 1 a 6 são de um dia de trabalho. O passo 7 depende de agenda de terceiros — é o que costuma atrasar mais, então vale começar a procurar as pessoas agora.
+Os passos 1 a 6 são de um dia de trabalho. O passo 7 depende do seu contador e tem prazo próprio: antes da primeira nota fiscal, não antes do lançamento. O passo 8 já está decidido, e o 9 é a virada para operação comercial.

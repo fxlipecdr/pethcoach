@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import { waitForTransitions } from "./settle";
 
 test("home, navigation, accessibility and responsive layout", async ({
   page,
@@ -50,6 +51,7 @@ test("home, navigation, accessibility and responsive layout", async ({
       () => document.documentElement.scrollWidth <= window.innerWidth,
     ),
   ).toBe(true);
+  await waitForTransitions(page);
   expect(
     (
       await new AxeBuilder({ page })
@@ -159,6 +161,7 @@ test("UI kit validates inputs, keyboard focus and dialogs; production hides it",
   const trigger = page.getByRole("button", { name: "Abrir exemplo" });
   await trigger.click();
   await expect(page.getByRole("dialog")).toBeVisible();
+  await waitForTransitions(page);
   expect(
     (await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa"]).analyze())
       .violations,
@@ -171,6 +174,7 @@ test("UI kit validates inputs, keyboard focus and dialogs; production hides it",
       () => document.documentElement.scrollWidth <= window.innerWidth,
     ),
   ).toBe(true);
+  await waitForTransitions(page);
   expect(
     (
       await new AxeBuilder({ page })

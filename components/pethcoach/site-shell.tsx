@@ -6,6 +6,7 @@ import { PethMascot } from "@/components/pethcoach/peth-mascot";
 import { CookiePreferencesButton } from "@/components/pethcoach/cookie-preferences-button";
 import { Paw, Bone, StarDoodle } from "@/components/pethcoach/doodles";
 import { brand } from "@/lib/brand";
+import { controlador, contato } from "@/content/legal";
 
 export { Brand } from "@/components/pethcoach/brand";
 export { SiteHeader } from "@/components/pethcoach/site-header";
@@ -106,7 +107,12 @@ export function SiteFooter() {
           </span>
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-strong-foreground/60">
             <CookiePreferencesButton className="hover:text-lime" />
-            <span>{brand.name} · Versão de desenvolvimento</span>
+            {/* Identificação do fornecedor: exigência do Código de Defesa do
+                Consumidor para quem vende à distância. */}
+            <span>
+              {controlador.razaoSocial} · CNPJ {controlador.cnpj} ·{" "}
+              {contato.email}
+            </span>
             <span className="inline-flex items-center gap-2">
               <Paw tone="lime" stroke="var(--ink)" size={16} />
               Feito para respeitar o ritmo de vocês.

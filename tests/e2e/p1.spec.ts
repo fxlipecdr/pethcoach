@@ -1,5 +1,6 @@
 import { expect, test, type Page } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import { waitForTransitions } from "./settle";
 
 async function checkAccessibleLayout(page: Page) {
   await expect(page.getByRole("main", { includeHidden: true })).toHaveCount(1);
@@ -8,6 +9,7 @@ async function checkAccessibleLayout(page: Page) {
       () => document.documentElement.scrollWidth <= window.innerWidth,
     ),
   ).toBe(true);
+  await waitForTransitions(page);
   expect(
     (
       await new AxeBuilder({ page })
@@ -160,6 +162,7 @@ test("all layout previews are usable in development and closed in production", a
       } else {
         await menu.click();
         await expect(page.getByRole("dialog")).toBeVisible();
+        await waitForTransitions(page);
         expect(
           (
             await new AxeBuilder({ page })

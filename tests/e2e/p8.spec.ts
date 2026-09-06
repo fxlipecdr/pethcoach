@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import { waitForTransitions } from "./settle";
 
 test("P8 - Day 1 is free, Day 2 is locked without entitlement, and check-in UI operates correctly", async ({
   page,
@@ -25,6 +26,7 @@ test("P8 - Day 1 is free, Day 2 is locked without entitlement, and check-in UI o
   await expect(page.getByRole("button", { name: "Conhecer o programa completo" })).toBeVisible();
 
   // Accessibility check on locked view
+  await waitForTransitions(page);
   const lockedAxe = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
     .analyze();
@@ -67,6 +69,7 @@ test("P8 - Day 1 is free, Day 2 is locked without entitlement, and check-in UI o
   ).toBe(true);
 
   // WCAG check on check-in state
+  await waitForTransitions(page);
   const checkinAxe = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
     .analyze();

@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import { waitForTransitions } from "./settle";
 
 test("interactive preview supports keyboard tabs, stage changes and reduced motion", async ({
   page,
@@ -41,6 +42,7 @@ test("interactive preview supports keyboard tabs, stage changes and reduced moti
   await expect(
     page.getByRole("heading", { name: "Primeiro, conhecer vocês." }),
   ).toBeVisible();
+  await waitForTransitions(page);
   expect(
     (
       await new AxeBuilder({ page })
@@ -71,6 +73,7 @@ test("responsive navigation keeps focus and closes after navigation", async ({
     await menu.click();
     const dialog = page.getByRole("dialog", { name: "Navegação do PethCoach" });
     await expect(dialog).toBeVisible();
+    await waitForTransitions(page);
     expect(
       (
         await new AxeBuilder({ page })

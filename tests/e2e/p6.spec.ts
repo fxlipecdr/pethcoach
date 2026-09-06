@@ -1,5 +1,6 @@
 import { AxeBuilder } from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
+import { waitForTransitions } from "./settle";
 
 const assessmentId = "11111111-1111-4111-8111-111111111111";
 
@@ -49,6 +50,7 @@ test("P6 displays observable summary and claim CTA for CONTINUE outcome", async 
   ).toBe(true);
 
   // WCAG A and AA accessibility check
+  await waitForTransitions(page);
   expect(
     (await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa"]).analyze())
       .violations,

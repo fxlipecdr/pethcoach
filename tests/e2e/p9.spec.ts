@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import { waitForTransitions } from "./settle";
 
 test("P9 - Timeline and Milestones tab renders correctly with initial badges and adaptations", async ({
   page,
@@ -31,6 +32,7 @@ test("P9 - Timeline and Milestones tab renders correctly with initial badges and
   ).toBeVisible();
 
   // Check WCAG accessibility on Timeline view
+  await waitForTransitions(page);
   const axeResults = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
     .analyze();
@@ -96,6 +98,7 @@ test("P9 - Check-in with difficulty perception and milestone unlock", async ({
   await expect(page.getByText("Pipoca estava super focada.")).toBeVisible();
 
   // WCAG check
+  await waitForTransitions(page);
   const axeResults = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
     .analyze();
@@ -150,6 +153,7 @@ test("P9 - Safety flag triggers immediate safety pause and referral guidance", a
   ).toBeVisible();
 
   // WCAG check on safety pause view
+  await waitForTransitions(page);
   const axeResults = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
     .analyze();

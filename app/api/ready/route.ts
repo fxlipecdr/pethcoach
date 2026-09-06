@@ -85,8 +85,18 @@ export async function GET(request: Request) {
   // Só o banco impede servir tráfego; o resto tem caminho de contingência.
   const pronto = dependencias[0]?.estado === "ok";
 
+  // Qual versão está no ar. É o que responde "o rollback pegou?" sem depender
+  // do painel da hospedagem, e fica atrás do segredo por não ser informação
+  // de visitante. A variável é preenchida pela Vercel durante a build.
+  const commit = process.env.VERCEL_GIT_COMMIT_SHA?.slice(0, 7) ?? "local";
+
   return NextResponse.json(
-    { pronto, verificado_em: new Date().toISOString(), dependencias },
+    {
+      pronto,
+      commit,
+      verificado_em: new Date().toISOString(),
+      dependencias,
+    },
     {
       status: pronto ? 200 : 503,
       headers: { "Cache-Control": "no-store", "X-Content-Type-Options": "nosniff" },

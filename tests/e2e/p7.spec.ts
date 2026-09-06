@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import { waitForTransitions } from "./settle";
 
 test("P7 plan view displays 1-3 tasks, visible duration and meets WCAG AA at 360px", async ({
   page,
@@ -39,6 +40,7 @@ test("P7 plan view displays 1-3 tasks, visible duration and meets WCAG AA at 360
   ).toBe(true);
 
   // WCAG 2.2 AA accessibility check
+  await waitForTransitions(page);
   const axeResults = await new AxeBuilder({ page })
     .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
     .analyze();

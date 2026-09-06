@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
+import { waitForTransitions } from "./settle";
 
 test("P2 dog form validates, preserves fields and stays accessible at 360px", async ({
   page,
@@ -28,6 +29,7 @@ test("P2 dog form validates, preserves fields and stays accessible at 360px", as
       () => document.documentElement.scrollWidth <= innerWidth,
     ),
   ).toBe(true);
+  await waitForTransitions(page);
   expect(
     (
       await new AxeBuilder({ page })

@@ -1,5 +1,6 @@
 import { AxeBuilder } from "@axe-core/playwright";
 import { expect, test, type Page } from "@playwright/test";
+import { waitForTransitions } from "./settle";
 
 const assessmentId = "11111111-1111-4111-8111-111111111111";
 const questions = Array.from({ length: 8 }, (_, index) => ({
@@ -78,6 +79,7 @@ test("P4 quiz keeps one question per screen, persists progress and completes", a
   await expect(page.getByRole("heading", { name: "Vamos entender a rotina de vocês" })).toBeVisible();
   await page.getByRole("button", { name: "Começar quiz" }).click();
   await expect(page.getByRole("group", { name: "Pergunta observável 1?" })).toBeVisible();
+  await waitForTransitions(page);
   expect(
     (await new AxeBuilder({ page }).withTags(["wcag2a", "wcag2aa"]).analyze())
       .violations,
