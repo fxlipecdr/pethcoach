@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { problemSlugs } from "@/content/problems/slugs";
 
 export const OPERATOR_ROLES = ["admin", "reviewer", "operator"] as const;
 export type OperatorRole = (typeof OPERATOR_ROLES)[number];
@@ -55,11 +56,7 @@ export function containsAversiveTerms(text: string): string | null {
 export const moduleEditorSchema = z
   .object({
     id: z.string().uuid().optional(),
-    problemSlug: z.enum([
-      "filhote-mordendo",
-      "xixi-lugar-errado",
-      "cachorro-puxa-guia",
-    ]),
+    problemSlug: z.enum(problemSlugs),
     slug: z
       .string()
       .min(3, "Slug muito curto.")

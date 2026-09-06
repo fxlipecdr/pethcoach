@@ -95,15 +95,42 @@ test("o site não declara que o produto está em desenvolvimento", async ({
    * Enquanto o produto não vendia, dizer "em desenvolvimento" era honesto.
    * Depois que a cobrança está no ar, a mesma frase passa a desencorajar a
    * compra de quem chega por anúncio — e diz ao revisor do Stripe que o site
-   * não está pronto para vender. Este teste impede que ela volte por descuido.
+   * não está pronto para vender.
+   *
+   * A lista cresceu depois de uma varredura que achou nove afirmações
+   * envelhecidas em cinco páginas: a home dizia "três situações" mostrando
+   * sete, as dúvidas diziam que não havia quiz nem cobrança, e a tela de
+   * acesso dizia que planos não estavam disponíveis. Nada disso dá erro de
+   * compilação, e o texto envelhece calado.
    */
-  for (const rota of ["/", "/privacidade", "/termos", "/entrar"]) {
+  const proibidas = [
+    /em desenvolvimento/i,
+    /programas ainda não estão dispon/i,
+    /estamos preparando/i,
+    /estamos construindo/i,
+    /estamos desenhando/i,
+    /próximas fases/i,
+    /proposta dos programas/i,
+    /cobranças ainda não estão/i,
+    /três situações/i,
+  ];
+
+  for (const rota of [
+    "/",
+    "/ajuda",
+    "/planos",
+    "/privacidade",
+    "/termos",
+    "/entrar",
+    "/problemas/cachorro-late-muito",
+  ]) {
     await page.goto(rota);
     const corpo = page.locator("body");
-    await expect(corpo).not.toContainText(/em desenvolvimento/i);
-    await expect(corpo).not.toContainText(
-      /programas ainda não estão dispon/i,
-    );
+    for (const proibida of proibidas) {
+      await expect(corpo, `${rota} contém "${proibida}"`).not.toContainText(
+        proibida,
+      );
+    }
   }
 
   // A descrição usada em busca e compartilhamento também não pode declarar obra.

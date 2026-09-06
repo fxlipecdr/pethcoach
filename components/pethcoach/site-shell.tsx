@@ -56,7 +56,7 @@ export function SiteFooter() {
         tone="lime"
         stroke="var(--ink)"
         size={26}
-        className="absolute top-40 right-[7%] hidden -rotate-12 opacity-90 lg:block"
+        className="absolute top-40 right-[4%] hidden -rotate-12 opacity-90 xl:block"
       />
 
       <div className="page-width pt-24 pb-10 sm:pt-28">

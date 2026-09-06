@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { problemSlugs } from "@/content/problems/slugs";
 
 // Local drafts are untrusted UX state. They never authorize a database read/claim.
 export const localContextKey = "pethcoach:anonymous-context:v1";
@@ -9,16 +10,12 @@ export const anonymousContextSchema = z
     anonymousId: z.uuid(),
     updatedAt: z.number().int().nonnegative(),
     problem: z
-      .enum(["cachorro-puxa-guia", "filhote-mordendo", "xixi-lugar-errado"])
+      .enum(problemSlugs)
       .optional(),
     assessment: z
       .object({
         id: z.uuid(),
-        problem: z.enum([
-          "cachorro-puxa-guia",
-          "filhote-mordendo",
-          "xixi-lugar-errado",
-        ]),
+        problem: z.enum(problemSlugs),
         currentQuestion: z.number().int().min(0).max(9),
       })
       .strict()

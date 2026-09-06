@@ -97,7 +97,7 @@ export default function Home() {
       <LandingTracker slug="home" />
 
       {/* §14 — hero assimétrico: texto à esquerda, universo visual à direita. */}
-      <section className="relative overflow-hidden pt-8 pb-16 md:pt-14 md:pb-24">
+      <section className="relative overflow-hidden pt-8 pb-24 md:pt-14 md:pb-32">
         <Bone
           tone="cream"
           size={70}
@@ -106,7 +106,7 @@ export default function Home() {
         <StarDoodle
           tone="lime"
           size={30}
-          className="absolute top-24 right-[46%] hidden rotate-12 opacity-90 lg:block"
+          className="absolute top-10 right-[42%] hidden rotate-12 opacity-90 xl:block"
         />
 
         <div className="page-width relative grid items-center gap-12 md:grid-cols-[1.12fr_0.88fr] md:gap-10 lg:gap-16">
@@ -172,9 +172,11 @@ export default function Home() {
 
             <ProductPreview />
 
+            {/* Precisa ficar abaixo da legenda da demonstração: em -bottom-14
+                o cartão cobria o texto em 1024, 1280 e 1440. */}
             <FloatingCard
               delayed
-              className="absolute -bottom-14 -left-8 z-10 hidden w-64 sm:block"
+              className="absolute -bottom-24 -left-8 z-10 hidden w-64 sm:block"
             >
               <div className="flex items-center gap-3">
                 <PethMascot mood="happy" size={46} className="shrink-0" />
@@ -213,7 +215,7 @@ export default function Home() {
         <SectionHeader
           eyebrow="Um ponto de partida"
           title="O que vocês precisam melhorar?"
-          description="Três situações do dia a dia. Conheça a proposta dos programas que estamos preparando."
+          description="Sete situações do dia a dia. Escolha a de vocês e comece pelo Dia 1, que é gratuito."
           aside={
             <Scribble className="hidden w-36 text-primary-strong sm:block" />
           }
@@ -258,7 +260,7 @@ export default function Home() {
                 {lead.description}
               </p>
               <span className="arrow-nudge mt-7 inline-flex items-center gap-3 text-sm font-bold text-primary-strong">
-                Conhecer a proposta
+                Ver o programa
                 <ArrowUpRight className="size-4" aria-hidden="true" />
               </span>
             </div>
@@ -292,7 +294,7 @@ export default function Home() {
                     {problem.description}
                   </p>
                   <span className="arrow-nudge mt-4 inline-flex items-center gap-2 text-sm font-bold text-primary-strong">
-                    Conhecer a proposta
+                    Ver o programa
                     <ArrowUpRight className="size-4" aria-hidden="true" />
                   </span>
                 </div>
@@ -353,8 +355,8 @@ export default function Home() {
               Um plano para a vida real.
             </h2>
             <p className="mt-4 max-w-md leading-relaxed text-muted-foreground">
-              Sem precisar descobrir tudo sozinho. É assim que estamos
-              desenhando a sua experiência.
+              Sem precisar descobrir tudo sozinho. É assim que o programa
+              funciona, do primeiro dia ao décimo quarto.
             </p>
 
             <ol className="mt-9 space-y-4" aria-label="Passos do funcionamento">
@@ -416,9 +418,10 @@ export default function Home() {
           </div>
           <div className="self-center">
             <p className="leading-relaxed text-strong-foreground/85">
-              Estamos construindo uma experiência baseada em recompensas e
-              respeito ao cão. Não fazemos diagnósticos nem substituímos a
-              avaliação de um veterinário ou profissional qualificado.
+              Toda a orientação é baseada em recompensas e respeito ao cão.
+              Não fazemos diagnóstico nem substituímos a avaliação de um
+              médico-veterinário — e a triagem de segurança interrompe o treino
+              quando é disso que vocês precisam.
             </p>
             <Link
               href="/ajuda"
@@ -442,8 +445,8 @@ export default function Home() {
             É bom ter clareza.
           </h2>
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted-foreground">
-            Respostas sobre a proposta e sobre o que já está disponível nesta
-            versão.
+            O que costuma travar a decisão, respondido antes de você
+            perguntar.
           </p>
           <PethMascot
             mood="thinking"

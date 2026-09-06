@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { waitForTransitions } from "./settle";
+import { faqs } from "@/content/faq";
 
 test("interactive preview supports keyboard tabs, stage changes and reduced motion", async ({
   page,
@@ -94,14 +95,14 @@ test("responsive navigation keeps focus and closes after navigation", async ({
     await expect(dialog).not.toBeVisible();
   }
   await page.waitForURL("/ajuda");
-  const question = page.getByRole("button", {
-    name: "Já posso criar um plano?",
-  });
+  // Ancorado na primeira pergunta do catálogo, não no texto dela: o conteúdo
+  // das dúvidas muda com o produto, o comportamento do acordeão não.
+  const [primeiraDuvida] = faqs;
+  if (!primeiraDuvida) throw new Error("Catálogo de dúvidas está vazio.");
+  const question = page.getByRole("button", { name: primeiraDuvida.question });
   await question.click();
   await expect(question).toHaveAttribute("aria-expanded", "true");
-  await expect(
-    page.getByText(/Ainda não. Esta é uma versão de desenvolvimento./),
-  ).toBeVisible();
+  await expect(page.getByText(primeiraDuvida.answer, { exact: false })).toBeVisible();
   await question.click();
   await expect(question).toHaveAttribute("aria-expanded", "false");
 });

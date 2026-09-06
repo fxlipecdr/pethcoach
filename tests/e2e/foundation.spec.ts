@@ -1,6 +1,7 @@
 import { expect, test } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 import { waitForTransitions } from "./settle";
+import { faqs } from "@/content/faq";
 
 test("home, navigation, accessibility and responsive layout", async ({
   page,
@@ -194,16 +195,14 @@ test("help is usable with keyboard and unknown routes remain 404", async ({
   page,
 }) => {
   await page.goto("/ajuda");
-  const question = page.getByRole("button", {
-    name: "Já posso criar um plano?",
-  });
+  // O texto das dúvidas acompanha o produto; o que este teste garante é que a
+  // primeira delas abre pelo teclado, seja qual for a pergunta.
+  const [primeiraDuvida] = faqs;
+  if (!primeiraDuvida) throw new Error("Catálogo de dúvidas está vazio.");
+  const question = page.getByRole("button", { name: primeiraDuvida.question });
   await question.focus();
   await page.keyboard.press("Enter");
-  await expect(
-    page.getByText("Ainda não. Esta é uma versão de desenvolvimento.", {
-      exact: false,
-    }),
-  ).toBeVisible();
+  await expect(page.getByText(primeiraDuvida.answer, { exact: false })).toBeVisible();
   const response = await page.goto("/caminho-inexistente");
   expect(response?.status()).toBe(404);
   await expect(

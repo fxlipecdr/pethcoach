@@ -257,9 +257,9 @@ export function QuizEngine({
         <div className="mt-6 flex items-start gap-3 rounded-2xl bg-secondary/70 p-4 text-foreground">
           <ShieldCheck className="mt-0.5 size-5 shrink-0 text-primary-strong" aria-hidden="true" />
           <p className="text-sm leading-relaxed">
-            Suas respostas ficam associadas a uma credencial segura neste navegador
-            por até sete dias. O resultado e a triagem de segurança entram nas
-            próximas fases.
+            Suas respostas ficam associadas a uma credencial segura neste
+            navegador por até sete dias. Ao final você recebe o resultado e a
+            triagem de segurança, que roda antes de qualquer exercício.
           </p>
         </div>
         {message ? (

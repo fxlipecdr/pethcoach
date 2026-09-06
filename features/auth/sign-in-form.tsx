@@ -137,7 +137,7 @@ export function SignInForm({
       </form>
       <p className="mt-5 text-xs leading-relaxed text-muted-foreground">
         No primeiro acesso, uma conta será criada para salvar os perfis dos seus
-        cães. Planos e cobranças ainda não estão disponíveis.
+        cães. O primeiro dia de treino é gratuito e não pede cartão.
       </p>
       <Link href="/#problemas" className="nav-link mt-5 text-sm text-primary-strong">
         Conhecer os programas

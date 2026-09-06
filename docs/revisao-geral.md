@@ -42,6 +42,20 @@ Todos executados com o código de saída real, sem canalizar a saída para `tail
 - **`'unsafe-inline'` em `script-src` nas rotas públicas estáticas.** Página estática não tem nonce possível, porque o HTML sai do build. As rotas que leem sessão ou parâmetro usam nonce e não têm `'unsafe-inline'`. Decisão registrada em `lib/security/csp.ts`.
 - **Chaves de stack local nos arquivos do funil.** `playwright.funnel.config.ts` e `tests/e2e-funnel/billing.spec.ts` têm chaves `sb_publishable_`/`sb_secret_` como valor padrão, ao lado de `http://127.0.0.1:54321`. São da stack local, não do projeto remoto — a chave publicável ali é diferente da do projeto de São Paulo. Inalcançáveis de fora.
 
+## Varredura de layout e de texto envelhecido — 06/09/2026
+
+**Sobreposições.** Medidas, não olhadas: um script percorre todo elemento decorativo (`svg` e qualquer coisa com `absolute`) e cruza o retângulo de cada um com o de todo nó de texto, em 768, 1024, 1280, 1440 e 1600. Três colisões reais apareceram e foram corrigidas:
+
+- o cartão flutuante do mascote cobria a legenda da demonstração em **todas** as larguras de desktop, invadindo 15px do texto;
+- uma estrela decorativa caía sobre o *eyebrow* do herói;
+- outra estrela caía sobre o link "Privacidade" do rodapé em 1024.
+
+Três achados restantes são falsos positivos e ficam registrados para a próxima varredura não perder tempo: o banner de cookies e o link "pular para o conteúdo" são sobreposições intencionais, e a logo tem `overflow-hidden` no contêiner, então o retângulo transborda mas o pixel não.
+
+**Texto envelhecido.** Nove afirmações em cinco páginas descreviam um produto que ainda não vendia: a home dizia "três situações" exibindo sete e chamava os programas de "proposta que estamos preparando", as dúvidas diziam que não havia quiz nem cobrança, o quiz prometia resultado "nas próximas fases" e a tela de acesso dizia que planos não estavam disponíveis.
+
+Nada disso quebra build nem teste. Texto envelhece calado, e o custo é duplo: desencoraja quem chega por anúncio e contradiz a página de planos, que mostra preço. `tests/e2e/legal.spec.ts` agora varre sete rotas contra nove padrões proibidos.
+
 ## Observações operacionais
 
 - **Indexação.** `app/robots.ts` tem `disallow: "/"` **fixo**, e todas as páginas trazem `robots: { index: false }` no metadata. Liberar indexação exige editar esses dois lugares — não é controlado por variável de ambiente.

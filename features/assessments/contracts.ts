@@ -1,14 +1,20 @@
 import { z } from "zod";
+import { problemSlugs } from "@/content/problems/slugs";
 import {
   safetyCodeSchema,
   safetyOutcomeSchema,
 } from "@/features/safety/contracts";
 
-export const problemSlugSchema = z.enum([
-  "cachorro-puxa-guia",
-  "filhote-mordendo",
-  "xixi-lugar-errado",
-]);
+/**
+ * Slugs aceitos no quiz, derivados do catálogo de landings.
+ *
+ * Já foi uma lista fixa aqui, e o custo apareceu ao adicionar programas: as
+ * landings novas subiam, o banco tinha as perguntas, e `/quiz/<slug>` devolvia
+ * 404 porque este enum não sabia dos slugs. Derivar da mesma fonte que gera as
+ * páginas elimina a divergência: acrescentar um problema em `content/problems`
+ * passa a bastar.
+ */
+export const problemSlugSchema = z.enum(problemSlugs);
 
 export const quizOptionSchema = z
   .object({
