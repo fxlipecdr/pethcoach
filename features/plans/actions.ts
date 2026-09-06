@@ -147,9 +147,27 @@ export async function generatePlanAction(
   let modelVersion: string | undefined = undefined;
 
   try {
+    /**
+     * As respostas do questionário vão junto: são elas que permitem ao planner
+     * montar uma sequência diferente para cada tutor. O planner determinístico
+     * não as recebe — e é por isso que ele entrega os mesmos 14 dias para todo
+     * mundo com o mesmo problema.
+     *
+     * Vão como pares chave/opção, sem texto livre e sem nada que identifique a
+     * pessoa: nome, e-mail e identificadores não entram no prompt.
+     */
+    const respostas = Object.fromEntries(
+      Object.entries(
+        (assessment.answers_json ?? {}) as Record<string, unknown>,
+      )
+        .filter(([, valor]) => typeof valor === "string")
+        .map(([chave, valor]) => [chave, valor as string]),
+    );
+
     const aiResult = await aiProvider.generatePlan({
       assessmentId: assessment.id,
       availableModules: modules,
+      answers: respostas,
       promptVersion: PLAN_ENGINE_VERSION,
     });
 
@@ -159,10 +177,25 @@ export async function generatePlanAction(
       promptVersion = aiResult.promptVersion;
       modelVersion = aiResult.modelVersion;
     } else {
-      // Deterministic progression guarantees safety, 1-3 tasks/day and zero hallucinations
+      /**
+       * O determinístico garante segurança, 1 a 3 tarefas por dia e zero
+       * alucinação — mas cair aqui em silêncio esconde configuração errada.
+       * Um nome de modelo com erro de digitação, por exemplo, devolve 404 e
+       * todo mundo volta a receber o mesmo plano sem ninguém perceber. O
+       * motivo vai para o log justamente para isso não passar batido.
+       */
+      const motivo = aiResult.ok
+        ? "plano_invalido_para_o_catalogo"
+        : `${aiResult.code}${"message" in aiResult && aiResult.message ? `: ${aiResult.message}` : ""}`;
+      console.warn(
+        `[planner] IA não usada, plano determinístico assumiu: ${String(motivo)}`,
+      );
       schedule = buildDeterministicPlan(modules, 14);
     }
-  } catch {
+  } catch (err) {
+    console.warn(
+      `[planner] erro inesperado no planner de IA: ${err instanceof Error ? err.message : "desconhecido"}`,
+    );
     schedule = buildDeterministicPlan(modules, 14);
   }
 

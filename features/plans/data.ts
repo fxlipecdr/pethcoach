@@ -680,3 +680,39 @@ export async function getUserActivePlans(
   );
 }
 
+
+/**
+ * Primeiro exercício do programa, para entregar valor antes de pedir conta.
+ *
+ * Até aqui, quem terminava o quiz recebia um resumo e um pedido de cadastro —
+ * nenhum exercício. Dez perguntas respondidas e nada praticável de volta, o
+ * que faz o tutor sair sem nunca ver o produto funcionando.
+ *
+ * O Dia 1 é gratuito por definição do produto, e `modules` é legível por
+ * visitante anônimo quando publicado. Então dá para mostrar o exercício ali
+ * mesmo, e só depois convidar a salvar o plano.
+ *
+ * Devolve `null` em qualquer falha: a página de resultado não pode quebrar por
+ * causa de um bloco de bônus.
+ */
+export async function loadFirstDayModule(
+  client: Client,
+  problemSlug: string,
+): Promise<BehaviorModule | null> {
+  try {
+    const { data: problema } = await client
+      .from("problems")
+      .select("id")
+      .eq("slug", problemSlug)
+      .eq("status", "published")
+      .maybeSingle();
+    if (!problema) return null;
+
+    const modulos = await loadPublishedModules(client, problema.id);
+    // `loadPublishedModules` já ordena por dificuldade e duração: o primeiro é
+    // o exercício de entrada, que é exatamente o Dia 1 do plano determinístico.
+    return modulos[0] ?? null;
+  } catch {
+    return null;
+  }
+}

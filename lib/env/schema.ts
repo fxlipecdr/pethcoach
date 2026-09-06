@@ -52,6 +52,12 @@ export const serverEnvSchema = z
       z.string().min(32).max(256).optional(),
     ),
     SUPABASE_SECRET_KEY: optionalText,
+    /**
+     * Planner de IA. O provedor é escolhido pela chave presente; hoje o
+     * suportado é o Gemini. `OPENAI_API_KEY` permanece aceito para não quebrar
+     * ambientes que já a definiram, mas não há provedor OpenAI implementado.
+     */
+    GEMINI_API_KEY: optionalText,
     OPENAI_API_KEY: optionalText,
     AI_MODEL_PLANNER: optionalText,
     AI_MODEL_COPY: optionalText,
@@ -80,12 +86,13 @@ export const serverEnvSchema = z
   .superRefine((env, ctx) => {
     if (
       env.AI_GENERATION_ENABLED &&
-      (!env.OPENAI_API_KEY || !env.AI_MODEL_PLANNER)
+      (!env.GEMINI_API_KEY || !env.AI_MODEL_PLANNER)
     )
       ctx.addIssue({
         code: "custom",
         path: ["AI_GENERATION_ENABLED"],
-        message: "Ativar IA exige chave e modelo do planner.",
+        message:
+          "Ativar IA exige GEMINI_API_KEY e AI_MODEL_PLANNER. Sem os dois, o planner determinístico assume.",
       });
   });
 

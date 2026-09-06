@@ -28,6 +28,9 @@ import type {
 } from "@/features/safety/contracts";
 import { safetyPresentation } from "@/features/safety/presentation";
 import { ClaimCard } from "@/features/assessments/claim-card";
+import { FirstDayCard } from "@/features/assessments/first-day-card";
+import { loadFirstDayModule } from "@/features/plans/data";
+import type { BehaviorModule } from "@/features/plans/contracts";
 import { ObservableSummaryView } from "@/features/assessments/observable-summary-view";
 import { PethMascot } from "@/components/pethcoach/peth-mascot";
 
@@ -101,6 +104,7 @@ export default async function ResultPage({
   } | null = fixture;
 
   let observableSummary: ObservableSummary | null = null;
+  let firstDay: BehaviorModule | null = null;
   let isAuthenticated = false;
   let isClaimed = false;
   let userDogs: Array<{ id: string; name: string }> = [];
@@ -158,6 +162,12 @@ export default async function ResultPage({
       if (quiz) {
         observableSummary = buildObservableSummary(quiz, assessment.answers);
       }
+
+      // Valor antes do cadastro: o Dia 1 aparece aqui mesmo, sem conta.
+      firstDay = await loadFirstDayModule(
+        runtime.client,
+        assessment.problemSlug,
+      );
 
       const { data: authData } = await runtime.client.auth.getUser().catch(() => ({
         data: { user: null },
@@ -245,6 +255,7 @@ export default async function ResultPage({
         {result.status === "continue" && observableSummary ? (
           <>
             <ObservableSummaryView summary={observableSummary} />
+            {firstDay ? <FirstDayCard module={firstDay} /> : null}
             <ClaimCard
               assessmentId={resolvedParams.assessmentId}
               isAuthenticated={isAuthenticated}

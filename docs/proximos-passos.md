@@ -262,6 +262,45 @@ Só a Meta está implementada, porque foi a sua escolha. Google Ads e TikTok exi
 
 ---
 
+## 6.6 Ligar a IA que personaliza o plano (Gemini)
+
+Sem isso, o produto funciona — mas todo mundo com o mesmo problema recebe os **mesmos 14 dias**, porque o planner determinístico não recebe as respostas do questionário.
+
+**Onde pegar a chave.** Em [aistudio.google.com/apikey](https://aistudio.google.com/apikey), crie uma chave de API do Gemini. Ela é **segredo**: nunca em variável que comece com `NEXT_PUBLIC_`.
+
+**O que preencher na Vercel:**
+
+| Variável | Valor |
+|---|---|
+| `GEMINI_API_KEY` | a chave |
+| `AI_MODEL_PLANNER` | `gemini-3.8-flash` |
+| `AI_GENERATION_ENABLED` | `true` |
+
+As três juntas, ou nada acontece: o ambiente recusa `AI_GENERATION_ENABLED=true` sem chave e modelo, justamente para não haver ilusão de IA ligada.
+
+Depois de salvar, **redeploy**. Confira em `/api/ready`: `planner_ia` sai de `degradado` para `ok`.
+
+**Trocar de modelo depois é só mudar `AI_MODEL_PLANNER` e redeployar** — o código não fixa modelo nenhum, passa o nome direto para a API. Um cuidado: `/api/ready` só confirma que as variáveis existem, não que o modelo responde. Nome errado devolve 404 e o determinístico assume; o motivo fica no log da Vercel como `[planner] IA não usada`. Depois de trocar, gere um plano e confirme que essa linha **não** aparece.
+
+### O que a IA pode e não pode
+
+Isto não é detalhe de implementação, é o que separa um adestrador virtual de um gerador de texto solto:
+
+- **Não decide segurança.** A triagem determinística roda antes, e o plano só chega à IA com desfecho `continue`. Nada que o modelo escreva reabre um caso encaminhado ou bloqueado.
+- **Não inventa exercício.** Recebe a lista fechada de módulos aprovados e devolve só identificadores dela. Um id fora do catálogo é recusado e o plano cai no determinístico. Há teste que falha se essa recusa parar de funcionar.
+- **Não escreve o texto que o tutor lê.** O conteúdo de cada exercício vem do catálogo; o modelo escolhe quais entram em cada dia e em que ordem.
+- **Não recebe dado pessoal.** Vão apenas as respostas do questionário, como pares chave/opção. Nome, e-mail e identificadores ficam de fora, e um teste verifica isso.
+
+### Custo e comportamento em falha
+
+Uma chamada por geração de plano, limitada a 10 por hora por usuário. Se a API falhar, demorar mais de 12 segundos ou devolver algo inválido, o planner determinístico assume e o tutor recebe o plano normalmente — só sem personalização.
+
+### O limite real
+
+Com 4 exercícios por programa, a IA tem pouco o que combinar: ela reordena quatro coisas. O que multiplica planos distintos de verdade é **profundidade de catálogo**. Ligar a IA vale; ampliar o catálogo vale mais, e os dois juntos é que fazem o plano ser realmente único.
+
+---
+
 ## 7. As duas revisões profissionais — decisão tomada em 05/09/2026
 
 Estas nunca foram tarefas de computador, e nenhuma delas eu posso fazer.

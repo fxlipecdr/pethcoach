@@ -100,7 +100,10 @@ export async function GET(request: Request) {
     {
       nome: "planner_ia",
       // Sem chave o planner usa o fallback determinístico: degradado, não fora.
-      estado: env.OPENAI_API_KEY ? "ok" : "degradado",
+      estado:
+        env.AI_GENERATION_ENABLED && env.GEMINI_API_KEY && env.AI_MODEL_PLANNER
+          ? "ok"
+          : "degradado",
     },
   ];
 
