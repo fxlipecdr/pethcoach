@@ -9,6 +9,15 @@ export type CreateCheckoutResult =
   | { ok: false; error: string }
   | Unavailable;
 
+/** Preço vivo, lido do Stripe. `null` quando não há preço configurado. */
+export interface LivePrice {
+  /** Valor em centavos, como o Stripe guarda. */
+  unitAmount: number;
+  currency: string;
+  /** "month" | "year" quando recorrente; ausente em pagamento único. */
+  interval?: string;
+}
+
 export type CreatePortalResult =
   | { ok: true; url: string }
   | { ok: false; error: string }
@@ -34,6 +43,7 @@ export interface CreatePortalInput {
 export interface PaymentProvider {
   isConfigured(): boolean;
   getPriceId(planType: BillingPlanType): string | null;
+  getLivePrice(planType: BillingPlanType): Promise<LivePrice | null>;
   createCheckout(input: CreateCheckoutInput): Promise<CreateCheckoutResult>;
   createPortal(input: CreatePortalInput): Promise<CreatePortalResult>;
   constructWebhookEvent(
@@ -72,6 +82,35 @@ class StripePaymentProvider implements PaymentProvider {
         return env.STRIPE_PRICE_SINGLE_PROGRAM ?? null;
       default:
         return null;
+    }
+  }
+
+  /**
+   * Lê o preço direto do Stripe.
+   *
+   * O que o site anuncia e o que o Stripe cobra precisam ser o mesmo número.
+   * Enquanto o valor exibido vivia fixo no código, bastava alterar o preço no
+   * painel para a página passar a mentir — e anunciar um preço e cobrar outro
+   * é propaganda enganosa perante o Código de Defesa do Consumidor.
+   *
+   * Falha aqui não derruba a página: quem chama cai para o texto do catálogo,
+   * que passa a ser apenas um último recurso visual.
+   */
+  async getLivePrice(planType: BillingPlanType): Promise<LivePrice | null> {
+    const stripe = this.getClient();
+    const priceId = this.getPriceId(planType);
+    if (!stripe || !priceId) return null;
+
+    try {
+      const price = await stripe.prices.retrieve(priceId);
+      if (typeof price.unit_amount !== "number") return null;
+      return {
+        unitAmount: price.unit_amount,
+        currency: price.currency,
+        interval: price.recurring?.interval,
+      };
+    } catch {
+      return null;
     }
   }
 

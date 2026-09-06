@@ -77,6 +77,23 @@ Vale só para commits novos; os já feitos continuam com o autor antigo e precis
 
 **Como conferir que o caminho automático está de pé:** faça um commit e um push, e confirme que aparece um deploy novo na lista **sem clicar em nada**. Vale repetir essa verificação sempre que trocar de máquina ou reinstalar o git, porque o `user.email` é configuração local e volta ao padrão.
 
+## Preços em produção — 05/09/2026
+
+| Plano | Valor | Cobrança | Situação |
+|---|---|---|---|
+| Programa completo | R$ 97,00 | pagamento único | oferta principal do tráfego pago |
+| Assinatura mensal | R$ 39,90 | recorrente, cartão | secundária |
+| Assinatura anual | — | — | **não cadastrada**, some da tela sozinha |
+
+Dois pontos que determinaram esses números:
+
+- **Assinatura por Pix não existe no Brasil.** O Pix Automático não está disponível para contas brasileiras, então mensal e anual são cartão para sempre. O pagamento único é o único formato que aceitará Pix quando a conta for elegível — e por isso é a oferta do anúncio.
+- **O produto entrega 14 dias.** Vender um ano de acesso a 14 dias de conteúdo é o tipo de coisa que vira reclamação no Procon. O anual fica fora até existir conteúdo além dos 14 dias.
+
+**O valor exibido vem do Stripe, não do código.** `features/billing/pricing.ts` lê o preço vivo pelo ID configurado em `STRIPE_PRICE_*`. Mudar o preço no painel muda o site, sem deploy. Um plano sem preço cadastrado não aparece na tela, em vez de anunciar oferta que o checkout recusaria.
+
+Os valores em `features/billing/contracts.ts` são apenas referência para prévia de desenvolvimento, quando não há Stripe configurado.
+
 ## Stripe e Resend
 
 A chave Stripe anteriormente usada pertence ao sandbox `acct_1UAZB3LaePxLnVtP`. A consulta somente de leitura retornou HTTP 200, com `charges_enabled=false` e `details_submitted=false`. A auditoria posterior no painel confirmou modo de teste, zero produtos e nenhum destino de webhook; ativação de Payments e modelo de preços seguem não iniciados. O adapter de pagamento continua desativado.

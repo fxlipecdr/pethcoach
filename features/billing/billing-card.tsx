@@ -21,13 +21,33 @@ import {
 interface BillingCardProps {
   status: UserBillingStatus;
   dogId?: string;
+  /**
+   * Preços lidos do Stripe pela página, que é server component. Quando
+   * ausentes — só em prévia de desenvolvimento — vale o texto do catálogo.
+   * O valor exibido tem que ser o mesmo que o checkout cobra.
+   */
+  prices?: Partial<
+    Record<
+      BillingPlanType,
+      { priceFormatted: string; period: string; available?: boolean }
+    >
+  >;
 }
 
-export function BillingCard({ status, dogId }: BillingCardProps) {
+export function BillingCard({ status, dogId, prices }: BillingCardProps) {
   const [loadingAction, setLoadingAction] = useState<
     BillingPlanType | "portal" | null
   >(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
+  /**
+   * Só entram na tela os planos que o Stripe consegue cobrar. Um plano sem
+   * preço cadastrado — o anual, enquanto não for vendido — desaparece por
+   * conta própria, em vez de exibir um valor que o checkout recusaria.
+   */
+  const planosVisiveis = BILLING_PLANS_CATALOG.filter(
+    (plan) => prices?.[plan.id]?.available ?? true,
+  );
 
   useEffect(() => {
     if (!status.hasAccess) {
@@ -188,9 +208,18 @@ export function BillingCard({ status, dogId }: BillingCardProps) {
             escolha uma das opções abaixo:
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            {BILLING_PLANS_CATALOG.map((plan) => {
+          <div
+            className={`grid grid-cols-1 gap-4 ${
+              planosVisiveis.length >= 3
+                ? "md:grid-cols-3"
+                : planosVisiveis.length === 2
+                  ? "md:grid-cols-2"
+                  : "md:grid-cols-1"
+            }`}
+          >
+            {planosVisiveis.map((plan) => {
               const isRecommended = plan.recommended;
+              const preco = prices?.[plan.id] ?? plan;
 
               return (
                 <div
@@ -215,10 +244,10 @@ export function BillingCard({ status, dogId }: BillingCardProps) {
 
                     <div className="mt-3">
                       <span className="text-2xl font-extrabold text-foreground">
-                        {plan.priceFormatted}
+                        {preco.priceFormatted}
                       </span>
                       <span className="text-xs text-muted-foreground ml-1">
-                        {plan.period}
+                        {preco.period}
                       </span>
                     </div>
 

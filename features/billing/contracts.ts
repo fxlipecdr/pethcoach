@@ -72,11 +72,20 @@ export interface PlanPricingItem {
   recommended?: boolean;
 }
 
+/**
+ * Descrição dos planos. O **valor** exibido ao tutor vem do Stripe, via
+ * `features/billing/pricing.ts` — é o Stripe quem cobra, e anunciar um número
+ * diferente do cobrado é propaganda enganosa. Os valores abaixo são só
+ * referência para prévia de desenvolvimento, quando não há Stripe configurado.
+ *
+ * O plano anual fica descrito aqui, mas só aparece na tela quando existir um
+ * preço anual cadastrado no Stripe.
+ */
 export const BILLING_PLANS_CATALOG: PlanPricingItem[] = [
   {
     id: "monthly",
     title: "Assinatura Mensal",
-    priceFormatted: "R$ 49,90",
+    priceFormatted: "R$ 39,90",
     period: "/mês",
     description: "Acompanhamento flexível com renovação mensal cancelável a qualquer momento.",
     features: [
@@ -94,7 +103,7 @@ export const BILLING_PLANS_CATALOG: PlanPricingItem[] = [
     period: "/mês (cobrado anualmente R$ 418,80)",
     description: "O melhor custo-benefício para manter o bem-estar e o manejo contínuo durante todo o ano.",
     features: [
-      "Economia de 30% em relação ao plano mensal",
+      "Economia em relação ao plano mensal",
       "Acesso completo aos 14 dias e novos módulos",
       "Check-ins diários com histórico permanente",
       "Linha do tempo e todos os marcos comportamentais",
@@ -104,7 +113,7 @@ export const BILLING_PLANS_CATALOG: PlanPricingItem[] = [
   {
     id: "single_program",
     title: "Programa Completo Avulso",
-    priceFormatted: "R$ 147,00",
+    priceFormatted: "R$ 97,00",
     period: "pagamento único",
     description: "Acesso vitalício à jornada estruturada de 14 dias para resolver o comportamento do seu cão.",
     features: [

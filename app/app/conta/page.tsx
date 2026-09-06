@@ -5,6 +5,7 @@ import { AccountForm, SignOutForm } from "@/features/profile/account-forms";
 import { DataRightsCard } from "@/features/profile/data-rights-card";
 import { getUserBillingStatus } from "@/features/billing/data";
 import { BillingCard } from "@/features/billing/billing-card";
+import { resolvePlanPrices } from "@/features/billing/pricing";
 import { getOrCreateEmailPreferences } from "@/features/emails/data";
 import { EmailPreferencesCard } from "@/features/emails/email-preferences-card";
 
@@ -19,6 +20,8 @@ export default async function AccountPage() {
     throw new Error("Não foi possível carregar sua conta.");
 
   const billingStatus = await getUserBillingStatus(client, user.id);
+  // O preço vem do Stripe, não do código: é ele quem cobra.
+  const planPrices = await resolvePlanPrices();
   const emailPrefsRow = await getOrCreateEmailPreferences(user.id, client);
   const emailPreferences = emailPrefsRow
     ? {
@@ -46,7 +49,7 @@ export default async function AccountPage() {
         </p>
       </div>
       <div className="space-y-6">
-        <BillingCard status={billingStatus} />
+        <BillingCard status={billingStatus} prices={planPrices} />
         <EmailPreferencesCard initialPreferences={emailPreferences} />
         <Card>
           <h2 className="mb-5 text-lg font-semibold">Seu perfil</h2>
