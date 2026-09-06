@@ -33,6 +33,7 @@ import { loadFirstDayModule } from "@/features/plans/data";
 import type { BehaviorModule } from "@/features/plans/contracts";
 import { ObservableSummaryView } from "@/features/assessments/observable-summary-view";
 import { PethMascot } from "@/components/pethcoach/peth-mascot";
+import { findProblem } from "@/content/problems";
 
 export const metadata: Metadata = {
   title: "Resultado e triagem de segurança",
@@ -105,6 +106,7 @@ export default async function ResultPage({
 
   let observableSummary: ObservableSummary | null = null;
   let firstDay: BehaviorModule | null = null;
+  let problemSlug: string | null = fixture ? "cachorro-puxa-guia" : null;
   let isAuthenticated = false;
   let isClaimed = false;
   let userDogs: Array<{ id: string; name: string }> = [];
@@ -164,6 +166,7 @@ export default async function ResultPage({
       }
 
       // Valor antes do cadastro: o Dia 1 aparece aqui mesmo, sem conta.
+      problemSlug = assessment.problemSlug;
       firstDay = await loadFirstDayModule(
         runtime.client,
         assessment.problemSlug,
@@ -198,72 +201,132 @@ export default async function ResultPage({
   }
 
   const presentation = safetyPresentation(result.status, result.codes);
+  const seguePraticando = result.status === "continue";
+  const problema = problemSlug ? findProblem(problemSlug) : undefined;
+
+  /**
+   * O bloco de triagem, sempre presente e sempre íntegro.
+   *
+   * A **posição** dele muda conforme o desfecho, e isso é deliberado. Em
+   * encaminhamento ou bloqueio, a segurança é a mensagem: abre a página. Em
+   * `continue`, a mensagem é o plano — e liderar com "nenhum bloqueio imediato
+   * foi identificado" entrega a quem respondeu dez perguntas sobre o próprio
+   * cão a linguagem de um laudo, no negativo, antes de qualquer coisa útil.
+   *
+   * Nenhum texto some: o aviso de que não há diagnóstico, os sinais para
+   * observar e o limite de escopo continuam na tela, por inteiro.
+   */
+  const blocoDeTriagem = (
+    <Card
+      className={`rounded-3xl border-border/80 p-6 shadow-sm sm:p-10 ${seguePraticando ? "mt-6 bg-surface-soft" : ""}`}
+    >
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <Badge>
+            <ShieldCheck className="size-3.5" aria-hidden="true" />
+            {presentation.badge}
+          </Badge>
+          {seguePraticando ? (
+            <h2 className="mt-4 font-display text-xl font-bold tracking-tight text-foreground">
+              {presentation.title}
+            </h2>
+          ) : (
+            <h1 className="mt-5 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+              {presentation.title}
+            </h1>
+          )}
+        </div>
+        {seguePraticando ? null : (
+          <div className="hidden size-14 shrink-0 items-center justify-center rounded-2xl bg-secondary/80 sm:flex">
+            <PethMascot mood="neutral" size={48} />
+          </div>
+        )}
+      </div>
+      <p
+        className={`mt-4 leading-relaxed text-muted-foreground ${seguePraticando ? "text-sm" : "text-base sm:text-lg"}`}
+      >
+        {presentation.description}
+      </p>
+
+      <Feedback
+        tone={presentation.tone}
+        title="Próximos passos seguros"
+        className="mt-6 rounded-2xl"
+      >
+        <ul className="list-disc space-y-2 pl-5">
+          {presentation.actions.map((action) => (
+            <li key={action}>{action}</li>
+          ))}
+        </ul>
+      </Feedback>
+
+      <p className="mt-6 text-sm leading-relaxed text-muted-foreground">
+        O PethCoach não realiza diagnóstico, tratamento ou prognóstico. As
+        mensagens são regras fixas de segurança e não substituem avaliação
+        individual.
+      </p>
+
+      {seguePraticando ? null : (
+        <Link
+          href="/ajuda"
+          className={buttonVariants({ size: "lg", className: "mt-7" })}
+        >
+          Ver limites e como buscar ajuda
+        </Link>
+      )}
+    </Card>
+  );
+
+  if (!seguePraticando) {
+    return (
+      <section className="page-width py-10 sm:py-16">
+        <div className="mx-auto max-w-2xl">{blocoDeTriagem}</div>
+      </section>
+    );
+  }
 
   return (
     <section className="page-width py-10 sm:py-16">
       <div className="mx-auto max-w-2xl">
-        <Card className="p-6 sm:p-10 rounded-3xl shadow-sm border-border/80">
+        {/* Abre com o que o tutor veio buscar: o próximo passo, praticável hoje. */}
+        <Card className="rounded-3xl border-2 border-primary/30 bg-secondary/20 p-6 shadow-sm sm:p-10">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <Badge>
-                <ShieldCheck className="size-3.5" aria-hidden="true" />
-                {presentation.badge}
-              </Badge>
-              <h1 className="mt-5 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-                {presentation.title}
+              <Badge>SEU PLANO ESTÁ PRONTO</Badge>
+              <h1 className="mt-5 font-display text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
+                14 dias para
+                <br />
+                <span className="marker-underline">
+                  {problema ? problema.label.toLowerCase() : "mudar essa rotina"}
+                </span>
               </h1>
             </div>
-            {result.status === "continue" ? (
-              <div className="hidden sm:flex size-14 shrink-0 items-center justify-center rounded-2xl bg-secondary/80">
-                <PethMascot mood="celebrating" size={48} />
-              </div>
-            ) : null}
+            <div className="hidden size-14 shrink-0 items-center justify-center rounded-2xl bg-card sm:flex">
+              <PethMascot mood="celebrating" size={48} />
+            </div>
           </div>
           <p className="mt-4 text-base leading-relaxed text-muted-foreground sm:text-lg">
-            {presentation.description}
+            Montamos a sequência a partir do que você respondeu
+            {problema ? ` sobre ${problema.title.toLowerCase()}` : ""}. O{" "}
+            <strong className="text-foreground">Dia 1 está aqui embaixo</strong>
+            , completo e gratuito — dá para fazer hoje mesmo.
           </p>
-
-          <Feedback
-            tone={presentation.tone}
-            title="Próximos passos seguros"
-            className="mt-7 rounded-2xl"
-          >
-            <ul className="list-disc space-y-2 pl-5">
-              {presentation.actions.map((action) => (
-                <li key={action}>{action}</li>
-              ))}
-            </ul>
-          </Feedback>
-
-          <p className="mt-6 text-sm leading-relaxed text-muted-foreground">
-            O PethCoach não realiza diagnóstico, tratamento ou prognóstico. As
-            mensagens são regras fixas de segurança e não substituem avaliação
-            individual.
-          </p>
-
-          {result.status !== "continue" ? (
-            <Link
-              href="/ajuda"
-              className={buttonVariants({ size: "lg", className: "mt-7" })}
-            >
-              Ver limites e como buscar ajuda
-            </Link>
-          ) : null}
         </Card>
 
-        {/* Observable summary and Claim card only shown for CONTINUE outcome */}
-        {result.status === "continue" && observableSummary ? (
-          <>
-            <ObservableSummaryView summary={observableSummary} />
-            {firstDay ? <FirstDayCard module={firstDay} /> : null}
-            <ClaimCard
-              assessmentId={resolvedParams.assessmentId}
-              isAuthenticated={isAuthenticated}
-              isClaimed={isClaimed}
-              dogs={userDogs}
-            />
-          </>
+        {firstDay ? <FirstDayCard module={firstDay} /> : null}
+
+        <ClaimCard
+          assessmentId={resolvedParams.assessmentId}
+          isAuthenticated={isAuthenticated}
+          isClaimed={isClaimed}
+          dogs={userDogs}
+        />
+
+        {observableSummary ? (
+          <ObservableSummaryView summary={observableSummary} />
         ) : null}
+
+        {blocoDeTriagem}
       </div>
     </section>
   );
