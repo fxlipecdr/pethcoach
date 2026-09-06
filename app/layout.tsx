@@ -11,7 +11,7 @@ export function generateMetadata(): Metadata {
       template: "%s | PethCoach",
     },
     description:
-      "Um passo de cada vez para uma rotina melhor com seu cão. Conheça o PethCoach, uma plataforma de orientação comportamental em desenvolvimento.",
+      "Um passo de cada vez para uma rotina melhor com seu cão. Orientação comportamental baseada em recompensa, com plano diário de 14 dias. O primeiro dia é gratuito.",
     metadataBase: siteUrl ? new URL(siteUrl) : undefined,
     robots: { index: false, follow: false },
   };

@@ -52,7 +52,7 @@ export function WorkspaceShell({
           <div className="mt-4 flex items-center gap-3 rounded-card bg-surface-warm px-3 py-3">
             <PethMascot mood="neutral" size={40} className="float-soft" />
             <p className="text-xs leading-snug text-muted-foreground">
-              PethCoach · Em desenvolvimento
+              PethCoach · Um passo de cada vez
             </p>
           </div>
         </div>
@@ -68,11 +68,13 @@ export function WorkspaceShell({
             ) : null}
             {title}
           </div>
-          <div className="hidden lg:block">
-            <Badge>
-              {preview ? "Prévia de interface" : "Em desenvolvimento"}
-            </Badge>
-          </div>
+          {/* O selo marca fixture de prévia. Numa conta real não há o que
+              declarar, e anunciar obra a quem pagou só gera dúvida. */}
+          {preview ? (
+            <div className="hidden lg:block">
+              <Badge>Prévia de interface</Badge>
+            </div>
+          ) : null}
           {area === "admin" ? (
             <WorkspaceMenu area={area} preview={preview} />
           ) : null}

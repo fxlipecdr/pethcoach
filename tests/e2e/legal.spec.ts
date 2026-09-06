@@ -87,3 +87,84 @@ test("rodapé identifica o fornecedor em qualquer página", async ({ page }) => 
   await page.goto("/");
   await expect(page.getByRole("contentinfo").getByText(cnpj)).toBeVisible();
 });
+
+test("o site não declara que o produto está em desenvolvimento", async ({
+  page,
+}) => {
+  /**
+   * Enquanto o produto não vendia, dizer "em desenvolvimento" era honesto.
+   * Depois que a cobrança está no ar, a mesma frase passa a desencorajar a
+   * compra de quem chega por anúncio — e diz ao revisor do Stripe que o site
+   * não está pronto para vender. Este teste impede que ela volte por descuido.
+   */
+  for (const rota of ["/", "/privacidade", "/termos", "/entrar"]) {
+    await page.goto(rota);
+    const corpo = page.locator("body");
+    await expect(corpo).not.toContainText(/em desenvolvimento/i);
+    await expect(corpo).not.toContainText(
+      /programas ainda não estão dispon/i,
+    );
+  }
+
+  // A descrição usada em busca e compartilhamento também não pode declarar obra.
+  await page.goto("/");
+  const descricao = await page
+    .locator('meta[name="description"]')
+    .getAttribute("content");
+  expect(descricao ?? "").not.toMatch(/em desenvolvimento/i);
+});
+
+test("a vitrine pública informa preço, garantia e limite de escopo", async ({
+  page,
+}) => {
+  /**
+   * Três exigências se sobrepõem nesta página: o CDC pede preço claro antes da
+   * contratação, o anúncio precisa que o visitante veja o valor sem criar
+   * conta, e a análise de conta do Stripe abre o site para confirmar o que é
+   * vendido e por quanto. Nenhuma delas tolera preço atrás de login.
+   */
+  await page.goto("/planos");
+  await expect(
+    page.getByRole("heading", { name: /Quanto custa treinar/i, level: 1 }),
+  ).toBeVisible();
+
+  // Pelo menos um preço em reais, visível sem autenticação.
+  await expect(page.getByText(/R\$\s?\d/).first()).toBeVisible();
+
+  // Direito de arrependimento, com prazo e canal.
+  await expect(
+    page.getByRole("heading", { name: /7 dias para desistir/i }),
+  ).toBeVisible();
+  await expect(
+    page.getByText(/artigo 49 do Código de Defesa do Consumidor/i),
+  ).toBeVisible();
+
+  // O limite de escopo veterinário aparece antes da decisão de compra.
+  await expect(
+    page.getByRole("heading", { name: /Não é serviço veterinário/i }),
+  ).toBeVisible();
+
+  // Caminho para os termos, exigido em venda à distância.
+  await expect(page.getByRole("link", { name: "Termos de Uso" })).toBeVisible();
+
+  await waitForTransitions(page);
+  expect(
+    (
+      await new AxeBuilder({ page })
+        .withTags(["wcag2a", "wcag2aa", "wcag21aa", "wcag22aa"])
+        .analyze()
+    ).violations,
+  ).toEqual([]);
+  expect(
+    await page.evaluate(
+      () => document.documentElement.scrollWidth <= window.innerWidth,
+    ),
+  ).toBe(true);
+});
+
+test("a vitrine é alcançável a partir da home", async ({ page }) => {
+  await page.goto("/");
+  await expect(
+    page.getByRole("contentinfo").getByRole("link", { name: "Planos e preços" }),
+  ).toBeVisible();
+});

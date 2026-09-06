@@ -38,8 +38,10 @@ test("home, navigation, accessibility and responsive layout", async ({
       name: "Um próximo passo. Uma rotina mais leve.",
     }),
   ).toBeVisible();
+  // O selo carrega a oferta real. Já foi "Produto em desenvolvimento", frase
+  // que passou a desencorajar a compra depois que a cobrança entrou no ar.
   await expect(
-    page.getByText("Produto em desenvolvimento", { exact: true }),
+    page.getByText("Primeiro dia grátis", { exact: true }),
   ).toBeVisible();
   await page.getByRole("link", { name: "Conhecer os programas" }).click();
   await expect(page).toHaveURL(/#problemas$/);

@@ -50,9 +50,13 @@ describe("P3 problem content and SEO", () => {
     process.env.NEXT_PUBLIC_SITE_URL = "https://coach.example.test";
     const entries = sitemap();
 
-    expect(entries).toHaveLength(4);
+    // A vitrine de preços entra no sitemap: é a página que o anúncio precisa
+    // alcançar e a que a análise de conta do Stripe procura para confirmar o
+    // que é vendido e por quanto.
+    expect(entries).toHaveLength(5);
     expect(entries.map(({ url }) => url)).toEqual([
       "https://coach.example.test/",
+      "https://coach.example.test/planos",
       ...problems.map(
         ({ slug }) => `https://coach.example.test/problemas/${slug}`,
       ),

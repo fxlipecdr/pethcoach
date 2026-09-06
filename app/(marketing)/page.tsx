@@ -99,7 +99,7 @@ export default function Home() {
         <div className="page-width relative grid items-center gap-12 md:grid-cols-[1.12fr_0.88fr] md:gap-10 lg:gap-16">
           <div>
             <Sticker tone="lime" icon={<Spark tone="coral" size={16} />}>
-              Produto em desenvolvimento
+              Primeiro dia grátis
             </Sticker>
 
             <p className="eyebrow mt-7">Menos dúvidas. Mais conexão.</p>

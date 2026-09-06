@@ -37,6 +37,7 @@ export function MobileNav() {
             {[
               { href: "/#problemas", label: "Programas" },
               { href: "/#como-funciona", label: "Como funciona" },
+              { href: "/planos", label: "Planos" },
               { href: "/#nosso-compromisso", label: "Nosso compromisso" },
               { href: "/ajuda", label: "Dúvidas" },
             ].map((link) => (
@@ -56,12 +57,11 @@ export function MobileNav() {
           </nav>
           <div className="mt-auto pt-10">
             <p className="mb-4 text-xs text-muted-foreground">
-              Produto em desenvolvimento. Os programas ainda não estão
-              disponíveis.
+              O primeiro dia de treino é gratuito, sem cartão.
             </p>
             <SheetClose asChild>
               <Button asChild className="w-full">
-                <Link href="/entrar">Conhecer a área de acesso</Link>
+                <Link href="/entrar">Entrar</Link>
               </Button>
             </SheetClose>
           </div>

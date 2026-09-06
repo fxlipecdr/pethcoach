@@ -17,6 +17,7 @@ const footerColumns = [
     links: [
       { href: "/#problemas", label: "Programas" },
       { href: "/#como-funciona", label: "Como funciona" },
+      { href: "/planos", label: "Planos e preços" },
       { href: "/#nosso-compromisso", label: "Nosso compromisso" },
     ],
   },

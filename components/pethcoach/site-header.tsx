@@ -10,6 +10,7 @@ import { cn } from "@/lib/utils";
 const links = [
   { href: "/#problemas", label: "Programas" },
   { href: "/#como-funciona", label: "Como funciona" },
+  { href: "/planos", label: "Planos" },
   { href: "/ajuda", label: "Dúvidas" },
 ];
 

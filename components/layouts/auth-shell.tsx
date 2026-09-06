@@ -6,6 +6,7 @@ import { PethMascot } from "@/components/pethcoach/peth-mascot";
 import { Paw, StarDoodle } from "@/components/pethcoach/doodles";
 import { Sticker } from "@/components/pethcoach/playground";
 import { PreviewNotice } from "./preview-notice";
+import { controlador } from "@/content/legal";
 
 export function AuthShell({
   children,
@@ -70,7 +71,10 @@ export function AuthShell({
         </div>
       </main>
       <footer className="page-width flex flex-wrap items-center justify-between gap-3 border-t border-border py-5 text-xs text-muted-foreground">
-        <span>Uma experiência em desenvolvimento.</span>
+        {/* Identificação do fornecedor, como no rodapé público. */}
+        <span>
+          {controlador.razaoSocial} · CNPJ {controlador.cnpj}
+        </span>
         <nav aria-label="Informações de acesso" className="flex gap-5">
           <Link className="nav-link" href="/privacidade">
             Privacidade

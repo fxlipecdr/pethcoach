@@ -47,6 +47,36 @@ function periodoDe(interval: string | undefined, planType: BillingPlanType) {
   return planType === "single_program" ? "pagamento único" : "";
 }
 
+/**
+ * Preços para a página pública.
+ *
+ * Regra diferente da tela logada, e de propósito. Lá, plano sem preço vivo
+ * desaparece, porque o clique cairia direto num checkout que o Stripe recusa.
+ * Aqui não há checkout imediato — o botão leva ao acesso — e uma página de
+ * planos sem nenhum preço é pior por três motivos: o revisor do Stripe abre o
+ * site justamente para ver o que é vendido e por quanto, quem chega de anúncio
+ * desiste sem saber o preço, e o CDC exige informação clara e ostensiva do
+ * valor antes da contratação.
+ *
+ * Então o valor de referência do catálogo aparece quando o Stripe não responde
+ * — e o erro é registrado, alto, porque significa que a vitrine está exibindo
+ * um número que ninguém confirmou contra a cobrança.
+ */
+export async function resolvePublicPlanPrices(): Promise<
+  Record<BillingPlanType, ResolvedPlanPrice>
+> {
+  const precos = await resolvePlanPrices();
+  for (const [plano, preco] of Object.entries(precos)) {
+    if (!preco.live) {
+      console.error(
+        `[precos] vitrine pública exibindo valor de referência para "${plano}": ` +
+          `${preco.motivo ?? "desconhecido"}. Confira /api/ready.`,
+      );
+    }
+  }
+  return precos;
+}
+
 export async function resolvePlanPrices(): Promise<
   Record<BillingPlanType, ResolvedPlanPrice>
 > {
