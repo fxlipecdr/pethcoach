@@ -14,8 +14,8 @@ import {
 } from "./data";
 import {
   assessmentCookieName,
+  diagnoseAssessmentToken,
   assessmentTokenHash,
-  verifyAssessmentToken,
 } from "./token";
 import { dispatchTransactionalEmail } from "@/features/emails/dispatcher";
 
@@ -70,12 +70,32 @@ export async function claimAssessmentAction(
   const cookieStore = await cookies();
   const token = cookieStore.get(assessmentCookieName)?.value;
 
-  if (!token || !verifyAssessmentToken(token, parsed.data.assessmentId, runtime.secret)) {
-    return {
-      status: "error",
-      message:
-        "Não foi possível comprovar a posse desta avaliação no seu navegador atual.",
-    };
+  const falha = !token
+    ? ("sem_cookie" as const)
+    : diagnoseAssessmentToken(
+        token,
+        parsed.data.assessmentId,
+        runtime.secret,
+      );
+  if (falha || !token) {
+    // O motivo vai para o log do servidor: a mensagem ao tutor precisa dizer o
+    // que fazer, não o que quebrou. Nenhum token é registrado.
+    console.warn(`[claim] posse não comprovada: ${falha}`);
+
+    /**
+     * Refazer o questionário no mesmo navegador sobrescreve o cookie, que passa
+     * a apontar para a avaliação nova. Voltar para o resultado antigo — pelo
+     * histórico do navegador, por exemplo — cai exatamente aqui, e o tutor não
+     * tem como adivinhar isso pela mensagem genérica.
+     */
+    const mensagem =
+      falha === "outra_avaliacao"
+        ? "Este resultado é de um questionário anterior. Você respondeu outro depois, e é ele que está salvo neste navegador — abra o resultado mais recente para vinculá-lo."
+        : falha === "expirado"
+          ? "Este resultado passou dos 7 dias e não pode mais ser vinculado. Responder o questionário de novo leva poucos minutos."
+          : "Não foi possível comprovar a posse desta avaliação neste navegador. Se você respondeu o questionário em outro aparelho ou em janela anônima, responda novamente aqui.";
+
+    return { status: "error", message: mensagem };
   }
 
   const tokenHash = assessmentTokenHash(token);
