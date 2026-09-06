@@ -26,7 +26,7 @@ export function Brand({ className }: { className?: string }) {
             height={logo.height}
             sizes="160px"
             alt={brand.name}
-            className="absolute max-w-none mix-blend-multiply"
+            className="absolute max-w-none"
             style={{
               left: `${(-logo.crop.x / logo.crop.width) * 100}%`,
               top: `${(-logo.crop.y / logo.crop.height) * 100}%`,

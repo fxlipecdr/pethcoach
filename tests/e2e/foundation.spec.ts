@@ -90,7 +90,9 @@ test("private routes fail closed and success redirect grants nothing", async ({
   page,
   request,
 }) => {
-  for (const route of ["/app", "/admin", "/app/conta"]) {
+  // O histórico entrou nesta lista ao virar página real: antes era servido
+  // pelo catch-all de `/app/[...segments]` com aviso de obra.
+  for (const route of ["/app", "/admin", "/app/conta", "/app/historico"]) {
     await page.goto(route);
     await expect(page).toHaveURL(/\/entrar(?:\?next=.*)?$/);
   }
