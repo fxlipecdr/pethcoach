@@ -43,6 +43,22 @@ test("readiness reporta o estado real das dependências", async ({ request }) =>
   expect(porNome.planner_ia).toBe("degradado");
   expect(porNome.email).toBe("ausente");
 
+  // Situação de cada plano, para diagnosticar card que não aparece na loja
+  // sem precisar adivinhar qual variável de preço parou de resolver.
+  const planos = corpo.planos as {
+    plano: string;
+    estado: string;
+    visivel_na_loja: boolean;
+  }[];
+  expect(planos.map((p) => p.plano).sort()).toEqual([
+    "annual",
+    "monthly",
+    "single_program",
+  ]);
+
+  // Nenhum ID de preço pode vazar na resposta: só a situação.
+  expect(JSON.stringify(planos)).not.toMatch(/price_|prod_/);
+
   // Nenhuma URL, chave ou host pode aparecer na resposta.
   const texto = JSON.stringify(corpo);
   expect(texto).not.toMatch(/https?:\/\//);

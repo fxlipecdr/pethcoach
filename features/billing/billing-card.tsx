@@ -221,6 +221,19 @@ export function BillingCard({ status, dogId, prices }: BillingCardProps) {
               const isRecommended = plan.recommended;
               const preco = prices?.[plan.id] ?? plan;
 
+              /**
+               * "Mais econômico" e "com desconto" só podem ser ditos se o
+               * plano comparado estiver na tela, com o preço à vista. Sem a
+               * referência visível, a vantagem não é demonstrável e a
+               * afirmação vira publicidade enganosa.
+               */
+              const comparavel = plan.comparesTo
+                ? planosVisiveis.some((outro) => outro.id === plan.comparesTo)
+                : true;
+              const beneficios = comparavel
+                ? [...(plan.comparativeFeatures ?? []), ...plan.features]
+                : plan.features;
+
               return (
                 <div
                   key={plan.id}
@@ -235,7 +248,7 @@ export function BillingCard({ status, dogId, prices }: BillingCardProps) {
                       <span className="text-sm font-bold text-foreground">
                         {plan.title}
                       </span>
-                      {plan.badge ? (
+                      {plan.badge && comparavel ? (
                         <span className="rounded-full bg-primary text-primary-foreground px-2 py-0.5 text-[10px] font-bold">
                           {plan.badge}
                         </span>
@@ -256,7 +269,7 @@ export function BillingCard({ status, dogId, prices }: BillingCardProps) {
                     </p>
 
                     <ul className="mt-4 space-y-2 text-xs text-foreground">
-                      {plan.features.map((feature, idx) => (
+                      {beneficios.map((feature, idx) => (
                         <li key={idx} className="flex items-start gap-1.5">
                           <Check className="size-3.5 text-primary-strong shrink-0 mt-0.5" />
                           <span>{feature}</span>
@@ -273,7 +286,7 @@ export function BillingCard({ status, dogId, prices }: BillingCardProps) {
                       loadingText="Iniciando…"
                       onClick={() => handleCheckout(plan.id)}
                     >
-                      {isRecommended ? (
+                      {isRecommended && comparavel ? (
                         <>
                           <Sparkles className="size-3.5 mr-1" />
                           Assinar com desconto

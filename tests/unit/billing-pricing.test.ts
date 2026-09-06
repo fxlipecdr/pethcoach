@@ -83,3 +83,28 @@ describe("preços dos planos", () => {
     expect(precos.single_program.priceFormatted).toMatch(/R\$\s*147,00/);
   });
 });
+
+describe("afirmações comparativas", () => {
+  it("o plano anual só declara vantagem quando o mensal está à vista", async () => {
+    const { BILLING_PLANS_CATALOG } = await import(
+      "@/features/billing/contracts"
+    );
+    const anual = BILLING_PLANS_CATALOG.find((p) => p.id === "annual");
+
+    // A comparação precisa dizer contra quem compara, para que a tela possa
+    // esconder a afirmação quando a referência não estiver sendo vendida.
+    expect(anual?.comparesTo).toBe("monthly");
+    expect(anual?.comparativeFeatures).toEqual([
+      "Economia em relação ao plano mensal",
+    ]);
+
+    // Nenhuma afirmação comparativa pode estar na lista incondicional.
+    for (const plano of BILLING_PLANS_CATALOG) {
+      for (const beneficio of plano.features) {
+        expect(beneficio.toLowerCase()).not.toContain("economia");
+        expect(beneficio.toLowerCase()).not.toContain("desconto");
+        expect(beneficio.toLowerCase()).not.toContain("mais barato");
+      }
+    }
+  });
+});

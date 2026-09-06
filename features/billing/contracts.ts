@@ -64,11 +64,23 @@ export type UserBillingStatus = z.infer<typeof userBillingStatusSchema>;
 export interface PlanPricingItem {
   id: BillingPlanType;
   title: string;
+  /** Selo comparativo. Só aparece se `comparesTo` estiver visível na tela. */
   badge?: string;
   priceFormatted: string;
   period: string;
   description: string;
   features: string[];
+  /**
+   * Plano usado como referência nas afirmações comparativas deste card.
+   *
+   * Dizer "mais econômico" ou "com desconto" exige que o preço comparado
+   * esteja à vista: anunciar vantagem sem mostrar a referência é publicidade
+   * enganosa (CDC, art. 37). Quando o plano de referência não está sendo
+   * vendido, todo o comparativo desaparece.
+   */
+  comparesTo?: BillingPlanType;
+  /** Afirmações que só fazem sentido ao lado de `comparesTo`. */
+  comparativeFeatures?: string[];
   recommended?: boolean;
 }
 
@@ -102,8 +114,9 @@ export const BILLING_PLANS_CATALOG: PlanPricingItem[] = [
     priceFormatted: "R$ 34,90",
     period: "/mês (cobrado anualmente R$ 418,80)",
     description: "O melhor custo-benefício para manter o bem-estar e o manejo contínuo durante todo o ano.",
+    comparesTo: "monthly",
+    comparativeFeatures: ["Economia em relação ao plano mensal"],
     features: [
-      "Economia em relação ao plano mensal",
       "Acesso completo aos 14 dias e novos módulos",
       "Check-ins diários com histórico permanente",
       "Linha do tempo e todos os marcos comportamentais",

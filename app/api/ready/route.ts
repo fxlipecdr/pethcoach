@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { getServerEnv } from "@/lib/env/server";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
+import { resolvePlanPrices } from "@/features/billing/pricing";
+import { BILLING_PLANS_CATALOG } from "@/features/billing/contracts";
 
 export const dynamic = "force-dynamic";
 
@@ -68,6 +70,26 @@ export async function GET(request: Request) {
       { status: 401, headers: { "Cache-Control": "no-store" } },
     );
 
+  /**
+   * Situação de cada plano, para responder sem adivinhação por que um card não
+   * aparece na tela.
+   *
+   * Preço no Stripe é imutável: alterar o valor cria um preço novo, com ID
+   * novo, e arquiva o antigo. É por isso que uma variável `STRIPE_PRICE_*`
+   * deixa de resolver depois de "atualizar o plano" no painel. Aqui fica
+   * visível qual delas parou de responder.
+   *
+   * Nenhum ID nem valor é revelado: só se o plano está vendável.
+   */
+  const precos = await resolvePlanPrices();
+  const planos = BILLING_PLANS_CATALOG.map((plano) => ({
+    plano: plano.id,
+    estado: precos[plano.id].live
+      ? ("ok" as const)
+      : ("ausente" as const),
+    visivel_na_loja: precos[plano.id].available,
+  }));
+
   const dependencias: Dependencia[] = [
     await verificarBanco(),
     {
@@ -96,6 +118,7 @@ export async function GET(request: Request) {
       commit,
       verificado_em: new Date().toISOString(),
       dependencias,
+      planos,
     },
     {
       status: pronto ? 200 : 503,
