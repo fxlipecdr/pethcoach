@@ -65,11 +65,30 @@ export const aiProvider: AIProvider = {
 
 function resolver(): AIProvider {
   if (cache) return cache;
-  const env = getServerEnv();
-  cache =
-    env.AI_GENERATION_ENABLED && env.GEMINI_API_KEY && env.AI_MODEL_PLANNER
-      ? criarProvedorGemini()
-      : semProvedor;
+  try {
+    const env = getServerEnv();
+    if (!env.AI_GENERATION_ENABLED) {
+      cache = semProvedor;
+    } else if (!env.GEMINI_API_KEY || !env.AI_MODEL_PLANNER) {
+      /**
+       * Ligado pela metade é a configuração mais perigosa: parece IA ativa e
+       * não é. Isto já derrubou uma build inteira quando era erro de validação;
+       * agora degrada para o determinístico, mas em voz alta.
+       */
+      console.warn(
+        "[planner] AI_GENERATION_ENABLED está ligado, mas falta " +
+          `${!env.GEMINI_API_KEY ? "GEMINI_API_KEY" : "AI_MODEL_PLANNER"}. ` +
+          "O planner determinístico assumiu: todo mundo com o mesmo problema " +
+          "recebe o mesmo plano.",
+      );
+      cache = semProvedor;
+    } else {
+      cache = criarProvedorGemini();
+    }
+  } catch {
+    // Ambiente ilegível não pode impedir a geração de plano.
+    cache = semProvedor;
+  }
   return cache;
 }
 

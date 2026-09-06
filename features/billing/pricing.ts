@@ -80,8 +80,35 @@ export async function resolvePublicPlanPrices(): Promise<
 export async function resolvePlanPrices(): Promise<
   Record<BillingPlanType, ResolvedPlanPrice>
 > {
-  // Sem Stripe configurado a tela é prévia de layout, e o catálogo basta.
-  const stripeConfigurado = paymentProvider.isConfigured();
+  /**
+   * Ler o ambiente não pode derrubar a página.
+   *
+   * A home passou a exibir preço, e com isso a renderização dela passou a
+   * depender do ambiente do servidor. Uma variável mal configurada — no caso
+   * real, a da IA — fez a build inteira falhar em `Error occurred prerendering
+   * page "/"`. Preço é conteúdo importante, mas nunca ao ponto de tirar o
+   * produto do ar: qualquer falha aqui cai para o catálogo.
+   */
+  let stripeConfigurado = false;
+  try {
+    stripeConfigurado = paymentProvider.isConfigured();
+  } catch (err) {
+    console.error(
+      `[precos] ambiente ilegível ao montar a vitrine: ${err instanceof Error ? err.message : "desconhecido"}`,
+    );
+    return Object.fromEntries(
+      BILLING_PLANS_CATALOG.map((plano) => [
+        plano.id,
+        {
+          priceFormatted: plano.priceFormatted,
+          period: plano.period,
+          live: false,
+          available: true,
+          motivo: "ambiente_ilegivel",
+        },
+      ]),
+    ) as Record<BillingPlanType, ResolvedPlanPrice>;
+  }
 
   const entradas = await Promise.all(
     BILLING_PLANS_CATALOG.map(async (plano) => {

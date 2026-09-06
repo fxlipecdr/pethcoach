@@ -82,19 +82,23 @@ export const serverEnvSchema = z
     META_CAPI_ACCESS_TOKEN: optionalText,
     /** Código de evento de teste do Gerenciador de Eventos. Vazio em produção. */
     META_TEST_EVENT_CODE: optionalText,
-  })
-  .superRefine((env, ctx) => {
-    if (
-      env.AI_GENERATION_ENABLED &&
-      (!env.GEMINI_API_KEY || !env.AI_MODEL_PLANNER)
-    )
-      ctx.addIssue({
-        code: "custom",
-        path: ["AI_GENERATION_ENABLED"],
-        message:
-          "Ativar IA exige GEMINI_API_KEY e AI_MODEL_PLANNER. Sem os dois, o planner determinístico assume.",
-      });
   });
+
+/**
+ * Não há validação cruzada no ambiente do servidor, e isso é deliberado.
+ *
+ * Havia uma: `AI_GENERATION_ENABLED=true` sem chave ou modelo invalidava o
+ * ambiente inteiro. O efeito foi desproporcional — a home lê o ambiente para
+ * exibir preço, então marcar a IA pela metade derrubava a build do site inteiro
+ * com `Error occurred prerendering page "/"`. Um recurso opcional, que já tem
+ * fallback determinístico projetado para a ausência dele, não pode tirar o
+ * produto do ar.
+ *
+ * O planner passou a tratar "ligado porém incompleto" como desligado, e avisa
+ * no log — ver `lib/ai/provider.ts`. Falhar rápido continua valendo para o que
+ * não tem alternativa segura: é por isso que a chave publicável do Supabase
+ * ainda é recusada quando vem no formato de chave secreta.
+ */
 
 export function parseEnvironment<T>(schema: z.ZodType<T>, values: unknown): T {
   const result = schema.safeParse(values);

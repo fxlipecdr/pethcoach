@@ -38,10 +38,21 @@ describe("environment boundaries", () => {
       publicEnvSchema.safeParse({ NEXT_PUBLIC_SITE_URL: "javascript:alert(1)" })
         .success,
     ).toBe(false));
-  it("rejects AI enablement without credentials and a configured model", () =>
+  it("aceita IA ligada pela metade, para não derrubar o site inteiro", () => {
+    /**
+     * Esta regra já foi o contrário, e o custo apareceu em produção: marcar
+     * `AI_GENERATION_ENABLED=true` sem o modelo invalidava o ambiente, e como a
+     * home lê o ambiente para exibir preço, a build caía inteira com
+     * `Error occurred prerendering page "/"`.
+     *
+     * O planner degrada para o determinístico e avisa no log — comportamento
+     * coberto em `tests/unit/env-resiliencia.test.ts`. Recurso opcional com
+     * fallback seguro não pode tirar o produto do ar.
+     */
     expect(
       serverEnvSchema.safeParse({ AI_GENERATION_ENABLED: "true" }).success,
-    ).toBe(false));
+    ).toBe(true);
+  });
   it("never leaks bad environment values in errors", () => {
     expect(() =>
       parseEnvironment(publicEnvSchema, {
