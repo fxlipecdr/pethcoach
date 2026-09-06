@@ -8,6 +8,10 @@ import {
   Clock3,
   Dog,
   Droplets,
+  BellRing,
+  HandHeart,
+  Undo2,
+  House,
   Route,
   ShieldAlert,
   Sparkles,
@@ -18,8 +22,21 @@ import { getPublicEnv } from "@/lib/env/public";
 import { PethMascot } from "@/components/pethcoach/peth-mascot";
 import { LandingTracker } from "@/features/analytics/landing-tracker";
 
-const problemIcons = { route: Route, dog: Dog, drop: Droplets };
-const tones = { sage: "bg-sage", peach: "bg-peach", lavender: "bg-lavender" };
+const problemIcons = {
+  route: Route,
+  dog: Dog,
+  drop: Droplets,
+  bell: BellRing,
+  hand: HandHeart,
+  recall: Undo2,
+  home: House,
+};
+const tones = {
+  sage: "bg-sage",
+  peach: "bg-peach",
+  lavender: "bg-lavender",
+  butter: "bg-lime-soft",
+};
 
 type ProblemPageProps = { params: Promise<{ slug: string }> };
 

@@ -5,6 +5,10 @@ import {
   Check,
   Dog,
   Droplets,
+  BellRing,
+  HandHeart,
+  Undo2,
+  House,
   MessageCircle,
   Footprints,
   ChartNoAxesCombined,
@@ -38,13 +42,22 @@ import {
 import { problems } from "@/content/problems";
 import { LandingTracker } from "@/features/analytics/landing-tracker";
 
-const problemIcons = { route: Route, dog: Dog, drop: Droplets };
+const problemIcons = {
+  route: Route,
+  dog: Dog,
+  drop: Droplets,
+  bell: BellRing,
+  hand: HandHeart,
+  recall: Undo2,
+  home: House,
+};
 
 /** Tons de superfície por programa — §7: as cores secundárias são momentos, não uniforme. */
 const tones = {
   sage: "bg-mint-soft border-mint",
   peach: "bg-coral-soft border-coral/50",
   lavender: "bg-sky-soft border-sky",
+  butter: "bg-lime-soft border-lime",
 };
 
 const steps = [

@@ -13,10 +13,18 @@ afterEach(() => {
 
 describe("P3 problem content and SEO", () => {
   it("keeps every landing unique, reward-based and referral-safe", () => {
-    expect(problems).toHaveLength(3);
-    expect(new Set(problems.map(({ seoTitle }) => seoTitle)).size).toBe(3);
-    expect(new Set(problems.map(({ seoDescription }) => seoDescription)).size).toBe(
-      3,
+    // O número cresce conforme novas dores entram no catálogo; o que precisa
+    // continuar verdadeiro é que cada landing seja única e segura.
+    expect(problems.length).toBeGreaterThanOrEqual(7);
+    expect(new Set(problems.map(({ slug }) => slug)).size).toBe(problems.length);
+    expect(new Set(problems.map(({ seoTitle }) => seoTitle)).size).toBe(
+      problems.length,
+    );
+    expect(
+      new Set(problems.map(({ seoDescription }) => seoDescription)).size,
+    ).toBe(problems.length);
+    expect(new Set(problems.map(({ hero }) => hero)).size).toBe(
+      problems.length,
     );
 
     for (const problem of problems) {
@@ -53,7 +61,7 @@ describe("P3 problem content and SEO", () => {
     // A vitrine de preços entra no sitemap: é a página que o anúncio precisa
     // alcançar e a que a análise de conta do Stripe procura para confirmar o
     // que é vendido e por quanto.
-    expect(entries).toHaveLength(5);
+    expect(entries).toHaveLength(2 + problems.length);
     expect(entries.map(({ url }) => url)).toEqual([
       "https://coach.example.test/",
       "https://coach.example.test/planos",

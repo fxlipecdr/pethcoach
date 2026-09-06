@@ -30,6 +30,8 @@
 
 Revisão geral de 05/09/2026, com método e achados: `docs/revisao-geral.md`.
 
+**Catálogo em 06/09/2026:** sete programas comportamentais (`docs/catalogo-comportamental.md`), com 28 exercícios. Os quatro novos entraram pela migração `20260913000000_p16_quatro_novos_programas.sql`, que **ainda precisa ser aplicada no Supabase remoto** — sem ela, as quatro landings novas existem no site mas o quiz correspondente não responde.
+
 ## Antes de produção
 
 - [ ] P15 e beta controlado concluídos; incidentes resolvidos.

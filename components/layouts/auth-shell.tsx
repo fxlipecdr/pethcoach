@@ -73,7 +73,7 @@ export function AuthShell({
       <footer className="page-width flex flex-wrap items-center justify-between gap-3 border-t border-border py-5 text-xs text-muted-foreground">
         {/* Identificação do fornecedor, como no rodapé público. */}
         <span>
-          {controlador.razaoSocial} · CNPJ {controlador.cnpj}
+          CNPJ {controlador.cnpj}
         </span>
         <nav aria-label="Informações de acesso" className="flex gap-5">
           <Link className="nav-link" href="/privacidade">

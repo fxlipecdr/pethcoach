@@ -108,11 +108,11 @@ export function SiteFooter() {
           </span>
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs text-strong-foreground/60">
             <CookiePreferencesButton className="hover:text-lime" />
-            {/* Identificação do fornecedor: exigência do Código de Defesa do
-                Consumidor para quem vende à distância. */}
+            {/* Identificação do fornecedor em venda à distância. O nome
+                empresarial completo e o endereço ficam na política de
+                privacidade e nos termos, alcançáveis daqui. */}
             <span>
-              {controlador.razaoSocial} · CNPJ {controlador.cnpj} ·{" "}
-              {contato.email}
+              CNPJ {controlador.cnpj} · {contato.email}
             </span>
             <span className="inline-flex items-center gap-2">
               <Paw tone="lime" stroke="var(--ink)" size={16} />

@@ -9,6 +9,8 @@ const toneColors = {
   sage: "#e8f8ef",
   peach: "#ffe9e6",
   lavender: "#e6f4fc",
+  // Lime suave, o mesmo tom de --lime-soft do sistema.
+  butter: "#f7fcdc",
 };
 
 export default async function Image({
