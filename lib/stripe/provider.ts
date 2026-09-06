@@ -103,6 +103,14 @@ class StripePaymentProvider implements PaymentProvider {
 
     try {
       const price = await stripe.prices.retrieve(priceId);
+      /**
+       * Preço arquivado ainda responde na API, mas o checkout o recusa.
+       * Isso acontece toda vez que se "altera o valor" de um plano: o Stripe
+       * não edita preço, ele cria um novo e arquiva o antigo. Sem esta
+       * verificação, uma variável apontando para o preço velho exibiria um
+       * card bonito que dá erro no clique — pior do que não exibir nada.
+       */
+      if (!price.active) return null;
       if (typeof price.unit_amount !== "number") return null;
       return {
         unitAmount: price.unit_amount,

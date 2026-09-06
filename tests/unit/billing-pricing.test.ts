@@ -108,3 +108,16 @@ describe("afirmações comparativas", () => {
     }
   });
 });
+
+describe("preço arquivado", () => {
+  it("é tratado como ausente, porque o checkout o recusaria", async () => {
+    // O Stripe não edita preço: alterar o valor cria um novo e arquiva o
+    // antigo. O arquivado continua respondendo na API, então exibi-lo daria
+    // um card que falha no clique.
+    obterPreco.mockResolvedValue(null);
+
+    const precos = await resolvePlanPrices();
+    expect(precos.annual.available).toBe(false);
+    expect(precos.annual.live).toBe(false);
+  });
+});
