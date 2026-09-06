@@ -37,6 +37,7 @@ describe("P16 — novos programas comportamentais", () => {
       "20260903000000_p7_catalog_and_plans.sql",
       "20260912000000_p15_revisor_real_do_catalogo.sql",
       "20260913000000_p16_quatro_novos_programas.sql",
+      "20260914000000_p16_calibra_mudanca_repentina.sql",
     ]) {
       await db.exec(
         await readFile(
@@ -128,6 +129,63 @@ describe("P16 — novos programas comportamentais", () => {
         codes,
         `a tag "${tag}" não é reconhecida pelo gate de segurança`,
       ).not.toContain("UNRECOGNIZED_SAFETY_SIGNAL");
+    }
+  });
+
+  it("responder apenas \"começou de repente\" não encaminha", async () => {
+    /**
+     * O gate exige dois sinais: mudança repentina **e** sinal físico. Uma
+     * migração chegou a pôr os dois na mesma opção simples, e quem respondia
+     * só "começou de repente" recebia encaminhamento citando uma mudança
+     * física que nunca relatou. Começar de repente é resposta comum, então o
+     * erro virou o caminho mais frequente do quiz.
+     */
+    const { rows } = await db.query<{ key: string; rules_json: unknown }>(
+      `select key, rules_json from public.quiz_questions
+        where key in ('barking_onset', 'alone_onset') and status = 'published'`,
+    );
+    expect(rows.length).toBe(2);
+
+    for (const { key, rules_json } of rows) {
+      const regras =
+        (rules_json as { optionTags?: Record<string, string[]> } | null)
+          ?.optionTags ?? {};
+
+      const simples = regras.sudden ?? [];
+      expect(
+        evaluateSafetyTags(simples).status,
+        `${key}: "de repente" sozinho não pode encaminhar`,
+      ).toBe("continue");
+
+      // A triagem não some: existe a opção explícita de sinal físico.
+      const comSinalFisico = regras.sudden_physical ?? [];
+      expect(comSinalFisico.length, `${key}: falta a opção de sinal físico`).toBeGreaterThan(0);
+      expect(evaluateSafetyTags(comSinalFisico).status).toBe("refer");
+    }
+  });
+
+  it("nenhuma pergunta de início encaminha sozinha por mudança repentina", async () => {
+    const { rows } = await db.query<{ key: string; rules_json: unknown }>(
+      "select key, rules_json from public.quiz_questions where status = 'published'",
+    );
+
+    for (const { key, rules_json } of rows) {
+      const regras =
+        (rules_json as { optionTags?: Record<string, string[]> } | null)
+          ?.optionTags ?? {};
+      for (const [opcao, tags] of Object.entries(regras)) {
+        const temRepentina = tags.includes("sudden_change");
+        const temFisico =
+          tags.includes("physical_change") || tags.includes("suspected_pain");
+        if (temRepentina && temFisico) {
+          // Combinar os dois numa opção só é legítimo apenas quando a própria
+          // opção descreve o sinal físico.
+          expect(
+            opcao,
+            `${key}/${opcao} junta mudança repentina e sinal físico numa opção que não fala de sinal físico`,
+          ).toMatch(/physical|pain|blood|effort|thirst/);
+        }
+      }
     }
   });
 

@@ -170,3 +170,61 @@ describe("mensagem de erro do checkout", () => {
     }
   });
 });
+
+describe("comparação entre planos", () => {
+  it("nenhum plano afirma dar mais programas que o outro", async () => {
+    const { BILLING_PLANS_CATALOG } = await import(
+      "@/features/billing/contracts"
+    );
+
+    /**
+     * O acesso é um booleano: qualquer compra ativa libera os 7 programas.
+     * Dizer que um plano dá mais conteúdo empurraria o tutor a pagar mais caro
+     * por uma diferença que o sistema não implementa. A distinção honesta é
+     * permanência, não quantidade.
+     *
+     * Se o escopo por programa for implementado um dia, este teste deve ser
+     * reescrito junto — e não antes.
+     */
+    const mensal = BILLING_PLANS_CATALOG.find((p) => p.id === "monthly");
+    const avulso = BILLING_PLANS_CATALOG.find((p) => p.id === "single_program");
+
+    for (const plano of [mensal, avulso]) {
+      const texto = [plano?.description, ...(plano?.features ?? [])]
+        .join(" ")
+        .toLowerCase();
+      expect(texto).not.toMatch(/apenas um programa|somente um programa/);
+      expect(texto).not.toMatch(/programas limitados|acesso limitado a/);
+    }
+
+    // Os dois precisam deixar claro que o catálogo inteiro está incluído.
+    expect(
+      [mensal?.description, ...(mensal?.features ?? [])].join(" "),
+    ).toMatch(/todos os 7 programas/i);
+    expect(
+      [avulso?.description, ...(avulso?.features ?? [])].join(" "),
+    ).toMatch(/todos os 7 programas/i);
+
+    // As frases que comparam preço entre planos precisam estar na lista
+    // condicional: sem o outro card na tela, a comparação fica sem referência.
+    expect(mensal?.comparesTo).toBe("single_program");
+    expect(avulso?.comparesTo).toBe("monthly");
+  });
+
+  it("o ponto de virada declarado bate com a conta", async () => {
+    const { BILLING_PLANS_CATALOG } = await import(
+      "@/features/billing/contracts"
+    );
+    const avulso = BILLING_PLANS_CATALOG.find((p) => p.id === "single_program");
+    const texto = (avulso?.comparativeFeatures ?? []).join(" ");
+
+    // R$ 97 ÷ R$ 39,90 = 2,43 meses. Dois meses de assinatura custam R$ 79,80
+    // (mais barato); três custam R$ 119,70 (mais caro). "Terceiro mês" é o
+    // ponto correto, e o texto não pode divergir do preço praticado.
+    const mensal = 39.9;
+    const unico = 97;
+    const virada = Math.floor(unico / mensal) + 1;
+    expect(virada).toBe(3);
+    expect(texto).toMatch(/terceiro mês/i);
+  });
+});

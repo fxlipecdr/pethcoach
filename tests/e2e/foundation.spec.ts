@@ -45,8 +45,11 @@ test("home, navigation, accessibility and responsive layout", async ({
     page.getByText("Primeiro dia grátis, sem cartão", { exact: true }),
   ).toBeVisible();
   // O preço aparece no primeiro quadro: quem chega de anúncio não deveria
-  // precisar de dois cliques para saber quanto custa.
-  await expect(page.getByText(/Programa completo por/)).toBeVisible();
+  // precisar de dois cliques para saber quanto custa. É o **menor** valor de
+  // entrada, não o maior — abrir com o preço mais alto afasta quem começaria
+  // pelo plano barato.
+  await expect(page.getByText(/Depois, a partir de/)).toBeVisible();
+  await expect(page.getByText(/R\$\s?39,90/).first()).toBeVisible();
   await page.getByRole("link", { name: "Começar pelo dia grátis" }).first().click();
   await expect(page).toHaveURL(/#problemas$/);
   await expect(

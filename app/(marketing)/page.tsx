@@ -42,6 +42,7 @@ import {
 import { problems } from "@/content/problems";
 import { resolvePublicPlanPrices } from "@/features/billing/pricing";
 import { PlanCards } from "@/components/pethcoach/plan-cards";
+import { BILLING_PLANS_CATALOG } from "@/features/billing/contracts";
 import { LandingTracker } from "@/features/analytics/landing-tracker";
 
 const problemIcons = {
@@ -99,6 +100,33 @@ export const revalidate = 300;
 
 export default async function Home() {
   const precos = await resolvePublicPlanPrices();
+
+  /**
+   * Menor valor entre os planos vendáveis, com o período junto.
+   *
+   * Sai do mesmo dado que alimenta os cards, então nunca diverge do que o
+   * Stripe cobra — e acompanha sozinho qualquer mudança de preço ou de plano.
+   */
+  const precoDeEntrada = (() => {
+    const vendaveis = BILLING_PLANS_CATALOG.filter(
+      (plano) => precos[plano.id].live || plano.id !== "annual",
+    ).map((plano) => precos[plano.id]);
+    const menor = vendaveis.reduce<(typeof vendaveis)[number] | null>(
+      (atual, preco) => {
+        const valor = Number(
+          preco.priceFormatted.replace(/[^\d,]/g, "").replace(",", "."),
+        );
+        const valorAtual = atual
+          ? Number(atual.priceFormatted.replace(/[^\d,]/g, "").replace(",", "."))
+          : Number.POSITIVE_INFINITY;
+        return valor < valorAtual ? preco : atual;
+      },
+      null,
+    );
+    if (!menor) return null;
+    return `${menor.priceFormatted}${menor.period.startsWith("/") ? menor.period : ""}`;
+  })();
+
   const [lead, ...rest] = problems;
   const LeadIcon = problemIcons[lead.icon];
 
@@ -164,14 +192,15 @@ export default async function Home() {
             </div>
 
             {/* Sinal de preço no primeiro quadro: quem vem de anúncio não
-                deveria precisar de dois cliques para saber quanto custa. */}
+                deveria precisar de dois cliques para saber quanto custa.
+                Mostra o **menor** valor de entrada, não o maior: abrir com o
+                preço mais alto afasta quem começaria pelo plano barato, e o
+                detalhe de cada plano está a um clique. */}
             <p className="mt-8 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
               <span className="flex items-center gap-2 font-semibold">
                 <Paw tone="mint" size={22} />
-                Programa completo por{" "}
-                <strong className="text-foreground">
-                  {precos.single_program.priceFormatted}
-                </strong>
+                Depois, a partir de{" "}
+                <strong className="text-foreground">{precoDeEntrada}</strong>
               </span>
               <span>7 dias para desistir, sem justificar</span>
             </p>

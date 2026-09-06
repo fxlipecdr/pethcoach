@@ -92,6 +92,15 @@ export interface PlanPricingItem {
  *
  * O plano anual fica descrito aqui, mas só aparece na tela quando existir um
  * preço anual cadastrado no Stripe.
+ *
+ * Sobre a comparação entre os planos: hoje o acesso é um booleano — qualquer
+ * compra ativa libera os 7 programas, todos os dias, todos os cães. Então a
+ * diferença **não** é quantidade de conteúdo, e dizer que é empurraria alguém
+ * a pagar mais caro por uma distinção inexistente.
+ *
+ * A diferença real é permanência, e a conta é objetiva: R$ 97 ÷ R$ 39,90 dá
+ * pouco menos de dois meses e meio. Até dois meses, a assinatura sai mais
+ * barata; do terceiro em diante, o avulso. É isso que o texto abaixo diz.
  */
 export const BILLING_PLANS_CATALOG: PlanPricingItem[] = [
   {
@@ -99,12 +108,16 @@ export const BILLING_PLANS_CATALOG: PlanPricingItem[] = [
     title: "Assinatura Mensal",
     priceFormatted: "R$ 39,90",
     period: "/mês",
-    description: "Acompanhamento flexível com renovação mensal cancelável a qualquer momento.",
+    description:
+      "Para resolver uma questão pontual agora, sem compromisso longo.",
+    comparesTo: "single_program",
+    comparativeFeatures: [
+      "Sai mais barato que o vitalício se você usar por até dois meses",
+    ],
     features: [
-      "Acesso completo aos 14 dias de treino",
-      "Check-ins diários e adaptação de ritmo",
-      "Histórico de sessões e marcos comportamentais",
-      "Suporte a múltiplos cães no perfil",
+      "Todos os 7 programas enquanto a assinatura estiver ativa",
+      "Check-ins diários, histórico e marcos comportamentais",
+      "Cancele sozinho, sem falar com atendimento",
     ],
   },
   {
@@ -125,15 +138,17 @@ export const BILLING_PLANS_CATALOG: PlanPricingItem[] = [
   },
   {
     id: "single_program",
-    title: "Programa Completo Avulso",
+    title: "Acesso Completo Vitalício",
     priceFormatted: "R$ 97,00",
     period: "pagamento único",
-    description: "Acesso vitalício à jornada estruturada de 14 dias para resolver o comportamento do seu cão.",
+    description:
+      "Para acompanhar o cão ao longo da vida. Paga uma vez, e continua seu quando aparecer um problema novo daqui a um ano.",
+    comparesTo: "monthly",
+    comparativeFeatures: ["Compensa a partir do terceiro mês de uso"],
     features: [
-      "Acesso vitalício ao plano de 14 dias gerado",
-      "Sem cobranças recorrentes ou renovações",
-      "Check-ins diários e marcos comportamentais",
-      "Garantia de 7 dias incondicional",
+      "Todos os 7 programas, para sempre",
+      "Novos programas incluídos conforme entram no catálogo",
+      "Sem mensalidade e sem renovação",
     ],
   },
 ];
