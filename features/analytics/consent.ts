@@ -1,4 +1,5 @@
 import { setAnalyticsConsent } from "@/lib/posthog/client";
+import { loadMetaPixel } from "@/lib/meta/client";
 import type { ConsentStatus } from "./contracts";
 
 export const CONSENT_COOKIE_NAME = "peth_consent";
@@ -59,6 +60,9 @@ export function setConsent(status: "granted" | "denied"): void {
 
   // Sync with PostHog client
   void setAnalyticsConsent(status === "granted");
+
+  // O pixel da Meta só entra na página depois do aceite, nunca antes.
+  if (status === "granted") loadMetaPixel();
 
   // Notify active listeners
   if (typeof window.dispatchEvent === "function") {

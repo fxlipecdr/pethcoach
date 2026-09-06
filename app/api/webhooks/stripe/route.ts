@@ -10,6 +10,7 @@ import {
   upsertBillingCustomer,
 } from "@/features/billing/data";
 import { captureServerEvent } from "@/lib/posthog/server";
+import { sendMetaPurchase } from "@/lib/meta/server";
 import { dispatchTransactionalEmail } from "@/features/emails/dispatcher";
 
 export async function POST(req: NextRequest) {
@@ -114,6 +115,31 @@ export async function POST(req: NextRequest) {
             },
             userId,
           );
+
+          /**
+           * Conversão para a Meta. O id do evento é o da sessão de checkout,
+           * que é estável e único: se o navegador também enviar `Purchase`
+           * com o mesmo id, a Meta descarta a duplicata em vez de contar a
+           * compra duas vezes.
+           *
+           * O envio respeita o aceite registrado no momento do checkout e é
+           * best-effort: falha aqui não pode derrubar a concessão de acesso,
+           * que é o que o tutor pagou para receber.
+           */
+          const metaResultado = await sendMetaPurchase({
+            eventId: session.id,
+            valor: totalCents / 100,
+            moeda: session.currency ?? "brl",
+            emailCliente: session.customer_details?.email,
+            fbp: session.metadata?.metaFbp || null,
+            fbc: session.metadata?.metaFbc || null,
+            consentimento: session.metadata?.metaConsent ?? null,
+          });
+          if (!metaResultado.ok && metaResultado.motivo !== "sem_consentimento") {
+            console.warn(
+              `[meta] conversão não enviada: ${metaResultado.motivo}`,
+            );
+          }
 
           const customerEmail = session.customer_details?.email;
           if (customerEmail && userId) {

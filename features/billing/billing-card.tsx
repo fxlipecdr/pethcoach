@@ -11,6 +11,8 @@ import {
   type BillingPlanType,
   type UserBillingStatus,
 } from "./contracts";
+import { getStoredConsent } from "@/features/analytics/consent";
+import { readMetaCookies, trackMetaEvent } from "@/lib/meta/client";
 import {
   createCheckoutSessionAction,
   createCustomerPortalAction,
@@ -43,10 +45,26 @@ export function BillingCard({ status, dogId }: BillingCardProps) {
       price_id: planType,
     });
 
+    // Sinal para a conversão de servidor. O aceite e os cookies de primeira
+    // parte da Meta só existem no navegador; o webhook do Stripe precisa deles
+    // para saber se pode enviar a compra e com quais identificadores casá-la.
+    const consent = getStoredConsent();
+    const metaCookies = consent === "granted" ? readMetaCookies() : {};
+
+    // O evento de navegador usa o mesmo id que o servidor vai usar depois?
+    // Não: o id do servidor é o da sessão do Stripe, que ainda não existe.
+    // Por isso o `Purchase` fica só no servidor, onde a compra é fato
+    // confirmado, e aqui enviamos apenas o início do checkout.
+    trackMetaEvent("InitiateCheckout", { value: 0, currency: "BRL" });
+
     try {
       const result = await createCheckoutSessionAction({
         planType,
         dogId,
+        meta: {
+          consent,
+          ...metaCookies,
+        },
       });
 
       if (result.status === "error") {

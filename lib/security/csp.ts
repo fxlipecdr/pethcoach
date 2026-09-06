@@ -67,6 +67,23 @@ function compile() {
   const posthog = originOf(env.NEXT_PUBLIC_POSTHOG_HOST);
   const sentry = originOf(env.NEXT_PUBLIC_SENTRY_DSN);
 
+  /**
+   * O pixel da Meta é o único script de terceiro carregado por tag, e só
+   * quando há aceite de cookies. Sem estas origens o navegador bloqueia o
+   * carregamento **em silêncio** — a campanha roda, o anúncio gasta e nenhuma
+   * conversão chega ao Gerenciador de Eventos.
+   *
+   * As origens só entram na política quando o pixel está configurado, para não
+   * afrouxar a CSP de quem não anuncia.
+   */
+  const metaPixel = Boolean(env.NEXT_PUBLIC_META_PIXEL_ID);
+  const metaScript = metaPixel ? ["https://connect.facebook.net"] : [];
+  const metaConnect = metaPixel
+    ? ["https://www.facebook.com", "https://connect.facebook.net"]
+    : [];
+  // O pixel também mede por imagem 1x1 em www.facebook.com.
+  const metaImg = metaPixel ? ["https://www.facebook.com"] : [];
+
   const connect = [
     "'self'",
     supabase,
@@ -74,6 +91,7 @@ function compile() {
     supabase ? supabase.replace(/^https:/, "wss:") : null,
     posthog,
     sentry,
+    ...metaConnect,
   ].filter((value): value is string => Boolean(value));
 
   // React Refresh avalia módulos em tempo de execução e o HMR usa WebSocket.
@@ -84,7 +102,7 @@ function compile() {
   const rest = [
     // O Next injeta CSS crítico inline; nonce em estilo não cobre esse caso.
     "style-src 'self' 'unsafe-inline'",
-    "img-src 'self' data: blob:",
+    `img-src 'self' data: blob:${metaImg.length ? " " + metaImg.join(" ") : ""}`,
     "font-src 'self' data:",
     `connect-src ${connect.join(" ")}`,
     "form-action 'self'",
@@ -98,10 +116,11 @@ function compile() {
   if (!development) rest.push("upgrade-insecure-requests");
 
   const tail = `; ${rest.join("; ")}`;
+  const script = metaScript.length ? ` ${metaScript.join(" ")}` : "";
   return {
     withNonce: (nonce: string) =>
-      `default-src 'self'; script-src 'self' 'nonce-${nonce}'${extraScript}${tail}`,
-    open: `default-src 'self'; script-src 'self' 'unsafe-inline'${extraScript}${tail}`,
+      `default-src 'self'; script-src 'self' 'nonce-${nonce}'${script}${extraScript}${tail}`,
+    open: `default-src 'self'; script-src 'self' 'unsafe-inline'${script}${extraScript}${tail}`,
   };
 }
 

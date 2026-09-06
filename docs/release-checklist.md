@@ -28,6 +28,8 @@
 - [x] CSP completa com nonces/hashes compatíveis com SSR; rate limits distribuídos nos endpoints mutáveis. Detalhes em `docs/p14-acceptance.md`.
 - [ ] Termos, privacidade, controlador e canal de suporte revisados e reais. **Escritos e publicados em 05/09/2026**, com controlador, encarregado, bases legais, prazos de retenção, operadores, transferência internacional e o direito de arrependimento do art. 49 do CDC; dados factuais centralizados em `content/legal.ts` e presença travada por `tests/e2e/legal.spec.ts`. **Estado em 05/09/2026: risco assumido pelo controlador.** Felipe Cordeiro de Paula leu e aprovou os dois documentos como responsável pela empresa. Não houve revisão por advogado: o texto é redação técnica fiel ao que o sistema faz. Este item continua desmarcado porque o que ele exige é revisão profissional; a decisão de publicar assim é do controlador e está registrada aqui. Falta também operar o processo de reembolso quando houver o primeiro pedido.
 
+Revisão geral de 05/09/2026, com método e achados: `docs/revisao-geral.md`.
+
 ## Antes de produção
 
 - [ ] P15 e beta controlado concluídos; incidentes resolvidos.

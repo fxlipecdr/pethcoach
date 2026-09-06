@@ -95,11 +95,25 @@ class StripePaymentProvider implements PaymentProvider {
       input.planType === "single_program" ? "payment" : "subscription";
 
     try {
+      /**
+       * `payment_method_types` é deliberadamente omitido.
+       *
+       * Quando o campo é enviado, o Stripe exige que **todos** os métodos
+       * listados estejam ativos na conta e **rejeita a criação da sessão** se
+       * algum não estiver. Fixar `["card", "pix"]` no código quebraria o
+       * checkout inteiro enquanto o Pix não estivesse aprovado — e no Brasil o
+       * Pix é liberado só por convite, após no mínimo 60 dias processando
+       * pagamentos.
+       *
+       * Omitindo o campo, o Stripe usa os métodos configurados no Dashboard e
+       * escolhe os relevantes para o cliente. O Pix passa a aparecer sozinho no
+       * dia em que for aprovado, sem tocar em código e sem risco de derrubar a
+       * venda enquanto não for.
+       */
       const session = await stripe.checkout.sessions.create({
         customer: input.stripeCustomerId ?? undefined,
         customer_email: input.stripeCustomerId ? undefined : input.userEmail,
         client_reference_id: input.userId,
-        payment_method_types: ["card"],
         mode,
         line_items: [
           {

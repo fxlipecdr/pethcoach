@@ -65,6 +65,12 @@ export const operadores = [
     finalidade: "Métricas de uso, somente com seu consentimento",
     local: "Exterior",
   },
+  {
+    nome: "Meta (Facebook e Instagram)",
+    finalidade:
+      "Medição de anúncios, somente com seu consentimento. O e-mail, quando enviado, vai cifrado em hash e nunca em texto claro",
+    local: "Exterior",
+  },
 ] as const;
 
 /** Prazo do art. 49 do CDC para compras feitas fora do estabelecimento. */

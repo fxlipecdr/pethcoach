@@ -231,7 +231,12 @@ export default function PrivacyPage() {
         <p>
           Usamos o mínimo. São necessários para o serviço: o cookie de sessão,
           que mantém você conectado, e o do questionário anônimo. Só existem com
-          o seu aceite: as métricas de uso.
+          o seu aceite: as métricas de uso e o pixel de medição de anúncios da
+          Meta.
+        </p>
+        <p>
+          Se você recusar, o pixel não é carregado e nenhuma informação sua é
+          enviada à Meta — nem no navegador, nem depois de uma compra.
         </p>
         <p>
           Você muda sua escolha a qualquer momento pelo link{" "}

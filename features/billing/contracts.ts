@@ -7,9 +7,34 @@ export const billingPlanTypeSchema = z.enum([
 ]);
 export type BillingPlanType = z.infer<typeof billingPlanTypeSchema>;
 
+/**
+ * Sinal de anúncio enviado junto do checkout.
+ *
+ * Vem do navegador, então é entrada não confiável e passa por schema como
+ * qualquer outra. Serve para o webhook do Stripe saber, na hora da compra, se
+ * pode enviar a conversão à Meta e com quais identificadores — sem isso o
+ * servidor não tem como recuperar o aceite nem os cookies de primeira parte.
+ */
+export const metaSignalSchema = z.object({
+  /** Aceite de cookies no momento do checkout. Só "granted" libera envio. */
+  consent: z.enum(["granted", "denied", "pending"]).optional(),
+  fbp: z
+    .string()
+    .max(200)
+    .regex(/^[A-Za-z0-9._-]+$/)
+    .optional(),
+  fbc: z
+    .string()
+    .max(200)
+    .regex(/^[A-Za-z0-9._-]+$/)
+    .optional(),
+});
+export type MetaSignal = z.infer<typeof metaSignalSchema>;
+
 export const createCheckoutInputSchema = z.object({
   planType: billingPlanTypeSchema,
   dogId: z.string().uuid().optional(),
+  meta: metaSignalSchema.optional(),
 });
 export type CreateCheckoutInput = z.infer<typeof createCheckoutInputSchema>;
 

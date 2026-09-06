@@ -7,6 +7,7 @@ import { Cookie, ShieldCheck, X } from "lucide-react";
 import { Card } from "@/components/ui/primitives";
 import { Button } from "@/components/ui/button";
 import { getStoredConsent, setConsent } from "@/features/analytics/consent";
+import { loadMetaPixel } from "@/lib/meta/client";
 import {
   getOrCreateAnonymousId,
   parseAttributionParams,
@@ -72,6 +73,9 @@ export function ConsentBanner() {
       return () => clearTimeout(timer);
     } else if (current === "granted") {
       recordCurrentAttribution();
+      // Visitante que já aceitou numa visita anterior: o pixel precisa subir
+      // aqui, porque `setConsent` só roda quando a escolha muda.
+      loadMetaPixel();
     }
   }, [pathname]);
 

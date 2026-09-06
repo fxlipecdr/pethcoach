@@ -20,6 +20,8 @@ export const publicEnvSchema = z
     NEXT_PUBLIC_POSTHOG_KEY: optionalText,
     NEXT_PUBLIC_POSTHOG_HOST: optionalUrl,
     NEXT_PUBLIC_SENTRY_DSN: optionalUrl,
+    /** Pixel da Meta. Só carrega no navegador depois do aceite de cookies. */
+    NEXT_PUBLIC_META_PIXEL_ID: optionalText,
   })
   .superRefine((env, ctx) => {
     for (const [url, key] of [
@@ -67,6 +69,13 @@ export const serverEnvSchema = z
     EMAIL_FROM: optionalText,
     CRON_SECRET: optionalText,
     SENTRY_DSN: optionalUrl,
+    /**
+     * Token da Conversions API da Meta. Segredo: fica só no servidor, nunca
+     * numa variável `NEXT_PUBLIC_`.
+     */
+    META_CAPI_ACCESS_TOKEN: optionalText,
+    /** Código de evento de teste do Gerenciador de Eventos. Vazio em produção. */
+    META_TEST_EVENT_CODE: optionalText,
   })
   .superRefine((env, ctx) => {
     if (

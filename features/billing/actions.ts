@@ -73,6 +73,11 @@ export async function createCheckoutSessionAction(
     stripeCustomerId: customer?.stripeCustomerId,
     metadata: {
       dogId: parsed.data.dogId ?? "",
+      // Viajam até o webhook para que a conversão de servidor saiba se há
+      // aceite e com quais identificadores casar o evento do navegador.
+      metaConsent: parsed.data.meta?.consent ?? "pending",
+      metaFbp: parsed.data.meta?.fbp ?? "",
+      metaFbc: parsed.data.meta?.fbc ?? "",
     },
   });
 

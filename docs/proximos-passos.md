@@ -216,6 +216,52 @@ Quando a migração acontecer, **três campos de `content/legal.ts` mudam**: `ra
 
 ---
 
+## 6.5 Tráfego pago: o que configurar antes de gastar o primeiro real
+
+O código para medir conversão já está pronto. O que falta é ligar as contas.
+
+**6.5.1 — Pixel e Conversions API da Meta.**
+
+No Gerenciador de Eventos da Meta, crie um pixel e pegue duas coisas: o **ID do pixel** e um **token de acesso da Conversions API**. Coloque na Vercel:
+
+- `NEXT_PUBLIC_META_PIXEL_ID` — o ID. É público por natureza, pode ir numa variável `NEXT_PUBLIC_`.
+- `META_CAPI_ACCESS_TOKEN` — o token. **É segredo.** Nunca coloque numa variável que comece com `NEXT_PUBLIC_`, porque tudo que começa assim vai para o navegador de qualquer visitante.
+
+Para conferir se está chegando, preencha `META_TEST_EVENT_CODE` com o código que o Gerenciador de Eventos mostra na aba de teste, faça uma compra de teste, veja o evento aparecer — e **apague a variável depois**. Evento marcado como teste não conta para otimização de campanha.
+
+Como funciona, para você saber o que esperar:
+
+- O **pixel** mede visita e início de checkout no navegador, e só carrega depois do aceite de cookies.
+- A **compra** é enviada pelo servidor, a partir do webhook do Stripe, porque é lá que a venda é fato confirmado. Isso recupera as conversões que o pixel perde com bloqueador de anúncio, Safari ou aba fechada antes do retorno.
+- Os dois usam o mesmo identificador de evento, então a Meta descarta a duplicata em vez de contar a compra duas vezes.
+- **Sem aceite de cookies, nada é enviado** — nem no navegador, nem depois da compra. É o que a sua política de privacidade promete.
+
+**6.5.2 — Pix: você ainda não pode habilitar, e isso é normal.**
+
+No Brasil, o Pix no Stripe é **liberado só por convite**. Não existe botão para ativar. Os requisitos são:
+
+- conta em situação regular, e
+- **no mínimo 60 dias processando pagamentos** no Stripe
+
+Como a conta é nova, o Pix não aparece nas configurações de formas de pagamento. Não é erro seu nem falta do produto.
+
+**O que fazer:** anote na agenda para 60 dias depois da primeira venda real. Passado o prazo, confira em [Configurações → Formas de pagamento](https://dashboard.stripe.com/settings/payment_methods) se o Pix apareceu. Se não aparecer e você já tiver histórico, fale com o suporte do Stripe e peça avaliação de risco para Pix.
+
+**O que o código faz enquanto isso:** nada quebra. O checkout **não fixa** métodos de pagamento — ele usa o que estiver ativo no seu painel. No dia em que o Pix for aprovado, ele passa a aparecer sozinho, sem mexer em código nem fazer deploy.
+
+Isso é deliberado: se o código pedisse Pix explicitamente, o Stripe **rejeitaria a criação da sessão** enquanto o método não estivesse ativo, e a venda do programa completo quebraria inteira.
+
+**Dois limites do Pix para você saber de antemão:**
+
+- Cada Pix aceita de **R$ 0,50 a R$ 3.000**. Se algum plano passar disso, aquele preço não pode ser pago por Pix.
+- **Assinatura por Pix não existe no Brasil.** O Pix Automático, que faria cobrança recorrente, não está disponível para contas brasileiras. Então mensalidade e anuidade continuam só no cartão; o Pix, quando vier, vale para a compra à vista do programa completo.
+
+**6.5.3 — O que o código ainda não faz.**
+
+Só a Meta está implementada, porque foi a sua escolha. Google Ads e TikTok exigiriam trabalho equivalente. O `gclid` e o `ttclid` já são capturados e guardados, então a base de atribuição está pronta se você mudar de ideia.
+
+---
+
 ## 7. As duas revisões profissionais — decisão tomada em 05/09/2026
 
 Estas nunca foram tarefas de computador, e nenhuma delas eu posso fazer.
