@@ -29,6 +29,11 @@ export interface ResolvedPlanPrice {
    * ambiente de desenvolvimento, onde a tela existe para revisar layout.
    */
   available: boolean;
+  /**
+   * Por que o preço não pôde ser lido, quando não pôde. Serve ao diagnóstico
+   * em `/api/ready`: cada motivo aponta para uma correção diferente.
+   */
+  motivo?: string;
 }
 
 const moeda = new Intl.NumberFormat("pt-BR", {
@@ -50,8 +55,8 @@ export async function resolvePlanPrices(): Promise<
 
   const entradas = await Promise.all(
     BILLING_PLANS_CATALOG.map(async (plano) => {
-      const vivo = await paymentProvider.getLivePrice(plano.id);
-      if (!vivo) {
+      const resultado = await paymentProvider.getLivePrice(plano.id);
+      if (resultado.estado !== "ok") {
         return [
           plano.id,
           {
@@ -59,9 +64,11 @@ export async function resolvePlanPrices(): Promise<
             period: plano.period,
             live: false,
             available: !stripeConfigurado,
+            motivo: resultado.estado,
           },
         ] as const;
       }
+      const vivo = resultado.preco;
       return [
         plano.id,
         {

@@ -9,7 +9,7 @@ export type CreateCheckoutResult =
   | { ok: false; error: string }
   | Unavailable;
 
-/** Preço vivo, lido do Stripe. `null` quando não há preço configurado. */
+/** Preço vivo, lido do Stripe. */
 export interface LivePrice {
   /** Valor em centavos, como o Stripe guarda. */
   unitAmount: number;
@@ -17,6 +17,34 @@ export interface LivePrice {
   /** "month" | "year" quando recorrente; ausente em pagamento único. */
   interval?: string;
 }
+
+/**
+ * Por que um preço não pôde ser usado.
+ *
+ * Cada motivo aponta para uma correção diferente, e sem essa distinção o
+ * sintoma — "o plano não aparece" — é idêntico nos quatro casos:
+ *
+ * - `sem_id`: a variável `STRIPE_PRICE_*` está vazia no ambiente. Na Vercel,
+ *   isso acontece quando a variável não foi marcada para **Production**, ou
+ *   quando não houve redeploy depois de criá-la.
+ * - `nao_encontrado`: o ID não existe nesta conta. Normalmente é ID de produto
+ *   (`prod_…`) no lugar do ID de preço (`price_…`).
+ * - `modo_errado`: o preço existe, mas no outro modo. Chave de produção com
+ *   preço de teste, ou o contrário.
+ * - `arquivado`: o preço existe e está desativado. É o que acontece com o
+ *   preço antigo depois de "alterar o valor" de um plano.
+ */
+export type LivePriceFailure =
+  | "sem_id"
+  | "nao_encontrado"
+  | "modo_errado"
+  | "arquivado"
+  | "sem_valor"
+  | "erro";
+
+export type LivePriceResult =
+  | { estado: "ok"; preco: LivePrice }
+  | { estado: LivePriceFailure };
 
 export type CreatePortalResult =
   | { ok: true; url: string }
@@ -43,7 +71,7 @@ export interface CreatePortalInput {
 export interface PaymentProvider {
   isConfigured(): boolean;
   getPriceId(planType: BillingPlanType): string | null;
-  getLivePrice(planType: BillingPlanType): Promise<LivePrice | null>;
+  getLivePrice(planType: BillingPlanType): Promise<LivePriceResult>;
   createCheckout(input: CreateCheckoutInput): Promise<CreateCheckoutResult>;
   createPortal(input: CreatePortalInput): Promise<CreatePortalResult>;
   constructWebhookEvent(
@@ -96,29 +124,42 @@ class StripePaymentProvider implements PaymentProvider {
    * Falha aqui não derruba a página: quem chama cai para o texto do catálogo,
    * que passa a ser apenas um último recurso visual.
    */
-  async getLivePrice(planType: BillingPlanType): Promise<LivePrice | null> {
+  async getLivePrice(planType: BillingPlanType): Promise<LivePriceResult> {
     const stripe = this.getClient();
     const priceId = this.getPriceId(planType);
-    if (!stripe || !priceId) return null;
+    if (!stripe || !priceId) return { estado: "sem_id" };
 
     try {
       const price = await stripe.prices.retrieve(priceId);
       /**
        * Preço arquivado ainda responde na API, mas o checkout o recusa.
-       * Isso acontece toda vez que se "altera o valor" de um plano: o Stripe
-       * não edita preço, ele cria um novo e arquiva o antigo. Sem esta
-       * verificação, uma variável apontando para o preço velho exibiria um
-       * card bonito que dá erro no clique — pior do que não exibir nada.
+       * Acontece toda vez que se "altera o valor" de um plano: o Stripe não
+       * edita preço, cria um novo e arquiva o antigo. Sem esta verificação, a
+       * variável apontando para o preço velho exibiria um card que dá erro no
+       * clique — pior do que não exibir nada.
        */
-      if (!price.active) return null;
-      if (typeof price.unit_amount !== "number") return null;
+      if (!price.active) return { estado: "arquivado" };
+      if (typeof price.unit_amount !== "number") return { estado: "sem_valor" };
       return {
-        unitAmount: price.unit_amount,
-        currency: price.currency,
-        interval: price.recurring?.interval,
+        estado: "ok",
+        preco: {
+          unitAmount: price.unit_amount,
+          currency: price.currency,
+          interval: price.recurring?.interval,
+        },
       };
-    } catch {
-      return null;
+    } catch (err) {
+      /**
+       * A mensagem do Stripe distingue "não existe" de "existe no outro modo",
+       * e essa diferença aponta para correções opostas. Só o veredito é
+       * propagado: a mensagem original contém o ID e não sai daqui.
+       */
+      const mensagem = err instanceof Error ? err.message : "";
+      if (/similar object exists in (live|test) mode/i.test(mensagem))
+        return { estado: "modo_errado" };
+      if (/no such price|resource_missing/i.test(mensagem))
+        return { estado: "nao_encontrado" };
+      return { estado: "erro" };
     }
   }
 

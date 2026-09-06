@@ -27,10 +27,16 @@ describe("preços dos planos", () => {
   it("usa o valor do Stripe, não o texto do código", async () => {
     obterPreco.mockImplementation(async (plano) => {
       if (plano === "single_program")
-        return { unitAmount: 9700, currency: "brl" };
+        return { estado: "ok", preco: { unitAmount: 9700, currency: "brl" } };
       if (plano === "monthly")
-        return { unitAmount: 3990, currency: "brl", interval: "month" };
-      return { unitAmount: 29700, currency: "brl", interval: "year" };
+        return {
+          estado: "ok",
+          preco: { unitAmount: 3990, currency: "brl", interval: "month" },
+        };
+      return {
+        estado: "ok",
+        preco: { unitAmount: 29700, currency: "brl", interval: "year" },
+      };
     });
 
     const precos = await resolvePlanPrices();
@@ -49,8 +55,11 @@ describe("preços dos planos", () => {
   it("esconde plano sem preço cadastrado, em vez de anunciar oferta que o checkout recusa", async () => {
     // Cenário real: mensal e avulso cadastrados, anual não.
     obterPreco.mockImplementation(async (plano) => {
-      if (plano === "annual") return null;
-      return { unitAmount: 3990, currency: "brl", interval: "month" };
+      if (plano === "annual") return { estado: "sem_id" };
+      return {
+        estado: "ok",
+        preco: { unitAmount: 3990, currency: "brl", interval: "month" },
+      };
     });
 
     const precos = await resolvePlanPrices();
@@ -62,7 +71,7 @@ describe("preços dos planos", () => {
 
   it("mostra o catálogo quando o Stripe inteiro não está configurado", async () => {
     estaConfigurado.mockReturnValue(false);
-    obterPreco.mockResolvedValue(null);
+    obterPreco.mockResolvedValue({ estado: "sem_id" });
 
     const precos = await resolvePlanPrices();
 
@@ -74,8 +83,8 @@ describe("preços dos planos", () => {
 
   it("formata em real brasileiro", async () => {
     obterPreco.mockResolvedValue({
-      unitAmount: 14700,
-      currency: "brl",
+      estado: "ok",
+      preco: { unitAmount: 14700, currency: "brl" },
     });
 
     const precos = await resolvePlanPrices();
@@ -114,10 +123,32 @@ describe("preço arquivado", () => {
     // O Stripe não edita preço: alterar o valor cria um novo e arquiva o
     // antigo. O arquivado continua respondendo na API, então exibi-lo daria
     // um card que falha no clique.
-    obterPreco.mockResolvedValue(null);
+    obterPreco.mockResolvedValue({ estado: "arquivado" });
 
     const precos = await resolvePlanPrices();
     expect(precos.annual.available).toBe(false);
     expect(precos.annual.live).toBe(false);
+    // O motivo é o que transforma "não aparece" em instrução de conserto.
+    expect(precos.annual.motivo).toBe("arquivado");
+  });
+});
+
+describe("diagnóstico de preço", () => {
+  it("cada motivo aponta para uma correção diferente e nenhum vaza o ID", async () => {
+    const motivos = [
+      "sem_id",
+      "nao_encontrado",
+      "modo_errado",
+      "arquivado",
+    ] as const;
+
+    for (const motivo of motivos) {
+      obterPreco.mockResolvedValue({ estado: motivo });
+      const precos = await resolvePlanPrices();
+      expect(precos.monthly.motivo).toBe(motivo);
+      expect(precos.monthly.available).toBe(false);
+      // O veredito viaja; a mensagem original do Stripe, que contém o ID, não.
+      expect(JSON.stringify(precos)).not.toMatch(/price_|prod_|sk_/);
+    }
   });
 });

@@ -86,7 +86,7 @@ export async function GET(request: Request) {
     plano: plano.id,
     estado: precos[plano.id].live
       ? ("ok" as const)
-      : ("ausente" as const),
+      : (precos[plano.id].motivo ?? "ausente"),
     visivel_na_loja: precos[plano.id].available,
   }));
 
